@@ -8,24 +8,23 @@
     <style>
         body {
             margin: 0;
-            display: flex;
-            font-family: sans-serif;
+            display: grid;
+            /* Column 1: 1 fraction, Column 2: 5 fractions (Total 6 parts) */
+            grid-template-columns: 1fr 5fr;
             min-height: 100vh;
-            overflow-x: hidden; /* Prevents unwanted horizontal scrollbars */
+            font-family: sans-serif;
+            overflow-x: hidden;
         }
 
-        /* Sidebar - 1/6th of total width */
+        /* Sidebar - Occupies Column 1 */
         nav {
-            width: 16.66%; 
             background-color: #333333; /* Dark Grey */
             padding: 20px;
             display: flex;
             flex-direction: column;
-            box-sizing: border-box;
-            /* Higher z-index so images go UNDER it */
             position: relative;
             z-index: 10; 
-            box-shadow: 5px 0 15px rgba(0,0,0,0.1); /* Optional: subtle shadow over the images */
+            box-shadow: 5px 0 15px rgba(0,0,0,0.1);
         }
 
         nav a {
@@ -40,12 +39,10 @@
             text-decoration: underline;
         }
 
-        /* Content Area - 5/6ths of width */
+        /* Content Area - Occupies Column 2 */
         main {
-            flex-grow: 1;
             padding: 40px 0; 
             background-color: #ffffff;
-            /* Allow the container to touch the nav bar */
             display: flex;
             flex-direction: column;
         }
@@ -59,19 +56,18 @@
             color: #222;
         }
 
-        /* Scroll Container - Starts exactly at the edge of the nav bar */
+        /* Image Carousel Logic */
         .scroll-container {
             width: 100%;
             overflow: hidden;
             background: #ffffff;
             padding: 20px 0;
             margin-top: 30px;
-            /* Pulls the container slightly left to ensure no gap with the nav */
-            margin-left: 0; 
         }
 
         .scroll-wrapper {
             display: flex;
+            /* Width calculation remains the same for the loop */
             width: calc(250px * 6); 
             animation: scroll 20s linear infinite;
         }
@@ -89,7 +85,6 @@
 
         @keyframes scroll {
             0% { transform: translateX(0); }
-            /* Moves the width of 3 images (250px * 3) plus their margins (20px * 3) */
             100% { transform: translateX(calc(-270px * 3)); } 
         }
     </style>
@@ -107,7 +102,7 @@
     <main>
         <div class="content-padding">
             <h1>Ben Chmieleski</h1>
-            <p>Click on a link in the navigation bar to get started. </p> 
+            <p>Click on a link in the navigation bar to get started.</p> 
         </div>
 
         <div class="scroll-container">
@@ -115,7 +110,7 @@
                 <img src="image1.jpg" alt="1">
                 <img src="image2.jpg" alt="2">
                 <img src="image3.jpg" alt="3">
-                <!-- Duplicates -->
+                <!-- Duplicates for loop -->
                 <img src="image1.jpg" alt="1">
                 <img src="image2.jpg" alt="2">
                 <img src="image3.jpg" alt="3">
@@ -125,4 +120,3 @@
 
 </body>
 </html>
-
