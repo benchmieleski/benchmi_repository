@@ -61,6 +61,7 @@
             background-size: 400% auto;
             animation: gradient-flow 18s linear infinite;
             display: inline-block;
+            transition: color 0.4s ease;
         }
 
         @keyframes gradient-flow {
@@ -88,10 +89,7 @@
             width: fit-content;
         }
 
-        .nav-link:hover {
-            transform: translateX(3px);
-            opacity: 0.8;
-        }
+        .nav-link:hover { transform: translateX(3px); opacity: 0.8; }
 
         .color-controls-dropdown {
             margin-top: 10px;
@@ -118,17 +116,8 @@
             width: 100vw;
             display: flex;
             align-items: flex-end;
-            overflow-x: auto; 
-            overflow-y: hidden;
-            padding-bottom: 20px; 
-            scrollbar-width: thin;
-            scrollbar-color: var(--theme-c2) transparent;
-        }
-
-        .gallery-container::-webkit-scrollbar { height: 6px; }
-        .gallery-container::-webkit-scrollbar-thumb {
-            background-color: var(--theme-c2);
-            border-radius: 10px;
+            overflow: hidden;
+            padding-bottom: 40px; 
         }
 
         .scroll-wrapper {
@@ -136,7 +125,6 @@
             white-space: nowrap;
             animation: scroll 45s linear infinite;
             padding: 0 20px;
-            padding-bottom: 20px; 
         }
 
         .scroll-wrapper:hover { animation-play-state: paused; }
@@ -144,15 +132,22 @@
         .painting-wrapper {
             position: relative;
             height: 45vh; 
-            margin: 0 30px;
+            margin: 0 40px;
             padding: 12px;
-            border: 5px solid var(--theme-c2);
+            border: 8px solid;
+            border-image-slice: 1;
+            border-image-source: linear-gradient(to right, 
+                var(--theme-c1), 
+                var(--theme-c2), 
+                var(--theme-c3), 
+                var(--theme-c1));
             background-color: var(--wrapper-bg); 
             flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: border-color 0.4s ease, background-color 0.4s ease;
+            transition: background-color 0.4s ease;
+            animation: gradient-flow 18s linear infinite;
         }
 
         .painting { height: 100%; display: block; }
@@ -172,18 +167,9 @@
             z-index: 10;
         }
 
-        .painting-wrapper:hover .painting-info {
-            opacity: 1;
-            transform: translate(-50%, -65%);
-        }
+        .painting-wrapper:hover .painting-info { opacity: 1; transform: translate(-50%, -65%); }
 
-        .info-header {
-            font-size: 0.8rem;
-            font-weight: bold;
-            letter-spacing: 1px;
-            white-space: nowrap;
-        }
-
+        .info-header { font-size: 0.8rem; font-weight: bold; letter-spacing: 1px; white-space: nowrap; }
         .info-subheader {
             color: #000; 
             background-color: #fff;
@@ -224,12 +210,6 @@
             border: 1px solid var(--theme-c2);
             color: var(--theme-c2);
             padding: 5px 10px;
-            transition: all 0.2s;
-        }
-        
-        .close-btn:hover {
-            background-color: var(--theme-c2);
-            color: #fff;
         }
     </style>
 </head>
@@ -240,7 +220,7 @@
             <div class="site-name">
                 <span class="inv-grad-box">Ben Chmieleski</span>
             </div>
-            <div class="nav-menu" id="navMenu">
+            <div class="nav-menu">
                 <div class="nav-link inv-grad-box" onclick="openModal('about')">About</div>
                 <div class="nav-link inv-grad-box" onclick="openModal('contact')">Contact</div>
                 
@@ -261,9 +241,9 @@
                         <div class="swatch" style="background: #af9991;"></div>
                     </div>
                     <div class="theme-option" onclick="setTheme('monochrome', this)">
-                        <div class="swatch" style="background: #666666;"></div>
-                        <div class="swatch" style="background: #ffffff;"></div>
-                        <div class="swatch" style="background: #c2c2c2;"></div>
+                        <div class="swatch" style="background: #000;"></div>
+                        <div class="swatch" style="background: #444;"></div>
+                        <div class="swatch" style="background: #111;"></div>
                     </div>
                 </div>
             </div>
@@ -292,34 +272,10 @@
 
     <script>
         const themes = {
-            electric: { 
-                colors: ['#d9b3f2', '#b3d9d9', '#efb9da'], 
-                bg: '#ffffff', 
-                wrapper: '#ffffff', 
-                text: '#1a1a1a', 
-                name: '#ffffff' 
-            },
-            jewel: { 
-                colors: ['#739bf3', '#c39bd4', '#ff72be'], 
-                bg: '#e0fcf9', 
-                wrapper: '#ffffff', 
-                text: '#1a1a1a', 
-                name: '#ffffff' 
-            },
-            autumn: { 
-                colors: ['#e4a578', '#d0d166', '#af9991'], 
-                bg: '#fff4e0', 
-                wrapper: '#ffffff', 
-                text: '#1a1a1a', 
-                name: '#ffffff' 
-            },
-            monochrome: { 
-                colors: ['#666666', '#ffffff', '#c2c2c2'], 
-                bg: '#0a0a1a', 
-                wrapper: '#ffffff', 
-                text: '#ffffff', 
-                name: '#ffffff' 
-            }
+            electric: { colors: ['#d9b3f2', '#b3d9d9', '#efb9da'], bg: '#ffffff', text: '#1a1a1a' },
+            jewel: { colors: ['#739bf3', '#c39bd4', '#ff72be'], bg: '#ffffff', text: '#1a1a1a' },
+            autumn: { colors: ['#e4a578', '#d0d166', '#af9991'], bg: '#ffffff', text: '#1a1a1a' },
+            monochrome: { colors: ['#000000', '#444444', '#111111'], bg: '#000000', text: '#ffffff' }
         };
 
         function setTheme(key, el) {
@@ -329,12 +285,9 @@
             root.style.setProperty('--theme-c1', t.colors[0]);
             root.style.setProperty('--theme-c2', t.colors[1]);
             root.style.setProperty('--theme-c3', t.colors[2]);
-            
             root.style.setProperty('--bg-main', t.bg);
-            root.style.setProperty('--wrapper-bg', t.wrapper);
             root.style.setProperty('--text-base', t.text);
-            root.style.setProperty('--name-text', t.name);
-            root.style.setProperty('--modal-bg', (t.bg === '#0a0a1a') ? '#1e1e1e' : '#ffffff');
+            root.style.setProperty('--modal-bg', (t.bg === '#000000') ? '#1e1e1e' : '#ffffff');
             
             document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
             el.classList.add('active');
@@ -343,11 +296,9 @@
         function openModal(type) {
             const body = document.getElementById('modal-body');
             if (type === 'about') {
-                body.innerHTML = `Hello, I'm Ben Chmieleski and I'm an Artist & Designer <br>
-                    located in West Michigan. I believe in the power of design to improve the human condition. <br>
-                    I paint landscapes and botanic-inspired pieces.`;
+                body.innerHTML = `<h3>Ben Chmieleski</h3><p>Artist & Designer located in West Michigan. <br>I paint landscapes and botanic-inspired pieces.</p>`;
             } else {
-                body.innerHTML = `email<br>benchmieleski@gmail.com`;
+                body.innerHTML = `<h3>Contact</h3><p>benchmieleski@gmail.com</p>`;
             }
             document.getElementById('modal').style.display = 'block';
         }
