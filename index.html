@@ -341,7 +341,9 @@
         }
 
         function openModal(type) {
-            const content = type === 'about' ? 'sample text 1' : 'sample text 2';
+            const content = type === 'about' ? 'Hello, I'm Ben Chmieleski and I'm an Artist & Designer <br>
+                located in West Michigan. I believe in the power of design to improve the human condition. <br>
+                I painting landscapes and botanic-inspired pieces.' : 'email<br>benchmieleski@gmail.com';
             document.getElementById('modal-body').textContent = content;
             document.getElementById('modal').style.display = 'block';
         }
