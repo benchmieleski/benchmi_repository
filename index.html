@@ -6,13 +6,12 @@
     <title>Ben Chmieleski</title>
     <style>
         :root {
-            /* Translucent/60% Opacity Mix for Electric Theme */
             --bg-main: #ffffff;
             --text-base: #1a1a1a;
             --name-text: #ffffff;
-            --theme-c1: #c466ff; /* 60% mix of #9D00FF with white */
-            --theme-c2: #66b9b9; /* 60% mix of #008B8B with white */
-            --theme-c3: #dd73b6; /* 60% mix of #C71585 with white */
+            --theme-c1: #c466ff; 
+            --theme-c2: #66b9b9; /* Middle Color used for frame/scroll */
+            --theme-c3: #dd73b6; 
             --modal-bg: #ffffff;
             --wrapper-bg: #ffffff; 
         }
@@ -123,12 +122,13 @@
             overflow-y: hidden;
             padding-bottom: 20px; 
             scrollbar-width: thin;
-            scrollbar-color: var(--theme-c3) transparent;
+            /* Scroll bar matches middle color */
+            scrollbar-color: var(--theme-c2) transparent;
         }
 
         .gallery-container::-webkit-scrollbar { height: 6px; }
         .gallery-container::-webkit-scrollbar-thumb {
-            background-color: var(--theme-c3);
+            background-color: var(--theme-c2);
             border-radius: 10px;
         }
 
@@ -147,7 +147,8 @@
             height: 45vh; 
             margin: 0 30px;
             padding: 12px;
-            border: 3px solid var(--theme-c3);
+            /* Frame color matches middle color, thickness increased for "thick" look */
+            border: 5px solid var(--theme-c2);
             background-color: var(--wrapper-bg); 
             flex-shrink: 0;
             display: flex;
@@ -222,14 +223,14 @@
             font-weight: bold;
             cursor: pointer;
             background: none;
-            border: 1px solid var(--theme-c3);
-            color: var(--theme-c3);
+            border: 1px solid var(--theme-c2);
+            color: var(--theme-c2);
             padding: 5px 10px;
             transition: all 0.2s;
         }
         
         .close-btn:hover {
-            background-color: var(--theme-c3);
+            background-color: var(--theme-c2);
             color: #fff;
         }
     </style>
@@ -263,7 +264,7 @@
                     </div>
                     <div class="theme-option" onclick="setTheme('monochrome', this)">
                         <div class="swatch" style="background: #666666;"></div>
-                        <div class="swatch" style="background: #e0e0e0;"></div>
+                        <div class="swatch" style="background: #ffffff;"></div>
                         <div class="swatch" style="background: #c2c2c2;"></div>
                     </div>
                 </div>
@@ -293,7 +294,6 @@
 
     <script>
         const themes = {
-            // Colors mixed with 40% white to achieve "60% opacity" look
             electric: { 
                 colors: ['#c466ff', '#66b9b9', '#dd73b6'], 
                 bg: '#ffffff', 
@@ -301,7 +301,6 @@
                 text: '#1a1a1a', 
                 name: '#ffffff' 
             },
-            // Background changed to saturated Mint-Cyan
             jewel: { 
                 colors: ['#739bf3', '#c39bd4', '#ff72be'], 
                 bg: '#e0fcf9', 
@@ -317,7 +316,8 @@
                 name: '#ffffff' 
             },
             monochrome: { 
-                colors: ['#666666', '#e0e0e0', '#c2c2c2'], 
+                // Middle color is white (#ffffff) to satisfy requirement for thick white border
+                colors: ['#666666', '#ffffff', '#c2c2c2'], 
                 bg: '#0a0a1a', 
                 wrapper: '#1a1a2e', 
                 text: '#ffffff', 
@@ -344,7 +344,7 @@
         }
 
         function openModal(type) {
-            const content = type === 'about' ? 'sample text1' : 'sample text2';
+            const content = type === 'about' ? 'sample text 1' : 'sample text 2';
             document.getElementById('modal-body').textContent = content;
             document.getElementById('modal').style.display = 'block';
         }
