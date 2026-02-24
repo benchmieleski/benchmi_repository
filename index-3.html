@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ben Chmieleski</title>
+    <style>
+        :root {
+            --bg-main: #ffffff;
+            --text-base: #1a1a1a;
+            --name-text: #ffffff;
+            --theme-c1: #9D00FF; 
+            --theme-c2: #008B8B; 
+            --theme-c3: #C71585; 
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: var(--bg-main);
+            color: var(--text-base);
+            font-family: sans-serif;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            height: 100vh;
+        }
+
+        header {
+            position: fixed;
+            top: 40px;
+            left: 40px;
+            z-index: 1000;
+        }
+
+        .site-name-wrapper {
+            display: inline-block;
+            cursor: pointer;
+            padding-bottom: 30px; 
+        }
+
+        .site-name {
+            display: flex;
+            align-items: stretch;
+            font-size: 1.1rem;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            gap: 2px;
+            margin-bottom: 12px;
+        }
+
+        .inv-grad-box {
+            color: var(--name-text);
+            padding: 2px 8px;
+            background: linear-gradient(to right, 
+                var(--theme-c1), 
+                var(--theme-c2), 
+                var(--theme-c3), 
+                var(--theme-c1));
+            background-size: 400% auto;
+            animation: gradient-flow 18s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes gradient-flow {
+            0% { background-position: 0% center; }
+            100% { background-position: 400% center; }
+        }
+
+        .nav-menu {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            padding-left: 0;
+        }
+
+        .site-name-wrapper:hover .nav-menu {
+            display: flex;
+        }
+
+        .nav-link {
+            font-size: 0.6rem; 
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+            width: fit-content;
+        }
+
+        .nav-link:hover {
+            transform: translateX(3px);
+            opacity: 0.8;
+        }
+
+        .color-controls-dropdown {
+            margin-top: 10px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .theme-option {
+            display: flex;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            transition: border-color 0.2s;
+            padding: 1px;
+        }
+
+        .theme-option.active { border-color: var(--text-base); }
+        .swatch { width: 14px; height: 14px; }
+
+        /* Gallery Container with Scroll Bar */
+        .gallery-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100vw;
+            display: flex;
+            align-items: flex-end;
+            overflow-x: auto; 
+            overflow-y: hidden;
+            padding-bottom: 20px; 
+            scrollbar-width: thin;
+            scrollbar-color: var(--theme-c3) transparent;
+        }
+
+        .gallery-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        .gallery-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .gallery-container::-webkit-scrollbar-thumb {
+            background-color: var(--theme-c3);
+            border-radius: 10px;
+            transition: background-color 0.4s ease;
+        }
+
+        .scroll-wrapper {
+            display: inline-flex;
+            white-space: nowrap;
+            animation: scroll 45s linear infinite;
+            padding: 0 20px;
+            padding-bottom: 20px; 
+        }
+
+        .scroll-wrapper:hover { animation-play-state: paused; }
+
+        .painting-wrapper {
+            position: relative;
+            height: 45vh; 
+            margin: 0 30px;
+            padding: 12px;
+            border: 3px solid var(--theme-c3);
+            background-color: #fff; 
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: border-color 0.4s ease;
+        }
+
+        .painting {
+            height: 100%;
+            display: block;
+        }
+
+        .painting-info {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .painting-wrapper:hover .painting-info {
+            opacity: 1;
+            transform: translate(-50%, -65%);
+        }
+
+        .info-header {
+            font-size: 0.8rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .info-subheader {
+            color: #000000; 
+            background-color: #ffffff;
+            padding: 4px 8px;
+            font-size: 0.55rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            width: fit-content;
+            text-align: center;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        #modal {
+            display: none;
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border: 2px solid var(--theme-c1); 
+            z-index: 2000;
+            text-align: center;
+            font-size: 0.8rem;
+            min-width: 250px;
+            color: #1a1a1a;
+        }
+
+        .close-btn {
+            margin-top: 20px;
+            font-size: 0.6rem;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: 1px solid var(--theme-c3);
+            color: var(--theme-c3);
+            padding: 5px 10px;
+            transition: all 0.2s;
+        }
+        
+        .close-btn:hover {
+            background-color: var(--theme-c3);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="site-name-wrapper">
+            <div class="site-name">
+                <span class="inv-grad-box">Ben Chmieleski</span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <div class="nav-link inv-grad-box" onclick="openModal('about')">About</div>
+                <div class="nav-link inv-grad-box" onclick="openModal('contact')">Contact</div>
+                
+                <div class="color-controls-dropdown">
+                    <div class="theme-option active" onclick="setTheme('electric', this)">
+                        <div class="swatch" style="background: #9D00FF;"></div>
+                        <div class="swatch" style="background: #008B8B;"></div>
+                        <div class="swatch" style="background: #C71585;"></div>
+                    </div>
+                    <div class="theme-option" onclick="setTheme('jewel', this)">
+                        <div class="swatch" style="background: #1658EB;"></div>
+                        <div class="swatch" style="background: #9B59B6;"></div>
+                        <div class="swatch" style="background: #e6af00;"></div>
+                    </div>
+                    <div class="theme-option" onclick="setTheme('autumn', this)">
+                        <div class="swatch" style="background: #D2691E;"></div>
+                        <div class="swatch" style="background: #b1b300;"></div>
+                        <div class="swatch" style="background: #795548;"></div>
+                    </div>
+                    <div class="theme-option" onclick="setTheme('monochrome', this)">
+                        <div class="swatch" style="background: #000000;"></div>
+                        <div class="swatch" style="background: #cccccc;"></div>
+                        <div class="swatch" style="background: #999999;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="gallery-container">
+        <div class="scroll-wrapper">
+            <div class="painting-wrapper">
+                <img src="art_flowers.jpg" class="painting">
+                <div class="painting-info">
+                    <div class="info-header inv-grad-box">Floral</div>
+                    <div class="info-subheader">2025</div>
+                </div>
+            </div>
+            <div class="painting-wrapper">
+                <img src="art_gardens.jpg" class="painting">
+                <div class="painting-info">
+                    <div class="info-header inv-grad-box">Garden</div>
+                    <div class="info-subheader">Oil and Pastel, 2025</div>
+                </div>
+            </div>
+            <div class="painting-wrapper">
+                <img src="art_riverside.jpg" class="painting">
+                <div class="painting-info">
+                    <div class="info-header inv-grad-box">Riverside</div>
+                    <div class="info-subheader">2025</div>
+                </div>
+            </div>
+            <div class="painting-wrapper">
+                <img src="flipped.jpg" class="painting">
+                <div class="painting-info">
+                    <div class="info-header inv-grad-box">Reflection</div>
+                    <div class="info-subheader">2025</div>
+                </div>
+            </div>
+            <div class="painting-wrapper">
+                <img src="art_bella.jpg" class="painting">
+                <div class="painting-info">
+                    <div class="info-header inv-grad-box">Bella</div>
+                    <div class="info-subheader">Study 2025</div>
+                </div>
+            </div>
+
+            <div class="painting-wrapper">
+                <img src="art_flowers.jpg" class="painting">
+                <div class="painting-info">
+                    <div class="info-header inv-grad-box">Floral </div>
+                    <div class="info-subheader">2025</div>
+                </div>
+            </div>
+            <div class="painting-wrapper">
+                <img src="art_gardens.jpg" class="painting">
+                <div class="painting-info">
+                    <div class="info-header inv-grad-box">Garden</div>
+                    <div class="info-subheader">2025</div>
+                </div>
+            </div>
+            <div class="painting-wrapper">
+                <img src="art_riverside.jpg" class="painting">
+                <div class="painting-info">
+                    <div class="info-header inv-grad-box">Riverside</div>
+                    <div class="info-subheader">Mixed Media, 2022</div>
+                </div>
+            </div>
+            <div class="painting-wrapper">
+                <img src="flipped.jpg" class="painting">
+                <div class="painting-info">
+                    <div class="info-header inv-grad-box">Reflection</div>
+                    <div class="info-subheader">Digital Composition</div>
+                </div>
+            </div>
+            <div class="painting-wrapper">
+                <img src="art_bella.jpg" class="painting">
+                <div class="painting-info">
+                    <div class="info-header inv-grad-box">Bella</div>
+                    <div class="info-subheader">Portrait Study</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal">
+        <p id="modal-body"></p>
+        <button class="close-btn" onclick="document.getElementById('modal').style.display='none'">Close</button>
+    </div>
+
+    <script>
+        const themes = {
+            electric: { colors: ['#9D00FF', '#008B8B', '#C71585'], bg: '#ffffff', text: '#1a1a1a', name: '#ffffff' },
+            jewel: { colors: ['#1658EB', '#9B59B6', '#e6af00'], bg: '#ffffff', text: '#1a1a1a', name: '#ffffff' },
+            autumn: { colors: ['#D2691E', '#b1b300', '#795548'], bg: '#ffffff', text: '#1a1a1a', name: '#ffffff' },
+            monochrome: { colors: ['#000000', '#cccccc', '#999999'], bg: '#000000', text: '#ffffff', name: '#ffffff' }
+        };
+
+        function setTheme(key, el) {
+            const root = document.documentElement;
+            const t = themes[key];
+            
+            root.style.setProperty('--theme-c1', t.colors[0]);
+            root.style.setProperty('--theme-c2', t.colors[1]);
+            root.style.setProperty('--theme-c3', t.colors[2]);
+            
+            root.style.setProperty('--bg-main', t.bg);
+            root.style.setProperty('--text-base', t.text);
+            root.style.setProperty('--name-text', t.name);
+            
+            document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function openModal(type) {
+            const body = type === 'about' ? 'Ben Chmieleski is a West Michigan based Artist and Designer' : 'benchmieleski@gmail.com';
+            document.getElementById('modal-body').innerText = body;
+            document.getElementById('modal').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
