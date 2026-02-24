@@ -69,14 +69,6 @@
             100% { background-position: 400% center; }
         }
 
-        /* NEW: Dedicated animation for the painting frames to shift colors */
-        @keyframes border-color-shift {
-            0% { border-image-source: linear-gradient(to right, var(--theme-c1), var(--theme-c2), var(--theme-c3), var(--theme-c1)); }
-            33% { border-image-source: linear-gradient(to right, var(--theme-c2), var(--theme-c3), var(--theme-c1), var(--theme-c2)); }
-            66% { border-image-source: linear-gradient(to right, var(--theme-c3), var(--theme-c1), var(--theme-c2), var(--theme-c3)); }
-            100% { border-image-source: linear-gradient(to right, var(--theme-c1), var(--theme-c2), var(--theme-c3), var(--theme-c1)); }
-        }
-
         .nav-menu {
             display: none;
             flex-direction: column;
@@ -137,24 +129,33 @@
 
         .scroll-wrapper:hover { animation-play-state: paused; }
 
+        /* UPDATED: STATIC FRAME WITHOUT GLOW */
         .painting-wrapper {
             position: relative;
             height: 45vh; 
-            margin: 0 40px;
-            padding: 12px;
-            border: 8px solid;
-            border-image-slice: 1;
-            /* Updated to use the shift animation */
-            animation: border-color-shift 8s linear infinite;
-            background-color: var(--wrapper-bg); 
+            margin: 0 30px; 
+            padding: 6px; /* This creates the border thickness */
             flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 1;
+            background-color: var(--theme-c1); /* Static color instead of animated gradient */
             transition: background-color 0.4s ease;
         }
 
-        .painting { height: 100%; display: block; }
+        /* Hover effect for the static frame */
+        .painting-wrapper:hover {
+            background-color: var(--theme-c2);
+        }
+
+        .painting { 
+            height: 100%; 
+            display: block; 
+            background-color: var(--wrapper-bg); 
+            z-index: 2;
+            position: relative;
+        }
 
         .painting-info {
             position: absolute;
