@@ -9,9 +9,10 @@
             --bg-main: #ffffff;
             --text-base: #1a1a1a;
             --name-text: #ffffff;
-            --theme-c1: #c466ff; 
-            --theme-c2: #66b9b9; /* Middle Color used for frame/scroll */
-            --theme-c3: #dd73b6; 
+            /* Updated to paler versions of the original electric theme */
+            --theme-c1: #d9b3f2; 
+            --theme-c2: #b3d9d9; 
+            --theme-c3: #efb9da; 
             --modal-bg: #ffffff;
             --wrapper-bg: #ffffff; 
         }
@@ -122,7 +123,6 @@
             overflow-y: hidden;
             padding-bottom: 20px; 
             scrollbar-width: thin;
-            /* Scroll bar matches middle color */
             scrollbar-color: var(--theme-c2) transparent;
         }
 
@@ -147,7 +147,6 @@
             height: 45vh; 
             margin: 0 30px;
             padding: 12px;
-            /* Frame color matches middle color, thickness increased for "thick" look */
             border: 5px solid var(--theme-c2);
             background-color: var(--wrapper-bg); 
             flex-shrink: 0;
@@ -248,9 +247,9 @@
                 
                 <div class="color-controls-dropdown">
                     <div class="theme-option active" onclick="setTheme('electric', this)">
-                        <div class="swatch" style="background: #c466ff;"></div>
-                        <div class="swatch" style="background: #66b9b9;"></div>
-                        <div class="swatch" style="background: #dd73b6;"></div>
+                        <div class="swatch" style="background: #d9b3f2;"></div>
+                        <div class="swatch" style="background: #b3d9d9;"></div>
+                        <div class="swatch" style="background: #efb9da;"></div>
                     </div>
                     <div class="theme-option" onclick="setTheme('jewel', this)">
                         <div class="swatch" style="background: #739bf3;"></div>
@@ -295,7 +294,8 @@
     <script>
         const themes = {
             electric: { 
-                colors: ['#c466ff', '#66b9b9', '#dd73b6'], 
+                // Pale versions of the original colors
+                colors: ['#d9b3f2', '#b3d9d9', '#efb9da'], 
                 bg: '#ffffff', 
                 wrapper: '#ffffff', 
                 text: '#1a1a1a', 
@@ -316,7 +316,6 @@
                 name: '#ffffff' 
             },
             monochrome: { 
-                // Middle color is white (#ffffff) to satisfy requirement for thick white border
                 colors: ['#666666', '#ffffff', '#c2c2c2'], 
                 bg: '#0a0a1a', 
                 wrapper: '#1a1a2e', 
