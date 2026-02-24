@@ -17,25 +17,31 @@
         body, html {
             margin: 0;
             padding: 0;
-            overflow: hidden;
+            /* Changed overflow to allow vertical scrolling on mobile if needed */
+            overflow-x: hidden;
             background-color: var(--bg-main);
             color: var(--text-base);
             font-family: sans-serif;
             transition: background-color 0.4s ease, color 0.4s ease;
-            height: 100vh;
+            min-height: 100vh;
         }
 
         header {
             position: fixed;
-            top: 40px;
-            left: 40px;
+            top: 20px;
+            left: 20px;
             z-index: 1000;
         }
 
         .site-name-wrapper {
             display: inline-block;
             cursor: pointer;
-            padding-bottom: 30px; 
+            padding-bottom: 20px; 
+        }
+
+        /* Added a class to toggle menu via JS for mobile */
+        .site-name-wrapper.menu-open .nav-menu {
+            display: flex;
         }
 
         .site-name {
@@ -50,7 +56,7 @@
 
         .inv-grad-box {
             color: var(--name-text);
-            padding: 2px 8px;
+            padding: 4px 10px;
             background: linear-gradient(to right, 
                 var(--theme-c1), 
                 var(--theme-c2), 
@@ -69,16 +75,19 @@
         .nav-menu {
             display: none;
             flex-direction: column;
-            gap: 6px;
+            gap: 10px;
             padding-left: 0;
         }
 
-        .site-name-wrapper:hover .nav-menu {
-            display: flex;
+        /* Desktop Hover */
+        @media (min-width: 769px) {
+            .site-name-wrapper:hover .nav-menu {
+                display: flex;
+            }
         }
 
         .nav-link {
-            font-size: 0.6rem; 
+            font-size: 0.8rem; /* Larger for mobile tap targets */
             font-weight: bold;
             text-decoration: none;
             cursor: pointer;
@@ -86,53 +95,36 @@
             width: fit-content;
         }
 
-        .nav-link:hover {
-            transform: translateX(3px);
-            opacity: 0.8;
-        }
-
         .color-controls-dropdown {
             margin-top: 10px;
             display: flex;
-            gap: 6px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .theme-option {
             display: flex;
             cursor: pointer;
             border: 1px solid #ddd;
-            transition: border-color 0.2s;
-            padding: 1px;
+            padding: 2px;
         }
 
         .theme-option.active { border-color: var(--text-base); }
-        .swatch { width: 14px; height: 14px; }
+        .swatch { width: 20px; height: 20px; }
 
-        /* Gallery Container with Scroll Bar */
+        /* Gallery Container */
         .gallery-container {
-            position: absolute;
-            bottom: 0;
-            left: 0;
+            position: relative;
+            margin-top: 150px; /* Space for fixed header */
             width: 100vw;
             display: flex;
-            align-items: flex-end;
+            align-items: center;
             overflow-x: auto; 
             overflow-y: hidden;
-            padding-bottom: 20px; 
+            padding-bottom: 40px; 
             scrollbar-width: thin;
             scrollbar-color: var(--theme-c3) transparent;
-        }
-
-        .gallery-container::-webkit-scrollbar {
-            height: 6px;
-        }
-        .gallery-container::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .gallery-container::-webkit-scrollbar-thumb {
-            background-color: var(--theme-c3);
-            border-radius: 10px;
-            transition: background-color 0.4s ease;
+            -webkit-overflow-scrolling: touch;
         }
 
         .scroll-wrapper {
@@ -140,68 +132,104 @@
             white-space: nowrap;
             animation: scroll 45s linear infinite;
             padding: 0 20px;
-            padding-bottom: 20px; 
         }
-
-        .scroll-wrapper:hover { animation-play-state: paused; }
 
         .painting-wrapper {
             position: relative;
-            height: 45vh; 
-            margin: 0 30px;
-            padding: 12px;
-            border: 3px solid var(--theme-c3);
+            height: 50vh; 
+            margin: 0 15px;
+            padding: 8px;
+            border: 2px solid var(--theme-c3);
             background-color: #fff; 
             flex-shrink: 0;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            transition: border-color 0.4s ease;
         }
 
         .painting {
             height: 100%;
+            width: auto;
             display: block;
         }
 
         .painting-info {
             position: absolute;
-            top: 50%;
+            bottom: 10px;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translateX(-50%);
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 4px;
             opacity: 0;
-            transition: opacity 0.4s ease, transform 0.4s ease;
+            transition: opacity 0.4s ease;
             pointer-events: none;
             z-index: 10;
         }
 
         .painting-wrapper:hover .painting-info {
             opacity: 1;
-            transform: translate(-50%, -65%);
         }
 
         .info-header {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             font-weight: bold;
-            letter-spacing: 1px;
             white-space: nowrap;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         .info-subheader {
-            color: #000000; 
-            background-color: #ffffff;
-            padding: 4px 8px;
-            font-size: 0.55rem;
+            color: #000; 
+            background: rgba(255,255,255,0.9);
+            padding: 2px 6px;
+            font-size: 0.5rem;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            width: fit-content;
-            text-align: center;
+        }
+
+        /* MOBILE SPECIFIC OVERRIDES */
+        @media (max-width: 768px) {
+            header { top: 15px; left: 15px; }
+            
+            .scroll-wrapper {
+                animation: none; /* Disable auto-scroll for better manual control on mobile */
+                display: flex;
+                flex-direction: column; /* Stack vertically for a better mobile scroll */
+                gap: 40px;
+                padding-bottom: 100px;
+            }
+            
+            .gallery-container {
+                overflow-y: auto;
+                overflow-x: hidden;
+                height: 100vh;
+                margin-top: 80px;
+                align-items: flex-start;
+            }
+
+            .painting-wrapper {
+                height: auto;
+                width: 80vw;
+                margin: 0 auto;
+            }
+
+            .painting {
+                width: 100%;
+                height: auto;
+            }
+
+            .painting-info {
+                position: relative;
+                opacity: 1;
+                transform: none;
+                margin-top: 10px;
+                bottom: 0;
+            }
+            
+            #modal {
+                width: 80%;
+                padding: 20px;
+            }
         }
 
         @keyframes scroll {
@@ -219,33 +247,28 @@
             border: 2px solid var(--theme-c1); 
             z-index: 2000;
             text-align: center;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             min-width: 250px;
             color: #1a1a1a;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
         }
 
         .close-btn {
             margin-top: 20px;
-            font-size: 0.6rem;
+            font-size: 0.7rem;
             font-weight: bold;
             cursor: pointer;
             background: none;
             border: 1px solid var(--theme-c3);
             color: var(--theme-c3);
-            padding: 5px 10px;
-            transition: all 0.2s;
-        }
-        
-        .close-btn:hover {
-            background-color: var(--theme-c3);
-            color: white;
+            padding: 8px 16px;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="site-name-wrapper">
+        <div class="site-name-wrapper" id="siteWrapper" onclick="toggleMenu()">
             <div class="site-name">
                 <span class="inv-grad-box">Ben Chmieleski</span>
             </div>
@@ -282,82 +305,32 @@
     <div class="gallery-container">
         <div class="scroll-wrapper">
             <div class="painting-wrapper">
-                <img src="art_flowers.jpg" class="painting">
+                <img src="art_flowers.jpg" class="painting" alt="Floral">
                 <div class="painting-info">
                     <div class="info-header inv-grad-box">Floral</div>
                     <div class="info-subheader">2025</div>
                 </div>
             </div>
             <div class="painting-wrapper">
-                <img src="art_gardens.jpg" class="painting">
+                <img src="art_gardens.jpg" class="painting" alt="Garden">
                 <div class="painting-info">
                     <div class="info-header inv-grad-box">Garden</div>
                     <div class="info-subheader">Oil and Pastel, 2025</div>
                 </div>
             </div>
             <div class="painting-wrapper">
-                <img src="art_riverside.jpg" class="painting">
+                <img src="art_riverside.jpg" class="painting" alt="Riverside">
                 <div class="painting-info">
                     <div class="info-header inv-grad-box">Riverside</div>
                     <div class="info-subheader">2025</div>
                 </div>
             </div>
-            <div class="painting-wrapper">
-                <img src="flipped.jpg" class="painting">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Reflection</div>
-                    <div class="info-subheader">2025</div>
-                </div>
             </div>
-            <div class="painting-wrapper">
-                <img src="art_bella.jpg" class="painting">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Bella</div>
-                    <div class="info-subheader">Study 2025</div>
-                </div>
-            </div>
-
-            <div class="painting-wrapper">
-                <img src="art_flowers.jpg" class="painting">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Floral </div>
-                    <div class="info-subheader">2025</div>
-                </div>
-            </div>
-            <div class="painting-wrapper">
-                <img src="art_gardens.jpg" class="painting">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Garden</div>
-                    <div class="info-subheader">2025</div>
-                </div>
-            </div>
-            <div class="painting-wrapper">
-                <img src="art_riverside.jpg" class="painting">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Riverside</div>
-                    <div class="info-subheader">Mixed Media, 2022</div>
-                </div>
-            </div>
-            <div class="painting-wrapper">
-                <img src="flipped.jpg" class="painting">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Reflection</div>
-                    <div class="info-subheader">Digital Composition</div>
-                </div>
-            </div>
-            <div class="painting-wrapper">
-                <img src="art_bella.jpg" class="painting">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Bella</div>
-                    <div class="info-subheader">Portrait Study</div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <div id="modal">
         <p id="modal-body"></p>
-        <button class="close-btn" onclick="document.getElementById('modal').style.display='none'">Close</button>
+        <button class="close-btn" onclick="closeModal()">Close</button>
     </div>
 
     <script>
@@ -368,26 +341,35 @@
             monochrome: { colors: ['#000000', '#cccccc', '#999999'], bg: '#000000', text: '#ffffff', name: '#ffffff' }
         };
 
+        function toggleMenu() {
+            if (window.innerWidth <= 768) {
+                document.getElementById('siteWrapper').classList.toggle('menu-open');
+            }
+        }
+
         function setTheme(key, el) {
             const root = document.documentElement;
             const t = themes[key];
-            
             root.style.setProperty('--theme-c1', t.colors[0]);
             root.style.setProperty('--theme-c2', t.colors[1]);
             root.style.setProperty('--theme-c3', t.colors[2]);
-            
             root.style.setProperty('--bg-main', t.bg);
             root.style.setProperty('--text-base', t.text);
             root.style.setProperty('--name-text', t.name);
-            
             document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
             el.classList.add('active');
+            event.stopPropagation(); // Prevents menu from closing when picking theme
         }
 
         function openModal(type) {
+            event.stopPropagation();
             const body = type === 'about' ? 'Ben Chmieleski is a West Michigan based Artist and Designer' : 'benchmieleski@gmail.com';
             document.getElementById('modal-body').innerText = body;
             document.getElementById('modal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
         }
     </script>
 </body>
