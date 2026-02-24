@@ -12,6 +12,7 @@
             --theme-c1: #9D00FF; 
             --theme-c2: #008B8B; 
             --theme-c3: #C71585; 
+            --modal-bg: #ffffff;
         }
 
         body, html {
@@ -103,12 +104,12 @@
             border: 1px solid #ddd;
             transition: border-color 0.2s;
             padding: 1px;
+            background: #fff; /* Ensures visibility on dark backgrounds */
         }
 
-        .theme-option.active { border-color: var(--text-base); }
+        .theme-option.active { border-color: var(--text-base); border-width: 2px; }
         .swatch { width: 14px; height: 14px; }
 
-        /* Gallery Container with Scroll Bar */
         .gallery-container {
             position: absolute;
             bottom: 0;
@@ -123,16 +124,10 @@
             scrollbar-color: var(--theme-c3) transparent;
         }
 
-        .gallery-container::-webkit-scrollbar {
-            height: 6px;
-        }
-        .gallery-container::-webkit-scrollbar-track {
-            background: transparent;
-        }
+        .gallery-container::-webkit-scrollbar { height: 6px; }
         .gallery-container::-webkit-scrollbar-thumb {
             background-color: var(--theme-c3);
             border-radius: 10px;
-            transition: background-color 0.4s ease;
         }
 
         .scroll-wrapper {
@@ -159,10 +154,7 @@
             transition: border-color 0.4s ease;
         }
 
-        .painting {
-            height: 100%;
-            display: block;
-        }
+        .painting { height: 100%; display: block; }
 
         .painting-info {
             position: absolute;
@@ -189,18 +181,16 @@
             font-weight: bold;
             letter-spacing: 1px;
             white-space: nowrap;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         .info-subheader {
-            color: #000000; 
-            background-color: #ffffff;
+            color: #000; 
+            background-color: #fff;
             padding: 4px 8px;
             font-size: 0.55rem;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            width: fit-content;
             text-align: center;
         }
 
@@ -214,14 +204,14 @@
             position: fixed;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            background: white;
+            background: var(--modal-bg);
             padding: 40px;
             border: 2px solid var(--theme-c1); 
             z-index: 2000;
             text-align: center;
             font-size: 0.8rem;
             min-width: 250px;
-            color: #1a1a1a;
+            color: var(--text-base);
         }
 
         .close-btn {
@@ -238,7 +228,7 @@
         
         .close-btn:hover {
             background-color: var(--theme-c3);
-            color: white;
+            color: #fff;
         }
     </style>
 </head>
@@ -281,77 +271,16 @@
 
     <div class="gallery-container">
         <div class="scroll-wrapper">
-            <div class="painting-wrapper">
-                <img src="art_flowers.jpg" class="painting">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Floral</div>
-                    <div class="info-subheader">oil on paper, 2025</div>
-                </div>
-            </div>
-            <div class="painting-wrapper">
-                <img src="art_gardens.jpg" class="painting">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Garden</div>
-                    <div class="info-subheader">oil on paper, 2025</div>
-                </div>
-            </div>
-            <div class="painting-wrapper">
-                <img src="art_riverside.jpg" class="painting">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Riverside</div>
-                    <div class="info-subheader">oil on paper, 2025</div>
-                </div>
-            </div>
-            <div class="painting-wrapper">
-                <img src="flipped.jpg" class="painting">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Reflection</div>
-                    <div class="info-subheader">oil on paper, 2025</div>
-                </div>
-            </div>
-            <div class="painting-wrapper">
-                <img src="art_bella.jpg" class="painting">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Bella</div>
-                    <div class="info-subheader">acrylic on wood, 2025</div>
-                </div>
-            </div>
-
-            <div class="painting-wrapper">
-                <img src="art_flowers.jpg" class="painting">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Floral </div>
-                    <div class="info-subheader">oil on paper, 2025</div>
-                </div>
-            </div>
-            <div class="painting-wrapper">
-                <img src="art_gardens.jpg" class="painting">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Garden</div>
-                    <div class="info-subheader">oil on paper, 2025</div>
-                </div>
-            </div>
-            <div class="painting-wrapper">
-                <img src="art_riverside.jpg" class="painting">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Riverside</div>
-                    <div class="info-subheader">oil on paper, 2025</div>
-                </div>
-            </div>
-            <div class="painting-wrapper">
-                <img src="flipped.jpg" class="painting">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Reflection</div>
-                    <div class="info-subheader">oil on paper, 2025</div>
-                </div>
-            </div>
-            <div class="painting-wrapper">
-                <img src="art_bella.jpg" class="painting">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Bella</div>
-                    <div class="info-subheader">acrylic on wood, 2026</div>
-                </div>
-            </div>
+            <div class="painting-wrapper"><img src="art_flowers.jpg" class="painting"><div class="painting-info"><div class="info-header inv-grad-box">Floral</div><div class="info-subheader">oil on paper, 2025</div></div></div>
+            <div class="painting-wrapper"><img src="art_gardens.jpg" class="painting"><div class="painting-info"><div class="info-header inv-grad-box">Garden</div><div class="info-subheader">oil on paper, 2025</div></div></div>
+            <div class="painting-wrapper"><img src="art_riverside.jpg" class="painting"><div class="painting-info"><div class="info-header inv-grad-box">Riverside</div><div class="info-subheader">oil on paper, 2025</div></div></div>
+            <div class="painting-wrapper"><img src="flipped.jpg" class="painting"><div class="painting-info"><div class="info-header inv-grad-box">Reflection</div><div class="info-subheader">oil on paper, 2025</div></div></div>
+            <div class="painting-wrapper"><img src="art_bella.jpg" class="painting"><div class="painting-info"><div class="info-header inv-grad-box">Bella</div><div class="info-subheader">acrylic on wood, 2025</div></div></div>
+            <div class="painting-wrapper"><img src="art_flowers.jpg" class="painting"><div class="painting-info"><div class="info-header inv-grad-box">Floral</div><div class="info-subheader">oil on paper, 2025</div></div></div>
+            <div class="painting-wrapper"><img src="art_gardens.jpg" class="painting"><div class="painting-info"><div class="info-header inv-grad-box">Garden</div><div class="info-subheader">oil on paper, 2025</div></div></div>
+            <div class="painting-wrapper"><img src="art_riverside.jpg" class="painting"><div class="painting-info"><div class="info-header inv-grad-box">Riverside</div><div class="info-subheader">oil on paper, 2025</div></div></div>
+            <div class="painting-wrapper"><img src="flipped.jpg" class="painting"><div class="painting-info"><div class="info-header inv-grad-box">Reflection</div><div class="info-subheader">oil on paper, 2025</div></div></div>
+            <div class="painting-wrapper"><img src="art_bella.jpg" class="painting"><div class="painting-info"><div class="info-header inv-grad-box">Bella</div><div class="info-subheader">acrylic on wood, 2026</div></div></div>
         </div>
     </div>
 
@@ -363,32 +292,34 @@
     <script>
         const themes = {
             electric: { colors: ['#9D00FF', '#008B8B', '#C71585'], bg: '#ffffff', text: '#1a1a1a', name: '#ffffff' },
-            jewel: { colors: ['#1658EB', '#9B59B6', '#e6af00'], bg: '#ffffff', text: '#1a1a1a', name: '#ffffff' },
-            autumn: { colors: ['#D2691E', '#b1b300', '#795548'], bg: '#ffffff', text: '#1a1a1a', name: '#ffffff' },
-            monochrome: { colors: ['#000000', '#cccccc', '#999999'], bg: '#000000', text: '#ffffff', name: '#ffffff' }
+            jewel: { colors: ['#1658EB', '#9B59B6', '#e6af00'], bg: '#eef2ff', text: '#1a1a1a', name: '#ffffff' },
+            autumn: { colors: ['#D2691E', '#b1b300', '#795548'], bg: '#fffaf0', text: '#1a1a1a', name: '#ffffff' },
+            monochrome: { colors: ['#000000', '#cccccc', '#999999'], bg: '#121212', text: '#ffffff', name: '#ffffff' }
         };
 
         function setTheme(key, el) {
             const root = document.documentElement;
             const t = themes[key];
             
+            // Apply gradient colors
             root.style.setProperty('--theme-c1', t.colors[0]);
             root.style.setProperty('--theme-c2', t.colors[1]);
             root.style.setProperty('--theme-c3', t.colors[2]);
             
+            // Apply background and text colors
             root.style.setProperty('--bg-main', t.bg);
             root.style.setProperty('--text-base', t.text);
             root.style.setProperty('--name-text', t.name);
+            root.style.setProperty('--modal-bg', t.bg === '#121212' ? '#1e1e1e' : '#ffffff');
             
+            // Handle active class
             document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
             el.classList.add('active');
         }
 
         function openModal(type) {
-            const body = type === 'about' ? 'Hello, I'm Ben Chmieleski and I am an Artist and Designer based out of West Michigan. 
-                <br>
-                I believe good design can improve the human condition.' : 'email: benchmieleski@gmail.com';
-            document.getElementById('modal-body').innerText = body;
+            const content = type === 'about' ? 'sample text1' : 'sample text2';
+            document.getElementById('modal-body').textContent = content;
             document.getElementById('modal').style.display = 'block';
         }
     </script>
