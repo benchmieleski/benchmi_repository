@@ -17,7 +17,6 @@
         body, html {
             margin: 0;
             padding: 0;
-            /* Changed overflow to allow vertical scrolling on mobile if needed */
             overflow-x: hidden;
             background-color: var(--bg-main);
             color: var(--text-base);
@@ -39,7 +38,6 @@
             padding-bottom: 20px; 
         }
 
-        /* Added a class to toggle menu via JS for mobile */
         .site-name-wrapper.menu-open .nav-menu {
             display: flex;
         }
@@ -79,7 +77,6 @@
             padding-left: 0;
         }
 
-        /* Desktop Hover */
         @media (min-width: 769px) {
             .site-name-wrapper:hover .nav-menu {
                 display: flex;
@@ -87,7 +84,7 @@
         }
 
         .nav-link {
-            font-size: 0.8rem; /* Larger for mobile tap targets */
+            font-size: 0.8rem;
             font-weight: bold;
             text-decoration: none;
             cursor: pointer;
@@ -112,10 +109,9 @@
         .theme-option.active { border-color: var(--text-base); }
         .swatch { width: 20px; height: 20px; }
 
-        /* Gallery Container */
         .gallery-container {
             position: relative;
-            margin-top: 150px; /* Space for fixed header */
+            margin-top: 150px;
             width: 100vw;
             display: flex;
             align-items: center;
@@ -143,247 +139,4 @@
             background-color: #fff; 
             flex-shrink: 0;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .painting {
-            height: 100%;
-            width: auto;
-            display: block;
-        }
-
-        .painting-info {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        .painting-wrapper:hover .painting-info {
-            opacity: 1;
-        }
-
-        .info-header {
-            font-size: 0.7rem;
-            font-weight: bold;
-            white-space: nowrap;
-        }
-
-        .info-subheader {
-            color: #000; 
-            background: rgba(255,255,255,0.9);
-            padding: 2px 6px;
-            font-size: 0.5rem;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        /* MOBILE SPECIFIC OVERRIDES */
-        @media (max-width: 768px) {
-            header { top: 15px; left: 15px; }
-            
-            .scroll-wrapper {
-                animation: none; /* Disable auto-scroll for better manual control on mobile */
-                display: flex;
-                flex-direction: column; /* Stack vertically for a better mobile scroll */
-                gap: 40px;
-                padding-bottom: 100px;
-            }
-            
-            .gallery-container {
-                overflow-y: auto;
-                overflow-x: hidden;
-                height: 100vh;
-                margin-top: 80px;
-                align-items: flex-start;
-            }
-
-            .painting-wrapper {
-                height: auto;
-                width: 80vw;
-                margin: 0 auto;
-            }
-
-            .painting {
-                width: 100%;
-                height: auto;
-            }
-
-            .painting-info {
-                position: relative;
-                opacity: 1;
-                transform: none;
-                margin-top: 10px;
-                bottom: 0;
-            }
-            
-            #modal {
-                width: 80%;
-                padding: 20px;
-            }
-        }
-
-        @keyframes scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-
-        #modal {
-            display: none;
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 40px;
-            border: 2px solid var(--theme-c1); 
-            z-index: 2000;
-            text-align: center;
-            font-size: 0.9rem;
-            min-width: 250px;
-            color: #1a1a1a;
-            box-shadow: 0 0 20px rgba(0,0,0,0.2);
-        }
-
-        .close-btn {
-            margin-top: 20px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            cursor: pointer;
-            background: none;
-            border: 1px solid var(--theme-c3);
-            color: var(--theme-c3);
-            padding: 8px 16px;
-        }
-    </style>
-</head>
-<body>
-
-    <header>
-        <div class="site-name-wrapper" id="siteWrapper" onclick="toggleMenu()">
-            <div class="site-name">
-                <span class="inv-grad-box">Ben Chmieleski</span>
-            </div>
-            <div class="nav-menu" id="navMenu">
-                <div class="nav-link inv-grad-box" onclick="openModal('about')">About</div>
-                <div class="nav-link inv-grad-box" onclick="openModal('contact')">Contact</div>
-                
-                <div class="color-controls-dropdown">
-                    <div class="theme-option active" onclick="setTheme('electric', this)">
-                        <div class="swatch" style="background: #9D00FF;"></div>
-                        <div class="swatch" style="background: #008B8B;"></div>
-                        <div class="swatch" style="background: #C71585;"></div>
-                    </div>
-                    <div class="theme-option" onclick="setTheme('jewel', this)">
-                        <div class="swatch" style="background: #1658EB;"></div>
-                        <div class="swatch" style="background: #9B59B6;"></div>
-                        <div class="swatch" style="background: #e6af00;"></div>
-                    </div>
-                    <div class="theme-option" onclick="setTheme('autumn', this)">
-                        <div class="swatch" style="background: #D2691E;"></div>
-                        <div class="swatch" style="background: #b1b300;"></div>
-                        <div class="swatch" style="background: #795548;"></div>
-                    </div>
-                    <div class="theme-option" onclick="setTheme('monochrome', this)">
-                        <div class="swatch" style="background: #000000;"></div>
-                        <div class="swatch" style="background: #cccccc;"></div>
-                        <div class="swatch" style="background: #999999;"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <div class="gallery-container">
-        <div class="scroll-wrapper">
-            <div class="painting-wrapper">
-                <img src="art_flowers.jpg" class="painting" alt="Floral">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Floral</div>
-                    <div class="info-subheader">2025</div>
-                </div>
-            </div>
-            <div class="painting-wrapper">
-                <img src="art_gardens.jpg" class="painting" alt="Garden">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Garden</div>
-                    <div class="info-subheader">Oil and Pastel, 2025</div>
-                </div>
-            </div>
-            <div class="painting-wrapper">
-                <img src="art_riverside.jpg" class="painting" alt="Riverside">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Riverside</div>
-                    <div class="info-subheader">2025</div>
-                </div>
-                            <div class="painting-wrapper">
-                <img src="bella.jpg" class="painting" alt="Bella">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Bella</div>
-                    <div class="info-subheader">2026</div>
-                </div>
-
-                                        <div class="painting-wrapper">
-                <img src="art-reflection.jpg" class="painting" alt="Reflection">
-                <div class="painting-info">
-                    <div class="info-header inv-grad-box">Reflection</div>
-                    <div class="info-subheader">2025</div>
-                </div>
-            </div>
-            </div>
-    </div>
-
-    <div id="modal">
-        <p id="modal-body"></p>
-        <button class="close-btn" onclick="closeModal()">Close</button>
-    </div>
-
-    <script>
-        const themes = {
-            electric: { colors: ['#9D00FF', '#008B8B', '#C71585'], bg: '#ffffff', text: '#1a1a1a', name: '#ffffff' },
-            jewel: { colors: ['#1658EB', '#9B59B6', '#e6af00'], bg: '#ffffff', text: '#1a1a1a', name: '#ffffff' },
-            autumn: { colors: ['#D2691E', '#b1b300', '#795548'], bg: '#ffffff', text: '#1a1a1a', name: '#ffffff' },
-            monochrome: { colors: ['#000000', '#cccccc', '#999999'], bg: '#000000', text: '#ffffff', name: '#ffffff' }
-        };
-
-        function toggleMenu() {
-            if (window.innerWidth <= 768) {
-                document.getElementById('siteWrapper').classList.toggle('menu-open');
-            }
-        }
-
-        function setTheme(key, el) {
-            const root = document.documentElement;
-            const t = themes[key];
-            root.style.setProperty('--theme-c1', t.colors[0]);
-            root.style.setProperty('--theme-c2', t.colors[1]);
-            root.style.setProperty('--theme-c3', t.colors[2]);
-            root.style.setProperty('--bg-main', t.bg);
-            root.style.setProperty('--text-base', t.text);
-            root.style.setProperty('--name-text', t.name);
-            document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
-            el.classList.add('active');
-            event.stopPropagation(); // Prevents menu from closing when picking theme
-        }
-
-        function openModal(type) {
-            event.stopPropagation();
-            const body = type === 'about' ? 'Ben Chmieleski is a West Michigan based Artist and Designer' : 'benchmieleski@gmail.com';
-            document.getElementById('modal-body').innerText = body;
-            document.getElementById('modal').style.display = 'block';
-        }
-
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
-        }
-    </script>
-</body>
-</html>
+            flex-
