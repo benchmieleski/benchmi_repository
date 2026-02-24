@@ -6,13 +6,15 @@
     <title>Ben Chmieleski</title>
     <style>
         :root {
+            /* Translucent/60% Opacity Mix for Electric Theme */
             --bg-main: #ffffff;
             --text-base: #1a1a1a;
             --name-text: #ffffff;
-            --theme-c1: #9D00FF; 
-            --theme-c2: #008B8B; 
-            --theme-c3: #C71585; 
+            --theme-c1: #c466ff; /* 60% mix of #9D00FF with white */
+            --theme-c2: #66b9b9; /* 60% mix of #008B8B with white */
+            --theme-c3: #dd73b6; /* 60% mix of #C71585 with white */
             --modal-bg: #ffffff;
+            --wrapper-bg: #ffffff; 
         }
 
         body, html {
@@ -104,7 +106,7 @@
             border: 1px solid #ddd;
             transition: border-color 0.2s;
             padding: 1px;
-            background: #fff; /* Ensures visibility on dark backgrounds */
+            background: #fff;
         }
 
         .theme-option.active { border-color: var(--text-base); border-width: 2px; }
@@ -146,12 +148,12 @@
             margin: 0 30px;
             padding: 12px;
             border: 3px solid var(--theme-c3);
-            background-color: #fff; 
+            background-color: var(--wrapper-bg); 
             flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: border-color 0.4s ease;
+            transition: border-color 0.4s ease, background-color 0.4s ease;
         }
 
         .painting { height: 100%; display: block; }
@@ -245,24 +247,24 @@
                 
                 <div class="color-controls-dropdown">
                     <div class="theme-option active" onclick="setTheme('electric', this)">
-                        <div class="swatch" style="background: #9D00FF;"></div>
-                        <div class="swatch" style="background: #008B8B;"></div>
-                        <div class="swatch" style="background: #C71585;"></div>
+                        <div class="swatch" style="background: #c466ff;"></div>
+                        <div class="swatch" style="background: #66b9b9;"></div>
+                        <div class="swatch" style="background: #dd73b6;"></div>
                     </div>
                     <div class="theme-option" onclick="setTheme('jewel', this)">
-                        <div class="swatch" style="background: #1658EB;"></div>
-                        <div class="swatch" style="background: #9B59B6;"></div>
-                        <div class="swatch" style="background: #e6af00;"></div>
+                        <div class="swatch" style="background: #739bf3;"></div>
+                        <div class="swatch" style="background: #c39bd4;"></div>
+                        <div class="swatch" style="background: #ff72be;"></div>
                     </div>
                     <div class="theme-option" onclick="setTheme('autumn', this)">
-                        <div class="swatch" style="background: #D2691E;"></div>
-                        <div class="swatch" style="background: #b1b300;"></div>
-                        <div class="swatch" style="background: #795548;"></div>
+                        <div class="swatch" style="background: #e4a578;"></div>
+                        <div class="swatch" style="background: #d0d166;"></div>
+                        <div class="swatch" style="background: #af9991;"></div>
                     </div>
                     <div class="theme-option" onclick="setTheme('monochrome', this)">
-                        <div class="swatch" style="background: #000000;"></div>
-                        <div class="swatch" style="background: #cccccc;"></div>
-                        <div class="swatch" style="background: #999999;"></div>
+                        <div class="swatch" style="background: #666666;"></div>
+                        <div class="swatch" style="background: #e0e0e0;"></div>
+                        <div class="swatch" style="background: #c2c2c2;"></div>
                     </div>
                 </div>
             </div>
@@ -291,28 +293,52 @@
 
     <script>
         const themes = {
-            electric: { colors: ['#9D00FF', '#008B8B', '#C71585'], bg: '#ffffff', text: '#1a1a1a', name: '#ffffff' },
-            jewel: { colors: ['#1658EB', '#9B59B6', '#e6af00'], bg: '#eef2ff', text: '#1a1a1a', name: '#ffffff' },
-            autumn: { colors: ['#D2691E', '#b1b300', '#795548'], bg: '#fffaf0', text: '#1a1a1a', name: '#ffffff' },
-            monochrome: { colors: ['#000000', '#cccccc', '#999999'], bg: '#121212', text: '#ffffff', name: '#ffffff' }
+            // Colors mixed with 40% white to achieve "60% opacity" look
+            electric: { 
+                colors: ['#c466ff', '#66b9b9', '#dd73b6'], 
+                bg: '#ffffff', 
+                wrapper: '#ffffff', 
+                text: '#1a1a1a', 
+                name: '#ffffff' 
+            },
+            // Background changed to saturated Mint-Cyan
+            jewel: { 
+                colors: ['#739bf3', '#c39bd4', '#ff72be'], 
+                bg: '#e0fcf9', 
+                wrapper: '#ffffff', 
+                text: '#1a1a1a', 
+                name: '#ffffff' 
+            },
+            autumn: { 
+                colors: ['#e4a578', '#d0d166', '#af9991'], 
+                bg: '#fff4e0', 
+                wrapper: '#ffffff', 
+                text: '#1a1a1a', 
+                name: '#ffffff' 
+            },
+            monochrome: { 
+                colors: ['#666666', '#e0e0e0', '#c2c2c2'], 
+                bg: '#0a0a1a', 
+                wrapper: '#1a1a2e', 
+                text: '#ffffff', 
+                name: '#ffffff' 
+            }
         };
 
         function setTheme(key, el) {
             const root = document.documentElement;
             const t = themes[key];
             
-            // Apply gradient colors
             root.style.setProperty('--theme-c1', t.colors[0]);
             root.style.setProperty('--theme-c2', t.colors[1]);
             root.style.setProperty('--theme-c3', t.colors[2]);
             
-            // Apply background and text colors
             root.style.setProperty('--bg-main', t.bg);
+            root.style.setProperty('--wrapper-bg', t.wrapper);
             root.style.setProperty('--text-base', t.text);
             root.style.setProperty('--name-text', t.name);
-            root.style.setProperty('--modal-bg', t.bg === '#121212' ? '#1e1e1e' : '#ffffff');
+            root.style.setProperty('--modal-bg', (t.bg === '#0a0a1a') ? '#1e1e1e' : '#ffffff');
             
-            // Handle active class
             document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
             el.classList.add('active');
         }
