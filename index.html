@@ -92,10 +92,128 @@
 
         .nav-link:hover { transform: translateX(3px); opacity: 0.8; }
 
+        /* BLOG AREA STYLES */
+        .blog-container {
+            position: absolute;
+            top: 160px;
+            bottom: 35vh;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70vw;
+            overflow-y: auto;
+            padding-right: 20px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--theme-c2) transparent;
+            z-index: 5;
+        }
+
+        .blog-post {
+            display: flex;
+            margin-bottom: 80px;
+            gap: 40px;
+            align-items: flex-start;
+            scroll-margin-top: 20px;
+        }
+
+        .blog-post.text-only {
+            flex-direction: column;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .blog-img-frame {
+            flex: 1;
+            padding: 10px;
+            background-color: var(--painting-frame);
+            max-width: 400px;
+        }
+
+        .blog-img-frame img {
+            width: 100%;
+            display: block;
+            background-color: #fff;
+        }
+
+        .blog-content {
+            flex: 1;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .blog-content h2 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* GALLERY STYLES WITH HORIZONTAL SCROLLBAR */
+        .gallery-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100vw;
+            display: flex;
+            align-items: flex-end;
+            padding-bottom: 10px; 
+            height: 32vh;
+            overflow-x: auto; /* Enable horizontal scrolling */
+            overflow-y: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: var(--theme-c1) rgba(0,0,0,0.05);
+        }
+
+        /* Custom Scrollbar for Chrome/Safari */
+        .gallery-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        .gallery-container::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+        }
+        .gallery-container::-webkit-scrollbar-thumb {
+            background-color: var(--theme-c1);
+            border-radius: 10px;
+        }
+
+        .scroll-wrapper {
+            display: flex;
+            white-space: nowrap;
+            width: max-content;
+            /* Animation kept but pauses on hover to allow manual scroll focus */
+            animation: scroll 60s linear infinite;
+            padding: 0 20px;
+        }
+
+        .gallery-container:hover .scroll-wrapper { 
+            animation-play-state: paused; 
+        }
+
+        .painting-wrapper {
+            position: relative;
+            height: 25vh; 
+            margin: 0 20px; 
+            padding: 4px;
+            flex-shrink: 0;
+            background-color: var(--painting-frame); 
+            transition: background-color 0.4s ease, transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .painting { height: 100%; display: block; background-color: var(--wrapper-bg); }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
         .color-controls-dropdown {
             margin-top: 10px;
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(2, 1fr);
             gap: 6px;
+            width: fit-content;
         }
 
         .theme-option {
@@ -109,111 +227,6 @@
 
         .theme-option.active { border-color: var(--text-base); border-width: 2px; }
         .swatch { width: 14px; height: 14px; }
-
-        .gallery-container {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100vw;
-            display: flex;
-            align-items: flex-end;
-            overflow: hidden;
-            padding-bottom: 40px; 
-        }
-
-        .scroll-wrapper {
-            display: flex;
-            white-space: nowrap;
-            width: max-content;
-            animation: scroll 45s linear infinite;
-            padding: 0 20px;
-        }
-
-        .scroll-wrapper:hover { animation-play-state: paused; }
-
-        .painting-wrapper {
-            position: relative;
-            height: 45vh; 
-            margin: 0 30px; 
-            padding: 6px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1;
-            background-color: var(--painting-frame); 
-            transition: background-color 0.4s ease, transform 0.3s ease;
-            cursor: zoom-in;
-        }
-
-        .painting-wrapper:hover {
-            background-color: var(--theme-c2);
-            transform: translateY(-5px);
-        }
-
-        .painting { 
-            height: 100%; 
-            display: block; 
-            background-color: var(--wrapper-bg); 
-            z-index: 2;
-            position: relative;
-        }
-
-        .painting-info {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            opacity: 0;
-            transition: opacity 0.4s ease, transform 0.4s ease;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        .painting-wrapper:hover .painting-info { opacity: 1; transform: translate(-50%, -65%); }
-
-        .info-header { font-size: 0.8rem; font-weight: bold; letter-spacing: 1px; white-space: nowrap; }
-        .info-subheader {
-            color: #000; 
-            background-color: #fff;
-            padding: 4px 8px;
-            font-size: 0.55rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            text-align: center;
-        }
-
-        @keyframes scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-
-        /* LIGHTBOX STYLES */
-        #lightbox {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.92);
-            z-index: 3000;
-            justify-content: center;
-            align-items: center;
-            cursor: zoom-out;
-            backdrop-filter: blur(5px);
-        }
-
-        #lightbox img {
-            max-width: 90%;
-            max-height: 85%;
-            box-shadow: 0 0 40px rgba(0,0,0,0.8);
-            border: 3px solid var(--painting-frame);
-            object-fit: contain;
-        }
 
         #modal {
             display: none;
@@ -274,41 +287,90 @@
                         <div class="swatch" style="background: #444444;"></div>
                         <div class="swatch" style="background: #e0e0e0;"></div>
                     </div>
+                    <div class="theme-option" onclick="setTheme('fuzzy', this)">
+                        <div class="swatch" style="background: #ffc0cb;"></div>
+                        <div class="swatch" style="background: #ffd1dc;"></div>
+                        <div class="swatch" style="background: #ff69b4;"></div>
+                    </div>
+                    <div class="theme-option" onclick="setTheme('freezy', this)">
+                        <div class="swatch" style="background: #e0ffff;"></div>
+                        <div class="swatch" style="background: #afeeee;"></div>
+                        <div class="swatch" style="background: #00ced1;"></div>
+                    </div>
+                    <div class="theme-option" onclick="setTheme('jungle', this)">
+                        <div class="swatch" style="background: #7851a9;"></div>
+                        <div class="swatch" style="background: #32cd32;"></div>
+                        <div class="swatch" style="background: #fffacd;"></div>
+                    </div>
+                    <div class="theme-option" onclick="setTheme('minimal', this)">
+                        <div class="swatch" style="background: #ffffff;"></div>
+                        <div class="swatch" style="background: #f5f5f5;"></div>
+                        <div class="swatch" style="background: #d3d3d3;"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <div class="gallery-container">
-        <div class="scroll-wrapper">
-            <div class="painting-wrapper" onclick="openLightbox('art_flowers.jpg')"><img src="art_flowers.jpg" class="painting"><div class="painting-info"><div class="info-header inv-grad-box">Floral</div><div class="info-subheader">oil on paper, 2025</div></div></div>
-            <div class="painting-wrapper" onclick="openLightbox('art_gardens.jpg')"><img src="art_gardens.jpg" class="painting"><div class="painting-info"><div class="info-header inv-grad-box">Garden</div><div class="info-subheader">oil on paper, 2025</div></div></div>
-            <div class="painting-wrapper" onclick="openLightbox('art_riverside.jpg')"><img src="art_riverside.jpg" class="painting"><div class="painting-info"><div class="info-header inv-grad-box">Riverside</div><div class="info-subheader">oil on paper, 2025</div></div></div>
-            <div class="painting-wrapper" onclick="openLightbox('flipped.jpg')"><img src="flipped.jpg" class="painting"><div class="painting-info"><div class="info-header inv-grad-box">Reflection</div><div class="info-subheader">oil on paper, 2025</div></div></div>
-            <div class="painting-wrapper" onclick="openLightbox('art_bella.jpg')"><img src="art_bella.jpg" class="painting"><div class="painting-info"><div class="info-header inv-grad-box">Sunset</div><div class="info-subheader">acrylic on wood, 2026</div></div></div>
-            <div class="painting-wrapper" onclick="openLightbox('art_flowers.jpg')"><img src="art_flowers.jpg" class="painting"><div class="painting-info"><div class="info-header inv-grad-box">Floral</div><div class="info-subheader">oil on paper, 2025</div></div></div>
-            <div class="painting-wrapper" onclick="openLightbox('art_gardens.jpg')"><img src="art_gardens.jpg" class="painting"><div class="painting-info"><div class="info-header inv-grad-box">Garden</div><div class="info-subheader">oil on paper, 2025</div></div></div>
-            <div class="painting-wrapper" onclick="openLightbox('art_riverside.jpg')"><img src="art_riverside.jpg" class="painting"><div class="painting-info"><div class="info-header inv-grad-box">Riverside</div><div class="info-subheader">oil on paper, 2025</div></div></div>
-            <div class="painting-wrapper" onclick="openLightbox('flipped.jpg')"><img src="flipped.jpg" class="painting"><div class="painting-info"><div class="info-header inv-grad-box">Reflection</div><div class="info-subheader">oil on paper, 2025</div></div></div>
-            <div class="painting-wrapper" onclick="openLightbox('art_bella.jpg')"><img src="art_bella.jpg" class="painting"><div class="painting-info"><div class="info-header inv-grad-box">Sunset</div><div class="info-subheader">acrylic on wood, 2026</div></div></div>
+    <div class="blog-container" id="blog-area">
+        <div class="blog-post text-only">
+            <div class="blog-content">
+                <h2>Welcome to the Studio</h2>
+                <p>This is a text-only blog post. You can use this space to discuss upcoming shows, share thoughts on your process, or provide updates on your current work. This area scrolls vertically while the gallery below continues its movement.</p>
+            </div>
+        </div>
+
+        <div class="blog-post" id="post-floral">
+            <div class="blog-img-frame"><img src="art_flowers.jpg"></div>
+            <div class="blog-content">
+                <h2>Floral </h2>
+                <p> Floral sprays and sunshine days</p>
+            </div>
+        </div>
+
+        <div class="blog-post" id="post-garden">
+            <div class="blog-img-frame"><img src="art_gardens.jpg"></div>
+            <div class="blog-content">
+                <h2>Gardens</h2>
+                <p>Frederik Meijer Sculpture Gardens winter escape</p>
+            </div>
+        </div>
+
+        <div class="blog-post" id="post-riverside">
+            <div class="blog-img-frame"><img src="art_riverside.jpg"></div>
+            <div class="blog-content">
+                <h2>Riverside</h2>
+                <p>Riverside Park, Grand Rapids, MI.</p>
+            </div>
         </div>
     </div>
 
-    <div id="lightbox" onclick="closeLightbox()">
-        <img id="lightbox-img" src="" alt="Enlarged Art">
+    <div class="gallery-container">
+        <div class="scroll-wrapper">
+            <div class="painting-wrapper" onclick="scrollToPost('post-floral')"><img src="art_flowers.jpg" class="painting"></div>
+            <div class="painting-wrapper" onclick="scrollToPost('post-garden')"><img src="art_gardens.jpg" class="painting"></div>
+            <div class="painting-wrapper" onclick="scrollToPost('post-riverside')"><img src="art_riverside.jpg" class="painting"></div>
+            <div class="painting-wrapper" onclick="scrollToPost('post-floral')"><img src="art_flowers.jpg" class="painting"></div>
+            <div class="painting-wrapper" onclick="scrollToPost('post-garden')"><img src="art_gardens.jpg" class="painting"></div>
+            <div class="painting-wrapper" onclick="scrollToPost('post-riverside')"><img src="art_riverside.jpg" class="painting"></div>
+        </div>
     </div>
 
     <div id="modal">
         <div id="modal-body"></div>
-        <button class="close-btn" onclick="document.getElementById('modal').style.display='none'">Close</button>
+        <button id="modal-close-btn" class="close-btn" onclick="document.getElementById('modal').style.display='none'">Close</button>
     </div>
 
     <script>
         const themes = {
-            electric: { colors: ['#d9b3f2', '#b3d9d9', '#efb9da'], bg: '#ffffff', text: '#1a1a1a' },
-            jewel: { colors: ['#000080', '#daa520', '#ff00ff'], bg: '#daa520', text: '#ffffff' },
-            autumn: { colors: ['#e4a578', '#d0d166', '#af9991'], bg: '#d0d166', text: '#1a1a1a' },
-            monochrome: { colors: ['#000000', '#444444', '#e0e0e0'], bg: '#000000', text: '#ffffff' }
+            electric: { colors: ['#d9b3f2', '#b3d9d9', '#efb9da'], bg: '#ffffff', text: '#1a1a1a', nameText: '#ffffff' },
+            jewel: { colors: ['#000080', '#daa520', '#ff00ff'], bg: '#daa520', text: '#ffffff', nameText: '#ffffff' }, 
+            autumn: { colors: ['#e4a578', '#d0d166', '#af9991'], bg: '#d0d166', text: '#1a1a1a', nameText: '#000000' },
+            monochrome: { colors: ['#000000', '#444444', '#e0e0e0'], bg: '#000000', text: '#ffffff', nameText: '#ffffff' },
+            fuzzy: { colors: ['#ffc0cb', '#ffd1dc', '#ff69b4'], bg: '#ffd1dc', text: '#1a1a1a', nameText: '#ffffff' },
+            freezy: { colors: ['#e0ffff', '#afeeee', '#00ced1'], bg: '#f0f8ff', text: '#1a1a1a', nameText: '#ffffff' },
+            jungle: { colors: ['#7851a9', '#32cd32', '#fffacd'], bg: '#32cd32', text: '#1a1a1a', nameText: '#000000' },
+            minimal: { colors: ['#ffffff', '#f5f5f5', '#d3d3d3'], bg: '#ffffff', text: '#000000', nameText: '#000000' }
         };
 
         function setTheme(key, el) {
@@ -320,14 +382,33 @@
             root.style.setProperty('--theme-c3', t.colors[2]);
             root.style.setProperty('--bg-main', t.bg);
             root.style.setProperty('--text-base', t.text);
+            root.style.setProperty('--name-text', t.nameText);
             root.style.setProperty('--modal-bg', (t.bg === '#000000') ? '#1e1e1e' : '#ffffff');
 
-            // Set frame to white for monochrome, else use the first theme color
-            const frameColor = (key === 'monochrome') ? '#ffffff' : t.colors[0];
+            const frameColor = (key === 'monochrome' || key === 'minimal') ? '#d3d3d3' : t.colors[0];
             root.style.setProperty('--painting-frame', frameColor);
+
+            const closeBtn = document.getElementById('modal-close-btn');
+            if(key === 'minimal') {
+                closeBtn.style.color = '#000000';
+                closeBtn.style.borderColor = '#000000';
+            } else if (key === 'monochrome') {
+                closeBtn.style.color = '#ffffff';
+                closeBtn.style.borderColor = '#ffffff';
+            } else {
+                closeBtn.style.color = 'var(--theme-c2)';
+                closeBtn.style.borderColor = 'var(--theme-c2)';
+            }
             
             document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
             el.classList.add('active');
+        }
+
+        function scrollToPost(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
         }
 
         function openModal(type) {
@@ -340,20 +421,8 @@
             document.getElementById('modal').style.display = 'block';
         }
 
-        function openLightbox(src) {
-            const lb = document.getElementById('lightbox');
-            const lbImg = document.getElementById('lightbox-img');
-            lbImg.src = src;
-            lb.style.display = 'flex';
-        }
-
-        function closeLightbox() {
-            document.getElementById('lightbox').style.display = 'none';
-        }
-
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                closeLightbox();
                 document.getElementById('modal').style.display = 'none';
             }
         });
