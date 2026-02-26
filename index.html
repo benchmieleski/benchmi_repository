@@ -8,10 +8,10 @@
         :root {
             --bg-main: #ffffff;
             --text-base: #1a1a1a;
-            --theme-c1: #d9b3f2; 
-            --theme-c2: #b3d9d9; 
-            --theme-c3: #efb9da; 
-            --painting-frame: #d9b3f2; 
+            --theme-c1: #6cccb6; 
+            --theme-c2: #57648a; 
+            --theme-c3: #ab5c95; 
+            --painting-frame: #6cccb6; 
             --modal-bg: #ffffff;
         }
 
@@ -19,10 +19,11 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #ffffff;
+            background-color: var(--bg-main);
             color: var(--text-base);
             font-family: sans-serif;
             height: 100vh;
+            transition: background-color 0.4s ease, color 0.4s ease;
         }
 
         header {
@@ -48,7 +49,7 @@
             margin-bottom: 12px;
         }
 
-        /* Text-only gradient effect */
+        /* Text gradient effect */
         .inv-grad-box {
             background: linear-gradient(to right, 
                 var(--theme-c1), 
@@ -62,7 +63,14 @@
             background-clip: text;
             -webkit-text-fill-color: transparent;
             color: transparent;
-            transition: none;
+        }
+
+        /* Class to disable gradients for static theme */
+        .no-grad {
+            background: none !important;
+            animation: none !important;
+            -webkit-text-fill-color: var(--text-base) !important;
+            color: var(--text-base) !important;
         }
 
         @keyframes gradient-flow {
@@ -92,12 +100,11 @@
 
         .nav-link:hover { transform: translateX(3px); opacity: 0.8; }
 
-        /* Color Controls Grid (2x3) */
+        /* Color Controls Grid (1x4) */
         .color-controls-dropdown {
             margin-top: 15px;
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(2, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 8px;
             width: fit-content;
         }
@@ -105,7 +112,7 @@
         .theme-option {
             display: flex;
             cursor: pointer;
-            border: 1px solid var(--theme-c3); /* Applying 3rd accent color to UI border */
+            border: 1px solid var(--theme-c3); 
             transition: border-color 0.2s;
             padding: 1px;
             background: #fff;
@@ -130,7 +137,7 @@
             display: none; 
             opacity: 0;
             transition: opacity 0.5s ease;
-            background-color: #ffffff;
+            background-color: transparent;
         }
 
         .blog-container.active { display: block; opacity: 1; }
@@ -162,14 +169,14 @@
             gap: 15px;
             padding: 15px 0;
             width: 75vw;
-            background: linear-gradient(to top, #ffffff 40%, transparent);
+            background: linear-gradient(to top, var(--bg-main) 40%, transparent);
             z-index: 10;
             pointer-events: none;
         }
 
         .nav-btn {
             pointer-events: auto;
-            background: #ffffff;
+            background: var(--bg-main);
             border: 1px solid var(--text-base);
             color: var(--text-base);
             padding: 4px 12px;
@@ -281,7 +288,7 @@
             position: fixed;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            background: #ffffff;
+            background: var(--modal-bg);
             padding: 40px;
             border: 2px solid var(--theme-c1); 
             z-index: 2000;
@@ -297,7 +304,7 @@
             font-weight: bold;
             cursor: pointer;
             background: none;
-            border: 1px solid var(--theme-c3); /* Applying 3rd accent color to button */
+            border: 1px solid var(--theme-c3); 
             color: var(--theme-c3);
             padding: 5px 10px;
         }
@@ -315,12 +322,10 @@
                 <div class="nav-link inv-grad-box" onclick="event.stopPropagation(); openModal('contact')">Contact</div>
                 <div class="nav-link inv-grad-box" onclick="event.stopPropagation(); openBlogOnly()">Blog</div>
                 <div class="color-controls-dropdown">
-                    <div class="theme-option active" onclick="event.stopPropagation(); setTheme('electric', this)"><div class="swatch" style="background: #d9b3f2;"></div><div class="swatch" style="background: #b3d9d9;"></div><div class="swatch" style="background: #efb9da;"></div></div>
-                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('misty', this)"><div class="swatch" style="background: #6cccb6;"></div><div class="swatch" style="background: #57648a;"></div><div class="swatch" style="background: #ab5c95;"></div></div>
-                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('jungle', this)"><div class="swatch" style="background: #7851a9;"></div><div class="swatch" style="background: #32cd32;"></div><div class="swatch" style="background: #fffacd;"></div></div>
-                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('fuzzy', this)"><div class="swatch" style="background: #ffc0cb;"></div><div class="swatch" style="background: #ffd1dc;"></div><div class="swatch" style="background: #ff69b4;"></div></div>
-                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('freezy', this)"><div class="swatch" style="background: #e0ffff;"></div><div class="swatch" style="background: #afeeee;"></div><div class="swatch" style="background: #00ced1;"></div></div>
-                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('monochrome', this)"><div class="swatch" style="background: #000000;"></div><div class="swatch" style="background: #444444;"></div><div class="swatch" style="background: #e0e0e0;"></div></div>
+                    <div class="theme-option active" onclick="event.stopPropagation(); setTheme('misty', this)"><div class="swatch" style="background: #6cccb6;"></div><div class="swatch" style="background: #57648a;"></div><div class="swatch" style="background: #ab5c95;"></div></div>
+                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('electric', this)"><div class="swatch" style="background: #d9b3f2;"></div><div class="swatch" style="background: #b3d9d9;"></div><div class="swatch" style="background: #efb9da;"></div></div>
+                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('monochromeDark', this)"><div class="swatch" style="background: #cccccc;"></div><div class="swatch" style="background: #eeeeee;"></div><div class="swatch" style="background: #ffffff;"></div></div>
+                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('monochromeStatic', this)"><div class="swatch" style="background: #000000;"></div><div class="swatch" style="background: #000000;"></div><div class="swatch" style="background: #000000;"></div></div>
                 </div>
             </div>
         </div>
@@ -384,12 +389,10 @@
 
     <script>
         const themes = {
-            electric: { colors: ['#d9b3f2', '#b3d9d9', '#efb9da'] },
-            misty: { colors: ['#6cccb6', '#57648a', '#ab5c95'] }, 
-            jungle: { colors: ['#7851a9', '#32cd32', '#fffacd'] },
-            fuzzy: { colors: ['#ffc0cb', '#ffd1dc', '#ff69b4'] },
-            freezy: { colors: ['#e0ffff', '#afeeee', '#00ced1'] },
-            monochrome: { colors: ['#000000', '#444444', '#e0e0e0'] }
+            misty: { colors: ['#6cccb6', '#57648a', '#ab5c95'], bg: '#ffffff', text: '#1a1a1a' }, 
+            electric: { colors: ['#d9b3f2', '#b3d9d9', '#efb9da'], bg: '#ffffff', text: '#1a1a1a' },
+            monochromeDark: { colors: ['#cccccc', '#eeeeee', '#ffffff'], bg: '#000000', text: '#f0f0f0' },
+            monochromeStatic: { colors: ['#000000', '#000000', '#000000'], bg: '#ffffff', text: '#1a1a1a' }
         };
 
         let currentPostIndex = 0;
@@ -407,7 +410,19 @@
             root.style.setProperty('--theme-c1', t.colors[0]);
             root.style.setProperty('--theme-c2', t.colors[1]);
             root.style.setProperty('--theme-c3', t.colors[2]);
-            root.style.setProperty('--painting-frame', (key === 'monochrome') ? '#d3d3d3' : t.colors[0]);
+            root.style.setProperty('--bg-main', t.bg);
+            root.style.setProperty('--text-base', t.text);
+            root.style.setProperty('--painting-frame', (key.startsWith('monochrome')) ? '#d3d3d3' : t.colors[0]);
+            root.style.setProperty('--modal-bg', (t.bg === '#000000') ? '#1a1a1a' : '#ffffff');
+
+            const boxes = document.querySelectorAll('.inv-grad-box');
+            boxes.forEach(box => {
+                if (key === 'monochromeStatic') {
+                    box.classList.add('no-grad');
+                } else {
+                    box.classList.remove('no-grad');
+                }
+            });
             
             document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
             el.classList.add('active');
