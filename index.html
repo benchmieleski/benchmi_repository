@@ -8,23 +8,20 @@
         :root {
             --bg-main: #ffffff;
             --text-base: #1a1a1a;
-            --name-text: #ffffff;
             --theme-c1: #d9b3f2; 
             --theme-c2: #b3d9d9; 
             --theme-c3: #efb9da; 
             --painting-frame: #d9b3f2; 
             --modal-bg: #ffffff;
-            --wrapper-bg: #ffffff; 
         }
 
         body, html {
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: var(--bg-main);
+            background-color: #ffffff;
             color: var(--text-base);
             font-family: sans-serif;
-            transition: background-color 0.4s ease, color 0.4s ease;
             height: 100vh;
         }
 
@@ -51,9 +48,8 @@
             margin-bottom: 12px;
         }
 
+        /* Text-only gradient effect */
         .inv-grad-box {
-            color: var(--name-text);
-            padding: 2px 8px;
             background: linear-gradient(to right, 
                 var(--theme-c1), 
                 var(--theme-c2), 
@@ -62,7 +58,11 @@
             background-size: 400% auto;
             animation: gradient-flow 18s linear infinite;
             display: inline-block;
-            transition: color 0.4s ease;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+            transition: none;
         }
 
         @keyframes gradient-flow {
@@ -92,6 +92,29 @@
 
         .nav-link:hover { transform: translateX(3px); opacity: 0.8; }
 
+        /* Color Controls Grid (2x3) */
+        .color-controls-dropdown {
+            margin-top: 15px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 8px;
+            width: fit-content;
+        }
+
+        .theme-option {
+            display: flex;
+            cursor: pointer;
+            border: 1px solid var(--theme-c3); /* Applying 3rd accent color to UI border */
+            transition: border-color 0.2s;
+            padding: 1px;
+            background: #fff;
+        }
+
+        .theme-option.active { border-color: var(--text-base); border-width: 2px; }
+        .swatch { width: 14px; height: 14px; }
+
+        /* BLOG AREA */
         .blog-container {
             position: absolute;
             top: 100px;
@@ -107,12 +130,10 @@
             display: none; 
             opacity: 0;
             transition: opacity 0.5s ease;
+            background-color: #ffffff;
         }
 
-        .blog-container.active {
-            display: block;
-            opacity: 1;
-        }
+        .blog-container.active { display: block; opacity: 1; }
 
         .close-blog-x {
             position: sticky;
@@ -130,7 +151,6 @@
             transition: opacity 0.3s;
             font-family: serif;
         }
-        .close-blog-x:hover { opacity: 0.5; }
 
         .post-nav {
             position: absolute;
@@ -142,14 +162,14 @@
             gap: 15px;
             padding: 15px 0;
             width: 75vw;
-            background: linear-gradient(to top, var(--bg-main) 40%, transparent);
+            background: linear-gradient(to top, #ffffff 40%, transparent);
             z-index: 10;
             pointer-events: none;
         }
 
         .nav-btn {
             pointer-events: auto;
-            background: var(--bg-main);
+            background: #ffffff;
             border: 1px solid var(--text-base);
             color: var(--text-base);
             padding: 4px 12px;
@@ -159,12 +179,6 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             transition: all 0.3s;
-            opacity: 0.9;
-        }
-        .nav-btn:hover {
-            background: var(--text-base);
-            color: var(--bg-main);
-            opacity: 1;
         }
 
         .blog-post {
@@ -186,22 +200,14 @@
 
         .blog-img-frame {
             flex: 1;
-            padding: 5px; /* Reduced by 50% from 10px */
+            padding: 5px;
             background-color: var(--painting-frame);
             max-width: 500px;
         }
 
-        .blog-img-frame img {
-            width: 100%;
-            display: block;
-            background-color: #fff;
-        }
+        .blog-img-frame img { width: 100%; display: block; background-color: #fff; }
 
-        .blog-content {
-            flex: 1;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
+        .blog-content { flex: 1; font-size: 0.95rem; line-height: 1.6; }
 
         .blog-content h2 {
             margin-top: 0;
@@ -220,6 +226,7 @@
             letter-spacing: 0.5px;
         }
 
+        /* GALLERY STYLES */
         .gallery-container {
             position: absolute;
             bottom: 0;
@@ -235,16 +242,7 @@
             transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .gallery-container.minimized {
-            height: 18vh;
-            align-items: center;
-        }
-
-        .gallery-container::-webkit-scrollbar { height: 6px; }
-        .gallery-container::-webkit-scrollbar-thumb {
-            background-color: var(--theme-c1);
-            border-radius: 10px;
-        }
+        .gallery-container.minimized { height: 18vh; align-items: center; }
 
         .scroll-wrapper {
             display: flex;
@@ -254,13 +252,11 @@
             padding: 0 20px;
         }
 
-        .gallery-container:hover .scroll-wrapper { animation-play-state: paused; }
-
         .painting-wrapper {
             position: relative;
             height: 50vh; 
             margin: 0 30px; 
-            padding: 3px; /* Reduced by 50% from 6px */
+            padding: 3px;
             flex-shrink: 0;
             background-color: var(--painting-frame); 
             transition: all 0.6s ease;
@@ -270,42 +266,22 @@
         .gallery-container.minimized .painting-wrapper {
             height: 12vh;
             margin: 0 10px;
-            padding: 1.5px; /* Reduced by 50% from 3px */
+            padding: 1.5px;
         }
 
-        .painting { height: 100%; display: block; background-color: var(--wrapper-bg); }
+        .painting { height: 100%; display: block; background-color: #ffffff; }
 
         @keyframes scroll {
             0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
 
-        .color-controls-dropdown {
-            margin-top: 10px;
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 6px;
-            width: fit-content;
-        }
-
-        .theme-option {
-            display: flex;
-            cursor: pointer;
-            border: 1px solid #ddd;
-            transition: border-color 0.2s;
-            padding: 1px;
-            background: #fff;
-        }
-
-        .theme-option.active { border-color: var(--text-base); border-width: 2px; }
-        .swatch { width: 14px; height: 14px; }
-
         #modal {
             display: none;
             position: fixed;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            background: var(--modal-bg);
+            background: #ffffff;
             padding: 40px;
             border: 2px solid var(--theme-c1); 
             z-index: 2000;
@@ -321,8 +297,8 @@
             font-weight: bold;
             cursor: pointer;
             background: none;
-            border: 1px solid var(--theme-c2);
-            color: var(--theme-c2);
+            border: 1px solid var(--theme-c3); /* Applying 3rd accent color to button */
+            color: var(--theme-c3);
             padding: 5px 10px;
         }
     </style>
@@ -408,12 +384,12 @@
 
     <script>
         const themes = {
-            electric: { colors: ['#d9b3f2', '#b3d9d9', '#efb9da'], bg: '#ffffff', text: '#1a1a1a', nameText: '#ffffff' },
-            misty: { colors: ['#6cccb6', '#57648a', '#ab5c95'], bg: '#ffffff', text: '#1a1a1a', nameText: '#ffffff' }, 
-            jungle: { colors: ['#7851a9', '#32cd32', '#fffacd'], bg: '#32cd32', text: '#1a1a1a', nameText: '#000000' },
-            fuzzy: { colors: ['#ffc0cb', '#ffd1dc', '#ff69b4'], bg: '#ffd1dc', text: '#1a1a1a', nameText: '#ffffff' },
-            freezy: { colors: ['#e0ffff', '#afeeee', '#00ced1'], bg: '#f0f8ff', text: '#1a1a1a', nameText: '#ffffff' },
-            monochrome: { colors: ['#000000', '#444444', '#e0e0e0'], bg: '#000000', text: '#ffffff', nameText: '#ffffff' }
+            electric: { colors: ['#d9b3f2', '#b3d9d9', '#efb9da'] },
+            misty: { colors: ['#6cccb6', '#57648a', '#ab5c95'] }, 
+            jungle: { colors: ['#7851a9', '#32cd32', '#fffacd'] },
+            fuzzy: { colors: ['#ffc0cb', '#ffd1dc', '#ff69b4'] },
+            freezy: { colors: ['#e0ffff', '#afeeee', '#00ced1'] },
+            monochrome: { colors: ['#000000', '#444444', '#e0e0e0'] }
         };
 
         let currentPostIndex = 0;
@@ -431,10 +407,6 @@
             root.style.setProperty('--theme-c1', t.colors[0]);
             root.style.setProperty('--theme-c2', t.colors[1]);
             root.style.setProperty('--theme-c3', t.colors[2]);
-            root.style.setProperty('--bg-main', t.bg);
-            root.style.setProperty('--text-base', t.text);
-            root.style.setProperty('--name-text', t.nameText);
-            root.style.setProperty('--modal-bg', (t.bg === '#000000') ? '#1e1e1e' : '#ffffff');
             root.style.setProperty('--painting-frame', (key === 'monochrome') ? '#d3d3d3' : t.colors[0]);
             
             document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
@@ -447,11 +419,7 @@
             const nav = document.getElementById('blog-nav');
             activePostFilter = filter;
             document.querySelectorAll('.blog-post').forEach(post => {
-                if (filter === 'text-only') {
-                    post.style.display = post.classList.contains('text-only') ? 'flex' : 'none';
-                } else {
-                    post.style.display = 'flex';
-                }
+                post.style.display = (filter === 'text-only') ? (post.classList.contains('text-only') ? 'flex' : 'none') : 'flex';
             });
             currentPostIndex = postIds.indexOf(id);
             blog.style.display = 'block';
@@ -470,8 +438,7 @@
             currentPostIndex += direction;
             if (currentPostIndex < 0) currentPostIndex = postIds.length - 1;
             if (currentPostIndex >= postIds.length) currentPostIndex = 0;
-            const id = postIds[currentPostIndex];
-            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+            document.getElementById(postIds[currentPostIndex]).scrollIntoView({ behavior: 'smooth' });
         }
 
         function closeBlog() {
