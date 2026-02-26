@@ -200,7 +200,7 @@
             display: flex;
             margin-bottom: 120px;
             gap: 40px;
-            align-items: center; /* Changed from flex-start to center for better portrait balance */
+            align-items: center; /* Aligns content better for portrait images */
             scroll-margin-top: 60px;
         }
 
@@ -214,19 +214,19 @@
         }
 
         .blog-img-frame {
-            flex: 0 1 auto; /* Allow the frame to shrink/grow based on content */
+            flex: 0 1 auto;
             padding: 5px;
             background-color: var(--painting-frame);
-            max-width: 100%; /* Prevent overflowing width */
-            margin: 0 auto; /* Center frame */
+            max-width: 100%;
+            margin: 0 auto;
         }
 
         .blog-img-frame img { 
             max-width: 100%;
-            max-height: 65vh; /* Ensure portrait images fit within the viewable area */
+            max-height: 65vh; /* Prevents portrait images from being cut off */
             display: block; 
-            background-color: #fff; 
-            object-fit: contain; /* Maintain aspect ratio without cropping */
+            background-color: #fff;
+            object-fit: contain;
         }
 
         .blog-content { flex: 1; font-size: 0.95rem; line-height: 1.6; }
@@ -260,4 +260,260 @@
             overflow-y: hidden;
             scrollbar-width: thin;
             scrollbar-color: var(--theme-c1) rgba(0,0,0,0.05);
-            transition:
+            transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .gallery-container.minimized { height: 18vh; align-items: center; }
+
+        .scroll-wrapper {
+            display: flex;
+            white-space: nowrap;
+            width: max-content;
+            animation: scroll 65s linear infinite;
+            padding: 0 20px;
+        }
+
+        .painting-wrapper {
+            position: relative;
+            height: 50vh; 
+            margin: 0 30px; 
+            padding: 3px;
+            flex-shrink: 0;
+            background-color: var(--painting-frame); 
+            transition: all 0.6s ease;
+            cursor: pointer;
+        }
+
+        .gallery-container.minimized .painting-wrapper {
+            height: 12vh;
+            margin: 0 10px;
+            padding: 1.5px;
+        }
+
+        .painting { height: 100%; display: block; background-color: #ffffff; }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        #modal {
+            display: none;
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--modal-bg);
+            padding: 40px;
+            border: 2px solid var(--theme-c1); 
+            z-index: 2000;
+            text-align: center;
+            font-size: 0.8rem;
+            min-width: 250px;
+            color: var(--text-base);
+        }
+
+        .close-btn {
+            margin-top: 20px;
+            font-size: 0.6rem;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: 1px solid var(--theme-c3); 
+            color: var(--theme-c3);
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="site-name-wrapper" onclick="goHome()">
+            <div class="site-name inv-grad-box">Ben Chmieleski</div>
+            <div class="site-subheading inv-grad-box">Artist | Designer | Creator</div>
+            
+            <div class="nav-menu">
+                <div class="nav-link inv-grad-box" onclick="event.stopPropagation(); openModal('about')">About</div>
+                <div class="nav-link inv-grad-box" onclick="event.stopPropagation(); openModal('contact')">Contact</div>
+                <div class="nav-link inv-grad-box" onclick="event.stopPropagation(); openBlogOnly()">Blog</div>
+                <div class="color-controls-dropdown">
+                    <div class="theme-option active" onclick="event.stopPropagation(); setTheme('misty', this)"><div class="swatch" style="background: #6cccb6;"></div><div class="swatch" style="background: #57648a;"></div><div class="swatch" style="background: #ab5c95;"></div></div>
+                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('electric', this)"><div class="swatch" style="background: #d9b3f2;"></div><div class="swatch" style="background: #b3d9d9;"></div><div class="swatch" style="background: #efb9da;"></div></div>
+                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('monochromeDark', this)"><div class="swatch" style="background: #cccccc;"></div><div class="swatch" style="background: #eeeeee;"></div><div class="swatch" style="background: #ffffff;"></div></div>
+                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('monochromeStatic', this)"><div class="swatch" style="background: #000000;"></div><div class="swatch" style="background: #000000;"></div><div class="swatch" style="background: #000000;"></div></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="blog-container" id="blog-area">
+        <button class="close-blog-x" onclick="closeBlog()">&times;</button>
+        <div class="blog-post text-only" id="post-intro">
+            <div class="blog-content">
+                <h2>Portfolio Site Conception + Launch</h2>
+                <span class="blog-date">FEBRUARY 25, 2026</span>
+                <p>After having most of my creative work live in a transient state for most of my adult life, I wanted to begin to compile things together in order to weave together the story that is my creative life.</p>
+            </div>
+        </div>
+        <div class="blog-post" id="post-floral">
+            <div class="blog-img-frame"><img src="art_flowers.jpg"></div>
+            <div class="blog-content"><h2>Floral</h2><span class="blog-date">FEBRUARY 25, 2026</span><p>Floral Study</p></div>
+        </div>
+        <div class="blog-post" id="post-garden">
+            <div class="blog-img-frame"><img src="art_garden.jpg"></div>
+            <div class="blog-content"><h2>Garden</h2><span class="blog-date">FEBRUARY 25, 2026</span><p>Frederik Meijer Sculpture Gardens</p></div>
+        </div>
+        <div class="blog-post" id="post-riverside">
+            <div class="blog-img-frame"><img src="art_riverside.jpg"></div>
+            <div class="blog-content"><h2>Riverside</h2><span class="blog-date">FEBRUARY 25, 2026</span><p>Riverside Park</p></div>
+        </div>
+        <div class="blog-post" id="post-reflection">
+            <div class="blog-img-frame"><img src="flipped.jpg"></div>
+            <div class="blog-content"><h2>Sunset</h2><span class="blog-date">FEBRUARY 25, 2026</span><p>Sunset Study</p></div>
+        </div>
+        <div class="blog-post" id="post-sunset">
+            <div class="blog-img-frame"><img src="art_bella.jpg"></div>
+            <div class="blog-content"><h2>Bella</h2><span class="blog-date">FEBRUARY 25, 2026</span><p>Frederik Meijer Sculpture Gardens</p></div>
+        </div>
+    </div>
+
+    <div class="post-nav" id="blog-nav" style="display: none;">
+        <button class="nav-btn" onclick="navigatePost(-1)">Previous</button>
+        <button class="nav-btn" onclick="navigatePost(1)">Next</button>
+    </div>
+
+    <div class="gallery-container" id="gallery-container">
+        <div class="scroll-wrapper">
+            <div class="painting-wrapper" onclick="scrollToPost('post-floral')"><img src="art_flowers.jpg" class="painting"></div>
+            <div class="painting-wrapper" onclick="scrollToPost('post-garden')"><img src="art_garden.jpg" class="painting"></div>
+            <div class="painting-wrapper" onclick="scrollToPost('post-riverside')"><img src="art_riverside.jpg" class="painting"></div>
+            <div class="painting-wrapper" onclick="scrollToPost('post-reflection')"><img src="flipped.jpg" class="painting"></div>
+            <div class="painting-wrapper" onclick="scrollToPost('post-sunset')"><img src="art_bella.jpg" class="painting"></div>
+            <div class="painting-wrapper" onclick="scrollToPost('post-floral')"><img src="art_flowers.jpg" class="painting"></div>
+            <div class="painting-wrapper" onclick="scrollToPost('post-garden')"><img src="art_garden.jpg" class="painting"></div>
+            <div class="painting-wrapper" onclick="scrollToPost('post-riverside')"><img src="art_riverside.jpg" class="painting"></div>
+            <div class="painting-wrapper" onclick="scrollToPost('post-reflection')"><img src="flipped.jpg" class="painting"></div>
+            <div class="painting-wrapper" onclick="scrollToPost('post-sunset')"><img src="art_bella.jpg" class="painting"></div>
+        </div>
+    </div>
+
+    <div id="modal">
+        <div id="modal-body"></div>
+        <button id="modal-close-btn" class="close-btn" onclick="document.getElementById('modal').style.display='none'">Close</button>
+    </div>
+
+    <script>
+        const themes = {
+            misty: { colors: ['#6cccb6', '#57648a', '#ab5c95'], bg: '#ffffff', text: '#1a1a1a' }, 
+            electric: { colors: ['#d9b3f2', '#b3d9d9', '#efb9da'], bg: '#ffffff', text: '#1a1a1a' },
+            monochromeDark: { colors: ['#cccccc', '#eeeeee', '#ffffff'], bg: '#000000', text: '#f0f0f0' },
+            monochromeStatic: { colors: ['#000000', '#000000', '#000000'], bg: '#ffffff', text: '#1a1a1a' }
+        };
+
+        let currentPostIndex = 0;
+        let activePostFilter = 'all'; 
+        const postIds = ['post-intro', 'post-floral', 'post-garden', 'post-riverside', 'post-reflection', 'post-sunset'];
+
+        function goHome() {
+            closeBlog();
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        function setTheme(key, el) {
+            const root = document.documentElement;
+            const t = themes[key];
+            root.style.setProperty('--theme-c1', t.colors[0]);
+            root.style.setProperty('--theme-c2', t.colors[1]);
+            root.style.setProperty('--theme-c3', t.colors[2]);
+            root.style.setProperty('--bg-main', t.bg);
+            root.style.setProperty('--text-base', t.text);
+            root.style.setProperty('--painting-frame', (key.startsWith('monochrome')) ? '#d3d3d3' : t.colors[0]);
+            root.style.setProperty('--modal-bg', (t.bg === '#000000') ? '#1a1a1a' : '#ffffff');
+
+            const boxes = document.querySelectorAll('.inv-grad-box');
+            boxes.forEach(box => {
+                if (key === 'monochromeStatic') {
+                    box.classList.add('no-grad');
+                } else {
+                    box.classList.remove('no-grad');
+                }
+            });
+            
+            document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function scrollToPost(id, filter = 'all') {
+            const blog = document.getElementById('blog-area');
+            const gallery = document.getElementById('gallery-container');
+            const nav = document.getElementById('blog-nav');
+            
+            activePostFilter = filter;
+            currentPostIndex = postIds.indexOf(id);
+
+            // Set content visibility
+            document.querySelectorAll('.blog-post').forEach(post => {
+                post.style.display = (filter === 'text-only') 
+                    ? (post.classList.contains('text-only') ? 'flex' : 'none') 
+                    : 'flex';
+            });
+
+            blog.style.display = 'block';
+            nav.style.display = (filter === 'text-only') ? 'none' : 'flex'; 
+            gallery.classList.add('minimized');
+
+            // Timeout ensures layout has updated so scrollIntoView hits the right spot
+            setTimeout(() => {
+                blog.classList.add('active');
+                const target = document.getElementById(id);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 50); 
+        }
+
+        function openBlogOnly() { scrollToPost('post-intro', 'text-only'); }
+
+        function navigatePost(direction) {
+            if (activePostFilter === 'text-only') return; 
+            currentPostIndex += direction;
+            if (currentPostIndex < 0) currentPostIndex = postIds.length - 1;
+            if (currentPostIndex >= postIds.length) currentPostIndex = 0;
+            
+            const targetId = postIds[currentPostIndex];
+            document.getElementById(targetId).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function closeBlog() {
+            const blog = document.getElementById('blog-area');
+            const gallery = document.getElementById('gallery-container');
+            const nav = document.getElementById('blog-nav');
+            blog.classList.remove('active');
+            gallery.classList.remove('minimized');
+            setTimeout(() => {
+                if(!blog.classList.contains('active')) {
+                    blog.style.display = 'none';
+                    nav.style.display = 'none';
+                    blog.scrollTop = 0;
+                    document.querySelectorAll('.blog-post').forEach(p => p.style.display = 'flex');
+                }
+            }, 500);
+        }
+
+        function openModal(type) {
+            const body = document.getElementById('modal-body');
+            body.innerHTML = type === 'about' 
+                ? `<h3>Benjamin Chmieleski</h3><p>Artist & Designer located in West Michigan.<br>I paint landscapes and botanic-inspired pieces.</p>`
+                : `<h3>Contact</h3><p>benchmieleski@gmail.com</p>`;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') goHome();
+            if (document.getElementById('blog-area').classList.contains('active')) {
+                if (e.key === 'ArrowRight') navigatePost(1);
+                if (e.key === 'ArrowLeft') navigatePost(-1);
+            }
+        });
+    </script>
+</body>
+</html>
