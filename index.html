@@ -12,314 +12,102 @@
             --theme-c2: #57648a; 
             --theme-c3: #ab5c95; 
             --painting-frame: #6cccb6; 
-            --modal-bg: #ffffff;
         }
 
         body, html {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             overflow: hidden;
-            background-color: var(--bg-main);
+            background: var(--bg-main);
             color: var(--text-base);
             font-family: sans-serif;
             height: 100vh;
-            transition: background-color 0.4s ease, color 0.4s ease;
+            transition: background 0.4s, color 0.4s;
         }
 
-        header {
-            position: fixed;
-            top: 40px;
-            left: 40px;
-            z-index: 1000;
-        }
+        header { position: fixed; top: 40px; left: 40px; z-index: 1000; }
 
-        .site-name-wrapper {
-            display: inline-flex;
-            flex-direction: column;
-            cursor: pointer;
-            padding-bottom: 30px;
-            width: min-content;
-        }
-
-        .site-name {
-            display: block;
-            font-size: 1.25rem; 
-            font-weight: bold;
-            margin-bottom: 2px;
-            white-space: nowrap;
-            line-height: 1.1;
-        }
-
-        .site-subheading {
-            display: block;
-            font-size: 0.53rem;
-            font-weight: normal;
-            white-space: nowrap;
-            line-height: 1;
-            margin-bottom: 12px;
-        }
+        .site-name-wrapper { display: inline-flex; flex-direction: column; cursor: pointer; padding-bottom: 30px; }
+        .site-name { font-size: 1.25rem; font-weight: bold; line-height: 1.1; }
+        .site-subheading { font-size: 0.53rem; line-height: 1; margin: 2px 0 12px; }
 
         .inv-grad-box {
-            background: linear-gradient(to right, 
-                var(--theme-c1), 
-                var(--theme-c2), 
-                var(--theme-c3), 
-                var(--theme-c1));
+            background: linear-gradient(to right, var(--theme-c1), var(--theme-c2), var(--theme-c3), var(--theme-c1));
             background-size: 400% auto;
             animation: gradient-flow 18s linear infinite;
-            display: inline-block;
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            color: transparent;
         }
 
-        .no-grad {
-            background: none !important;
-            animation: none !important;
-            -webkit-text-fill-color: var(--text-base) !important;
-            color: var(--text-base) !important;
-        }
+        .no-grad { -webkit-text-fill-color: var(--text-base) !important; background: none !important; animation: none !important; }
 
-        @keyframes gradient-flow {
-            0% { background-position: 0% center; }
-            100% { background-position: 400% center; }
-        }
+        @keyframes gradient-flow { to { background-position: 400% center; } }
 
-        .nav-menu {
-            display: none;
-            flex-direction: column;
-            gap: 6px;
-            padding-left: 0;
-            width: max-content;
-        }
+        .nav-menu { display: none; flex-direction: column; gap: 6px; }
+        .site-name-wrapper:hover .nav-menu { display: flex; }
 
-        .site-name-wrapper:hover .nav-menu {
-            display: flex;
-        }
-
-        .nav-link {
-            font-size: 0.6rem; 
-            font-weight: bold;
-            text-decoration: none;
-            cursor: pointer;
-            transition: transform 0.2s, opacity 0.2s;
-            width: fit-content;
-        }
-
+        .nav-link { font-size: 0.6rem; font-weight: bold; text-decoration: none; transition: 0.2s; width: fit-content; }
         .nav-link:hover { transform: translateX(3px); opacity: 0.8; }
 
-        .color-controls-dropdown {
-            margin-top: 15px;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            width: fit-content;
-        }
-
-        .theme-option {
-            display: flex;
-            cursor: pointer;
-            border: 1px solid var(--theme-c3); 
-            transition: border-color 0.2s;
-            padding: 1px;
-            background: #fff;
-        }
-
-        .theme-option.active { border-color: var(--text-base); border-width: 2px; }
+        .color-controls-dropdown { margin-top: 15px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .theme-option { cursor: pointer; border: 1px solid var(--theme-c3); padding: 1px; background: #fff; display: flex; }
+        .theme-option.active { border: 2px solid var(--text-base); }
         .swatch { width: 14px; height: 14px; }
 
         .blog-container {
-            position: absolute;
-            top: 100px;
-            bottom: 25vh; /* Slightly more space for the larger gallery base */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80vw;
-            overflow-y: auto;
-            padding: 40px 20px 80px 20px;
-            scrollbar-width: thin;
-            scrollbar-color: var(--theme-c2) transparent;
-            z-index: 5;
-            display: none; 
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            background-color: transparent;
-            scroll-behavior: smooth;
+            position: absolute; top: 100px; bottom: 25vh; left: 50%;
+            transform: translateX(-50%); width: 80vw;
+            overflow-y: auto; padding: 40px 20px;
+            z-index: 5; display: none; opacity: 0;
+            transition: opacity 0.5s; scroll-behavior: smooth;
         }
-
         .blog-container.active { display: block; opacity: 1; }
 
-        .close-blog-x {
-            position: sticky;
-            top: -20px;
-            float: right;
-            background: none;
-            border: none;
-            font-size: 2.5rem;
-            line-height: 1;
-            cursor: pointer;
-            color: var(--text-base);
-            z-index: 100;
-            padding: 0;
-            margin-top: -20px;
-            transition: opacity 0.3s;
-            font-family: serif;
-        }
+        .close-blog-x { position: sticky; top: -20px; float: right; background: none; border: none; font-size: 2.5rem; cursor: pointer; color: var(--text-base); z-index: 100; font-family: serif; }
 
         .post-nav {
-            position: absolute;
-            bottom: 20vh;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            padding: 15px 0;
-            width: 75vw;
-            background: linear-gradient(to top, var(--bg-main) 40%, transparent);
-            z-index: 10;
-            pointer-events: none;
+            position: absolute; bottom: 20vh; left: 50%;
+            transform: translateX(-50%); display: none;
+            justify-content: center; gap: 15px; width: 75vw; z-index: 10;
+            /* Removed white gradient background here */
         }
 
         .nav-btn {
-            pointer-events: auto;
-            background: var(--bg-main);
-            border: 1px solid var(--text-base);
-            color: var(--text-base);
-            padding: 4px 12px;
-            font-size: 0.6rem;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s;
+            background: var(--bg-main); border: 1px solid var(--text-base);
+            color: var(--text-base); padding: 4px 12px; font-size: 0.6rem;
+            font-weight: bold; cursor: pointer; text-transform: uppercase;
         }
 
-        .blog-post {
-            display: flex;
-            margin-bottom: 120px;
-            gap: 50px;
-            align-items: center; 
-            scroll-margin-top: 60px;
-        }
+        .blog-post { display: flex; margin-bottom: 120px; gap: 50px; align-items: center; scroll-margin-top: 60px; }
+        .blog-post.text-only { flex-direction: column; text-align: center; max-width: 600px; margin: 0 auto 120px; }
 
-        .blog-post.text-only {
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .blog-img-frame {
-            flex: 0 0 50%; /* Restored to take up half the width */
-            padding: 8px;
-            background-color: var(--painting-frame);
-            max-width: 100%;
-        }
-
-        .blog-img-frame img { 
-            width: 100%;
-            height: auto;
-            display: block; 
-            background-color: #fff;
-        }
+        .blog-img-frame { flex: 0 0 50%; padding: 8px; background: var(--painting-frame); }
+        .blog-img-frame img { width: 100%; display: block; background: #fff; }
 
         .blog-content { flex: 1; font-size: 0.95rem; line-height: 1.6; }
-
-        .blog-content h2 {
-            margin-top: 0;
-            margin-bottom: 4px;
-            font-size: 1.6rem; /* Restored size */
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .blog-date {
-            display: block;
-            font-size: 0.65rem;
-            font-weight: bold;
-            opacity: 0.6;
-            margin-bottom: 12px;
-            letter-spacing: 0.5px;
-        }
+        .blog-content h2 { margin: 0 0 4px; font-size: 1.6rem; text-transform: uppercase; }
+        .blog-date { display: block; font-size: 0.65rem; font-weight: bold; opacity: 0.6; margin-bottom: 12px; }
 
         .gallery-container {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100vw;
-            display: flex;
-            align-items: center; 
-            height: 90vh; /* Restored to full height */
-            overflow-x: auto;
-            overflow-y: hidden;
-            scrollbar-width: thin;
-            scrollbar-color: var(--theme-c1) rgba(0,0,0,0.05);
+            position: absolute; bottom: 0; width: 100vw; height: 90vh;
+            display: flex; align-items: center; overflow-x: auto; overflow-y: hidden;
             transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        .gallery-container.minimized { height: 20vh; }
 
-        .gallery-container.minimized { height: 20vh; align-items: center; }
+        .scroll-wrapper { display: flex; width: max-content; animation: scroll 65s linear infinite; padding: 0 20px; }
+        .painting-wrapper { height: 65vh; margin: 0 40px; padding: 5px; background: var(--painting-frame); transition: 0.6s; cursor: pointer; }
+        .gallery-container.minimized .painting-wrapper { height: 14vh; margin: 0 10px; padding: 2px; }
+        .painting { height: 100%; display: block; background: #fff; }
 
-        .scroll-wrapper {
-            display: flex;
-            white-space: nowrap;
-            width: max-content;
-            animation: scroll 65s linear infinite;
-            padding: 0 20px;
-        }
-
-        .painting-wrapper {
-            position: relative;
-            height: 65vh; /* Restored larger size */
-            margin: 0 40px; 
-            padding: 5px;
-            flex-shrink: 0;
-            background-color: var(--painting-frame); 
-            transition: all 0.6s ease;
-            cursor: pointer;
-        }
-
-        .gallery-container.minimized .painting-wrapper {
-            height: 14vh;
-            margin: 0 10px;
-            padding: 2px;
-        }
-
-        .painting { height: 100%; display: block; background-color: #ffffff; }
-
-        @keyframes scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
+        @keyframes scroll { to { transform: translateX(-50%); } }
 
         #modal {
-            display: none;
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--modal-bg);
-            padding: 40px;
-            border: 2px solid var(--theme-c1); 
-            z-index: 2000;
-            text-align: center;
-            font-size: 0.8rem;
-            min-width: 250px;
-            color: var(--text-base);
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: var(--bg-main); padding: 40px; border: 2px solid var(--theme-c1);
+            z-index: 2000; text-align: center; color: var(--text-base);
         }
-
-        .close-btn {
-            margin-top: 20px;
-            font-size: 0.6rem;
-            font-weight: bold;
-            cursor: pointer;
-            background: none;
-            border: 1px solid var(--theme-c3); 
-            color: var(--theme-c3);
-            padding: 5px 10px;
-        }
+        .close-btn { margin-top: 20px; font-size: 0.6rem; font-weight: bold; cursor: pointer; background: none; border: 1px solid var(--theme-c3); color: var(--theme-c3); padding: 5px 10px; }
     </style>
 </head>
 <body>
@@ -328,53 +116,37 @@
         <div class="site-name-wrapper" onclick="goHome()">
             <div class="site-name inv-grad-box">Ben Chmieleski</div>
             <div class="site-subheading inv-grad-box">Artist | Designer | Creator</div>
-            
-            <div class="nav-menu">
-                <div class="nav-link inv-grad-box" onclick="event.stopPropagation(); openModal('about')">About</div>
-                <div class="nav-link inv-grad-box" onclick="event.stopPropagation(); openModal('contact')">Contact</div>
-                <div class="nav-link inv-grad-box" onclick="event.stopPropagation(); openBlogOnly()">Blog</div>
+            <nav class="nav-menu">
+                <a class="nav-link inv-grad-box" onclick="event.stopPropagation(); openModal('about')">About</a>
+                <a class="nav-link inv-grad-box" onclick="event.stopPropagation(); openModal('contact')">Contact</a>
+                <a class="nav-link inv-grad-box" onclick="event.stopPropagation(); openBlogOnly()">Blog</a>
                 <div class="color-controls-dropdown">
-                    <div class="theme-option active" onclick="event.stopPropagation(); setTheme('misty', this)"><div class="swatch" style="background: #6cccb6;"></div><div class="swatch" style="background: #57648a;"></div><div class="swatch" style="background: #ab5c95;"></div></div>
-                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('electric', this)"><div class="swatch" style="background: #d9b3f2;"></div><div class="swatch" style="background: #b3d9d9;"></div><div class="swatch" style="background: #efb9da;"></div></div>
-                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('monochromeDark', this)"><div class="swatch" style="background: #cccccc;"></div><div class="swatch" style="background: #eeeeee;"></div><div class="swatch" style="background: #ffffff;"></div></div>
-                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('monochromeStatic', this)"><div class="swatch" style="background: #000000;"></div><div class="swatch" style="background: #000000;"></div><div class="swatch" style="background: #000000;"></div></div>
+                    <div class="theme-option active" onclick="event.stopPropagation(); setTheme('misty', this)"><div class="swatch" style="background:#6cccb6"></div><div class="swatch" style="background:#57648a"></div><div class="swatch" style="background:#ab5c95"></div></div>
+                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('electric', this)"><div class="swatch" style="background:#d9b3f2"></div><div class="swatch" style="background:#b3d9d9"></div><div class="swatch" style="background:#efb9da"></div></div>
+                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('monochromeDark', this)"><div class="swatch" style="background:#ccc"></div><div class="swatch" style="background:#eee"></div><div class="swatch" style="background:#fff"></div></div>
+                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('monochromeStatic', this)"><div class="swatch" style="background:#000"></div><div class="swatch" style="background:#000"></div><div class="swatch" style="background:#000"></div></div>
                 </div>
-            </div>
+            </nav>
         </div>
     </header>
 
-    <div class="blog-container" id="blog-area">
+    <main class="blog-container" id="blog-area">
         <button class="close-blog-x" onclick="closeBlog()">&times;</button>
-        <div class="blog-post text-only" id="post-intro">
+        <article class="blog-post text-only" id="post-intro">
             <div class="blog-content">
                 <h2>Portfolio Site Conception + Launch</h2>
                 <span class="blog-date">FEBRUARY 25, 2026</span>
                 <p>After having most of my creative work live in a transient state for most of my adult life, I wanted to begin to compile things together in order to weave together the story that is my creative life.</p>
             </div>
-        </div>
-        <div class="blog-post" id="post-floral">
-            <div class="blog-img-frame"><img src="art_flowers.jpg"></div>
-            <div class="blog-content"><h2>Floral</h2><span class="blog-date">FEBRUARY 25, 2026</span><p>Floral Study</p></div>
-        </div>
-        <div class="blog-post" id="post-garden">
-            <div class="blog-img-frame"><img src="art_garden.jpg"></div>
-            <div class="blog-content"><h2>Garden</h2><span class="blog-date">FEBRUARY 25, 2026</span><p>Frederik Meijer Sculpture Gardens</p></div>
-        </div>
-        <div class="blog-post" id="post-riverside">
-            <div class="blog-img-frame"><img src="art_riverside.jpg"></div>
-            <div class="blog-content"><h2>Riverside</h2><span class="blog-date">FEBRUARY 25, 2026</span><p>Riverside Park</p></div>
-        </div>
-        <div class="blog-post" id="post-reflection">
-            <div class="blog-img-frame"><img src="flipped.jpg"></div>
-            <div class="blog-content"><h2>Sunset</h2><span class="blog-date">FEBRUARY 25, 2026</span><p>Sunset Study</p></div>
-        </div>
-        <div class="blog-post" id="post-sunset">
-            <div class="blog-img-frame"><img src="art_bella.jpg"></div>
-            <div class="blog-content"><h2>Bella</h2><span class="blog-date">FEBRUARY 25, 2026</span><p>Frederik Meijer Sculpture Gardens</p></div>
-        </div>
-    </div>
+        </article>
+        <article class="blog-post" id="post-floral"><div class="blog-img-frame"><img src="art_flowers.jpg"></div><div class="blog-content"><h2>Floral</h2><span class="blog-date">FEB 25, 2026</span><p>Floral Study</p></div></article>
+        <article class="blog-post" id="post-garden"><div class="blog-img-frame"><img src="art_garden.jpg"></div><div class="blog-content"><h2>Garden</h2><span class="blog-date">FEB 25, 2026</span><p>Frederik Meijer Sculpture Gardens</p></div></article>
+        <article class="blog-post" id="post-riverside"><div class="blog-img-frame"><img src="art_riverside.jpg"></div><div class="blog-content"><h2>Riverside</h2><span class="blog-date">FEB 25, 2026</span><p>Riverside Park</p></div></article>
+        <article class="blog-post" id="post-reflection"><div class="blog-img-frame"><img src="flipped.jpg"></div><div class="blog-content"><h2>Sunset</h2><span class="blog-date">FEB 25, 2026</span><p>Sunset Study</p></div></article>
+        <article class="blog-post" id="post-sunset"><div class="blog-img-frame"><img src="art_bella.jpg"></div><div class="blog-content"><h2>Bella</h2><span class="blog-date">FEB 25, 2026</span><p>Frederik Meijer Sculpture Gardens</p></div></article>
+    </main>
 
-    <div class="post-nav" id="blog-nav" style="display: none;">
+    <div class="post-nav" id="blog-nav">
         <button class="nav-btn" onclick="navigatePost(-1)">Previous</button>
         <button class="nav-btn" onclick="navigatePost(1)">Next</button>
     </div>
@@ -396,114 +168,79 @@
 
     <div id="modal">
         <div id="modal-body"></div>
-        <button id="modal-close-btn" class="close-btn" onclick="document.getElementById('modal').style.display='none'">Close</button>
+        <button class="close-btn" onclick="document.getElementById('modal').style.display='none'">Close</button>
     </div>
 
     <script>
         const themes = {
-            misty: { colors: ['#6cccb6', '#57648a', '#ab5c95'], bg: '#ffffff', text: '#1a1a1a' }, 
-            electric: { colors: ['#d9b3f2', '#b3d9d9', '#efb9da'], bg: '#ffffff', text: '#1a1a1a' },
-            monochromeDark: { colors: ['#cccccc', '#eeeeee', '#ffffff'], bg: '#000000', text: '#f0f0f0' },
-            monochromeStatic: { colors: ['#000000', '#000000', '#000000'], bg: '#ffffff', text: '#1a1a1a' }
+            misty: { colors: ['#6cccb6', '#57648a', '#ab5c95'], bg: '#fff', text: '#1a1a1a' }, 
+            electric: { colors: ['#d9b3f2', '#b3d9d9', '#efb9da'], bg: '#fff', text: '#1a1a1a' },
+            monochromeDark: { colors: ['#ccc', '#eee', '#fff'], bg: '#000', text: '#f0f0f0' },
+            monochromeStatic: { colors: ['#000', '#000', '#000'], bg: '#fff', text: '#1a1a1a' }
         };
 
-        let currentPostIndex = 0;
-        let activePostFilter = 'all'; 
+        let currentIdx = 0;
         const postIds = ['post-intro', 'post-floral', 'post-garden', 'post-riverside', 'post-reflection', 'post-sunset'];
 
-        function goHome() {
-            closeBlog();
-            document.getElementById('modal').style.display = 'none';
-        }
-
         function setTheme(key, el) {
-            const root = document.documentElement;
             const t = themes[key];
-            root.style.setProperty('--theme-c1', t.colors[0]);
-            root.style.setProperty('--theme-c2', t.colors[1]);
-            root.style.setProperty('--theme-c3', t.colors[2]);
-            root.style.setProperty('--bg-main', t.bg);
-            root.style.setProperty('--text-base', t.text);
-            root.style.setProperty('--painting-frame', (key.startsWith('monochrome')) ? '#d3d3d3' : t.colors[0]);
-            root.style.setProperty('--modal-bg', (t.bg === '#000000') ? '#1a1a1a' : '#ffffff');
+            const root = document.documentElement.style;
+            root.setProperty('--theme-c1', t.colors[0]);
+            root.setProperty('--theme-c2', t.colors[1]);
+            root.setProperty('--theme-c3', t.colors[2]);
+            root.setProperty('--bg-main', t.bg);
+            root.setProperty('--text-base', t.text);
+            root.setProperty('--painting-frame', key.includes('mono') ? '#d3d3d3' : t.colors[0]);
 
-            const boxes = document.querySelectorAll('.inv-grad-box');
-            boxes.forEach(box => {
-                if (key === 'monochromeStatic') {
-                    box.classList.add('no-grad');
-                } else {
-                    box.classList.remove('no-grad');
-                }
-            });
-            
+            document.querySelectorAll('.inv-grad-box').forEach(b => b.classList.toggle('no-grad', key === 'monochromeStatic'));
             document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
             el.classList.add('active');
         }
 
         function scrollToPost(id, filter = 'all') {
             const blog = document.getElementById('blog-area');
-            const gallery = document.getElementById('gallery-container');
             const nav = document.getElementById('blog-nav');
-            
-            activePostFilter = filter;
-            currentPostIndex = postIds.indexOf(id);
+            currentIdx = postIds.indexOf(id);
 
-            document.querySelectorAll('.blog-post').forEach(post => {
-                post.style.display = (filter === 'text-only') 
-                    ? (post.classList.contains('text-only') ? 'flex' : 'none') 
-                    : 'flex';
-            });
+            document.querySelectorAll('.blog-post').forEach(p => 
+                p.style.display = (filter === 'text-only' && !p.classList.contains('text-only')) ? 'none' : 'flex'
+            );
 
             blog.style.display = 'block';
-            nav.style.display = (filter === 'text-only') ? 'none' : 'flex'; 
-            gallery.classList.add('minimized');
+            nav.style.display = (filter === 'text-only') ? 'none' : 'flex';
+            document.getElementById('gallery-container').classList.add('minimized');
 
             setTimeout(() => {
                 blog.classList.add('active');
-                const target = document.getElementById(id);
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }, 50); 
+                document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+            }, 50);
         }
 
         function openBlogOnly() { scrollToPost('post-intro', 'text-only'); }
+        function goHome() { closeBlog(); document.getElementById('modal').style.display = 'none'; }
 
-        function navigatePost(direction) {
-            if (activePostFilter === 'text-only') return; 
-            currentPostIndex += direction;
-            if (currentPostIndex < 0) currentPostIndex = postIds.length - 1;
-            if (currentPostIndex >= postIds.length) currentPostIndex = 0;
-            
-            const targetId = postIds[currentPostIndex];
-            document.getElementById(targetId).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        function navigatePost(dir) {
+            currentIdx = (currentIdx + dir + postIds.length) % postIds.length;
+            document.getElementById(postIds[currentIdx]).scrollIntoView({ behavior: 'smooth' });
         }
 
         function closeBlog() {
             const blog = document.getElementById('blog-area');
-            const gallery = document.getElementById('gallery-container');
-            const nav = document.getElementById('blog-nav');
             blog.classList.remove('active');
-            gallery.classList.remove('minimized');
-            setTimeout(() => {
-                if(!blog.classList.contains('active')) {
-                    blog.style.display = 'none';
-                    nav.style.display = 'none';
-                    blog.scrollTop = 0;
-                    document.querySelectorAll('.blog-post').forEach(p => p.style.display = 'flex');
-                }
-            }, 500);
+            document.getElementById('gallery-container').classList.remove('minimized');
+            document.getElementById('blog-nav').style.display = 'none';
+            setTimeout(() => { if(!blog.classList.contains('active')) blog.style.display = 'none'; }, 500);
         }
 
         function openModal(type) {
             const body = document.getElementById('modal-body');
             body.innerHTML = type === 'about' 
-                ? `<h3>Benjamin Chmieleski</h3><p>Artist & Designer located in West Michigan.<br>I paint landscapes and botanic-inspired pieces.</p>`
+                ? `<h3>Benjamin Chmieleski</h3><p>Artist & Designer in West Michigan.<br>Landscape and botanical focus.</p>`
                 : `<h3>Contact</h3><p>benchmieleski@gmail.com</p>`;
             document.getElementById('modal').style.display = 'block';
         }
 
-        window.addEventListener('keydown', (e) => {
+        window.addEventListener('keydown', e => {
             if (e.key === 'Escape') goHome();
             if (document.getElementById('blog-area').classList.contains('active')) {
                 if (e.key === 'ArrowRight') navigatePost(1);
