@@ -38,7 +38,7 @@
             flex-direction: column;
             cursor: pointer;
             padding-bottom: 30px;
-            width: min-content; /* Forces the wrapper to be only as wide as the name */
+            width: min-content;
         }
 
         .site-name {
@@ -52,9 +52,8 @@
 
         .site-subheading {
             display: block;
-            font-size: 0.53rem; /* Adjusted size to naturally match width */
+            font-size: 0.53rem;
             font-weight: normal;
-            letter-spacing: 0px; /* Removed stretching */
             white-space: nowrap;
             line-height: 1;
             margin-bottom: 12px;
@@ -146,6 +145,7 @@
             opacity: 0;
             transition: opacity 0.5s ease;
             background-color: transparent;
+            scroll-behavior: smooth;
         }
 
         .blog-container.active { display: block; opacity: 1; }
@@ -377,12 +377,12 @@
     <div class="gallery-container" id="gallery-container">
         <div class="scroll-wrapper">
             <div class="painting-wrapper" onclick="scrollToPost('post-floral')"><img src="art_flowers.jpg" class="painting"></div>
-            <div class="painting-wrapper" onclick="scrollToPost('post-garden')"><img src="art_gardens.jpg" class="painting"></div>
+            <div class="painting-wrapper" onclick="scrollToPost('post-garden')"><img src="art_garden.jpg" class="painting"></div>
             <div class="painting-wrapper" onclick="scrollToPost('post-riverside')"><img src="art_riverside.jpg" class="painting"></div>
             <div class="painting-wrapper" onclick="scrollToPost('post-reflection')"><img src="flipped.jpg" class="painting"></div>
             <div class="painting-wrapper" onclick="scrollToPost('post-sunset')"><img src="art_bella.jpg" class="painting"></div>
             <div class="painting-wrapper" onclick="scrollToPost('post-floral')"><img src="art_flowers.jpg" class="painting"></div>
-            <div class="painting-wrapper" onclick="scrollToPost('post-garden')"><img src="art_gardens.jpg" class="painting"></div>
+            <div class="painting-wrapper" onclick="scrollToPost('post-garden')"><img src="art_garden.jpg" class="painting"></div>
             <div class="painting-wrapper" onclick="scrollToPost('post-riverside')"><img src="art_riverside.jpg" class="painting"></div>
             <div class="painting-wrapper" onclick="scrollToPost('post-reflection')"><img src="flipped.jpg" class="painting"></div>
             <div class="painting-wrapper" onclick="scrollToPost('post-sunset')"><img src="art_bella.jpg" class="painting"></div>
@@ -439,18 +439,32 @@
             const blog = document.getElementById('blog-area');
             const gallery = document.getElementById('gallery-container');
             const nav = document.getElementById('blog-nav');
+            
             activePostFilter = filter;
-            document.querySelectorAll('.blog-post').forEach(post => {
-                post.style.display = (filter === 'text-only') ? (post.classList.contains('text-only') ? 'flex' : 'none') : 'flex';
-            });
+            
+            // Sync current index based on the ID
             currentPostIndex = postIds.indexOf(id);
+
+            // Set visibility of posts before scrolling
+            document.querySelectorAll('.blog-post').forEach(post => {
+                post.style.display = (filter === 'text-only') 
+                    ? (post.classList.contains('text-only') ? 'flex' : 'none') 
+                    : 'flex';
+            });
+
+            // Trigger the UI change
             blog.style.display = 'block';
             nav.style.display = (filter === 'text-only') ? 'none' : 'flex'; 
+            gallery.classList.add('minimized');
+
+            // Wait for display:block to take effect before scrolling and animating opacity
             setTimeout(() => {
                 blog.classList.add('active');
-                gallery.classList.add('minimized');
-                document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-            }, 50);
+                const target = document.getElementById(id);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 50); 
         }
 
         function openBlogOnly() { scrollToPost('post-intro', 'text-only'); }
@@ -460,7 +474,10 @@
             currentPostIndex += direction;
             if (currentPostIndex < 0) currentPostIndex = postIds.length - 1;
             if (currentPostIndex >= postIds.length) currentPostIndex = 0;
-            document.getElementById(postIds[currentPostIndex]).scrollIntoView({ behavior: 'smooth' });
+            
+            // Ensure intro isn't shown in image-gallery navigation loop if preferred
+            const targetId = postIds[currentPostIndex];
+            document.getElementById(targetId).scrollIntoView({ behavior: 'smooth' });
         }
 
         function closeBlog() {
