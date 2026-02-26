@@ -283,7 +283,7 @@
         .color-controls-dropdown {
             margin-top: 10px;
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(6, 1fr);
             gap: 6px;
             width: fit-content;
         }
@@ -340,13 +340,11 @@
                 <div class="nav-link inv-grad-box" onclick="event.stopPropagation(); openBlogOnly()">Blog</div>
                 <div class="color-controls-dropdown">
                     <div class="theme-option active" onclick="event.stopPropagation(); setTheme('electric', this)"><div class="swatch" style="background: #d9b3f2;"></div><div class="swatch" style="background: #b3d9d9;"></div><div class="swatch" style="background: #efb9da;"></div></div>
-                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('jewel', this)"><div class="swatch" style="background: #000080;"></div><div class="swatch" style="background: #daa520;"></div><div class="swatch" style="background: #ff00ff;"></div></div>
-                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('autumn', this)"><div class="swatch" style="background: #e4a578;"></div><div class="swatch" style="background: #d0d166;"></div><div class="swatch" style="background: #af9991;"></div></div>
-                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('monochrome', this)"><div class="swatch" style="background: #000000;"></div><div class="swatch" style="background: #444444;"></div><div class="swatch" style="background: #e0e0e0;"></div></div>
+                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('misty', this)"><div class="swatch" style="background: #6cccb6;"></div><div class="swatch" style="background: #57648a;"></div><div class="swatch" style="background: #ab5c95;"></div></div>
+                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('jungle', this)"><div class="swatch" style="background: #7851a9;"></div><div class="swatch" style="background: #32cd32;"></div><div class="swatch" style="background: #fffacd;"></div></div>
                     <div class="theme-option" onclick="event.stopPropagation(); setTheme('fuzzy', this)"><div class="swatch" style="background: #ffc0cb;"></div><div class="swatch" style="background: #ffd1dc;"></div><div class="swatch" style="background: #ff69b4;"></div></div>
                     <div class="theme-option" onclick="event.stopPropagation(); setTheme('freezy', this)"><div class="swatch" style="background: #e0ffff;"></div><div class="swatch" style="background: #afeeee;"></div><div class="swatch" style="background: #00ced1;"></div></div>
-                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('jungle', this)"><div class="swatch" style="background: #7851a9;"></div><div class="swatch" style="background: #32cd32;"></div><div class="swatch" style="background: #fffacd;"></div></div>
-                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('minimal', this)"><div class="swatch" style="background: #ffffff;"></div><div class="swatch" style="background: #f5f5f5;"></div><div class="swatch" style="background: #d3d3d3;"></div></div>
+                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('monochrome', this)"><div class="swatch" style="background: #000000;"></div><div class="swatch" style="background: #444444;"></div><div class="swatch" style="background: #e0e0e0;"></div></div>
                 </div>
             </div>
         </div>
@@ -411,13 +409,11 @@
     <script>
         const themes = {
             electric: { colors: ['#d9b3f2', '#b3d9d9', '#efb9da'], bg: '#ffffff', text: '#1a1a1a', nameText: '#ffffff' },
-            jewel: { colors: ['#000080', '#daa520', '#ff00ff'], bg: '#daa520', text: '#ffffff', nameText: '#ffffff' }, 
-            autumn: { colors: ['#e4a578', '#d0d166', '#af9991'], bg: '#d0d166', text: '#1a1a1a', nameText: '#000000' },
-            monochrome: { colors: ['#000000', '#444444', '#e0e0e0'], bg: '#000000', text: '#ffffff', nameText: '#ffffff' },
+            misty: { colors: ['#6cccb6', '#57648a', '#ab5c95'], bg: '#ffffff', text: '#1a1a1a', nameText: '#ffffff' }, 
+            jungle: { colors: ['#7851a9', '#32cd32', '#fffacd'], bg: '#32cd32', text: '#1a1a1a', nameText: '#000000' },
             fuzzy: { colors: ['#ffc0cb', '#ffd1dc', '#ff69b4'], bg: '#ffd1dc', text: '#1a1a1a', nameText: '#ffffff' },
             freezy: { colors: ['#e0ffff', '#afeeee', '#00ced1'], bg: '#f0f8ff', text: '#1a1a1a', nameText: '#ffffff' },
-            jungle: { colors: ['#7851a9', '#32cd32', '#fffacd'], bg: '#32cd32', text: '#1a1a1a', nameText: '#000000' },
-            minimal: { colors: ['#ffffff', '#f5f5f5', '#d3d3d3'], bg: '#ffffff', text: '#000000', nameText: '#000000' }
+            monochrome: { colors: ['#000000', '#444444', '#e0e0e0'], bg: '#000000', text: '#ffffff', nameText: '#ffffff' }
         };
 
         let currentPostIndex = 0;
@@ -439,7 +435,7 @@
             root.style.setProperty('--text-base', t.text);
             root.style.setProperty('--name-text', t.nameText);
             root.style.setProperty('--modal-bg', (t.bg === '#000000') ? '#1e1e1e' : '#ffffff');
-            root.style.setProperty('--painting-frame', (key === 'monochrome' || key === 'minimal') ? '#d3d3d3' : t.colors[0]);
+            root.style.setProperty('--painting-frame', (key === 'monochrome') ? '#d3d3d3' : t.colors[0]);
             
             document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
             el.classList.add('active');
