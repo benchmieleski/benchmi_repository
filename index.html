@@ -132,10 +132,10 @@
         .blog-container {
             position: absolute;
             top: 100px;
-            bottom: 22vh;
+            bottom: 25vh; /* Slightly more space for the larger gallery base */
             left: 50%;
             transform: translateX(-50%);
-            width: 75vw;
+            width: 80vw;
             overflow-y: auto;
             padding: 40px 20px 80px 20px;
             scrollbar-width: thin;
@@ -169,7 +169,7 @@
 
         .post-nav {
             position: absolute;
-            bottom: 18vh;
+            bottom: 20vh;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -199,8 +199,8 @@
         .blog-post {
             display: flex;
             margin-bottom: 120px;
-            gap: 40px;
-            align-items: center; /* Aligns content better for portrait images */
+            gap: 50px;
+            align-items: center; 
             scroll-margin-top: 60px;
         }
 
@@ -214,19 +214,17 @@
         }
 
         .blog-img-frame {
-            flex: 0 1 auto;
-            padding: 5px;
+            flex: 0 0 50%; /* Restored to take up half the width */
+            padding: 8px;
             background-color: var(--painting-frame);
             max-width: 100%;
-            margin: 0 auto;
         }
 
         .blog-img-frame img { 
-            max-width: 100%;
-            max-height: 65vh; /* Prevents portrait images from being cut off */
+            width: 100%;
+            height: auto;
             display: block; 
             background-color: #fff;
-            object-fit: contain;
         }
 
         .blog-content { flex: 1; font-size: 0.95rem; line-height: 1.6; }
@@ -234,7 +232,7 @@
         .blog-content h2 {
             margin-top: 0;
             margin-bottom: 4px;
-            font-size: 1.4rem;
+            font-size: 1.6rem; /* Restored size */
             letter-spacing: 1px;
             text-transform: uppercase;
         }
@@ -255,7 +253,7 @@
             width: 100vw;
             display: flex;
             align-items: center; 
-            height: 80vh; 
+            height: 90vh; /* Restored to full height */
             overflow-x: auto;
             overflow-y: hidden;
             scrollbar-width: thin;
@@ -263,7 +261,7 @@
             transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .gallery-container.minimized { height: 18vh; align-items: center; }
+        .gallery-container.minimized { height: 20vh; align-items: center; }
 
         .scroll-wrapper {
             display: flex;
@@ -275,9 +273,9 @@
 
         .painting-wrapper {
             position: relative;
-            height: 50vh; 
-            margin: 0 30px; 
-            padding: 3px;
+            height: 65vh; /* Restored larger size */
+            margin: 0 40px; 
+            padding: 5px;
             flex-shrink: 0;
             background-color: var(--painting-frame); 
             transition: all 0.6s ease;
@@ -285,9 +283,9 @@
         }
 
         .gallery-container.minimized .painting-wrapper {
-            height: 12vh;
+            height: 14vh;
             margin: 0 10px;
-            padding: 1.5px;
+            padding: 2px;
         }
 
         .painting { height: 100%; display: block; background-color: #ffffff; }
@@ -450,7 +448,6 @@
             activePostFilter = filter;
             currentPostIndex = postIds.indexOf(id);
 
-            // Set content visibility
             document.querySelectorAll('.blog-post').forEach(post => {
                 post.style.display = (filter === 'text-only') 
                     ? (post.classList.contains('text-only') ? 'flex' : 'none') 
@@ -461,7 +458,6 @@
             nav.style.display = (filter === 'text-only') ? 'none' : 'flex'; 
             gallery.classList.add('minimized');
 
-            // Timeout ensures layout has updated so scrollIntoView hits the right spot
             setTimeout(() => {
                 blog.classList.add('active');
                 const target = document.getElementById(id);
