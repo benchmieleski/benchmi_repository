@@ -54,72 +54,94 @@
         .theme-option.active { border: 2px solid var(--text-base); }
         .swatch { width: 14px; height: 14px; }
 
-        /* BLOG CONTAINER UPDATED FOR NO HORIZONTAL SCROLL */
+        /* BLOG CONTAINER ADJUSTMENTS */
         .blog-container {
             position: absolute; 
-            top: 100px; 
-            bottom: 25vh; 
+            top: 80px; 
+            height: 70vh; /* Fits neatly above the 20vh minimized gallery */
             left: 50%;
             transform: translateX(-50%); 
-            width: 90vw;
-            max-width: 1100px;
-            overflow-y: auto; 
-            overflow-x: hidden; 
-            padding: 20px;
+            width: 85vw;
+            overflow-y: scroll; 
+            overflow-x: hidden;
             z-index: 5; 
             display: none; 
             opacity: 0;
             transition: opacity 0.5s; 
             scroll-behavior: smooth;
+            scroll-snap-type: y mandatory; /* Snaps to each post */
         }
         .blog-container.active { display: block; opacity: 1; }
 
-        .close-blog-x { position: sticky; top: 0; float: right; background: none; border: none; font-size: 2.5rem; cursor: pointer; color: var(--text-base); z-index: 100; font-family: serif; }
+        .close-blog-x { 
+            position: fixed; 
+            top: 20px; 
+            right: 40px; 
+            background: none; 
+            border: none; 
+            font-size: 2.5rem; 
+            cursor: pointer; 
+            color: var(--text-base); 
+            z-index: 1001; 
+            font-family: serif; 
+        }
 
         .post-nav {
-            position: absolute; bottom: 20vh; left: 50%;
-            transform: translateX(-50%); display: none;
-            justify-content: center; gap: 15px; width: 75vw; z-index: 10;
+            position: fixed; 
+            bottom: 22vh; 
+            left: 50%;
+            transform: translateX(-50%); 
+            display: none;
+            justify-content: center; 
+            gap: 15px; 
+            width: fit-content; 
+            z-index: 10;
         }
 
         .nav-btn {
             background: var(--bg-main); border: 1px solid var(--text-base);
-            color: var(--text-base); padding: 4px 12px; font-size: 0.6rem;
+            color: var(--text-base); padding: 6px 16px; font-size: 0.7rem;
             font-weight: bold; cursor: pointer; text-transform: uppercase;
         }
 
-        /* FLEX LAYOUT FOR SIDE-BY-SIDE VIEW */
+        /* INDIVIDUAL POST VIEWPORT LOCK */
         .blog-post { 
             display: flex; 
-            flex-direction: row; 
-            margin-bottom: 15vh; 
+            height: 70vh; /* Match container height */
             gap: 40px; 
             align-items: center; 
             justify-content: center;
-            scroll-margin-top: 40px; 
-            width: 100%;
+            scroll-snap-align: center; /* Snaps post to center of view */
+            box-sizing: border-box;
+            padding: 20px 0;
         }
-        .blog-post.text-only { flex-direction: column; text-align: center; max-width: 600px; margin: 0 auto 120px; }
 
         .blog-img-frame { 
-            flex: 0 1 55%; 
-            max-width: 600px; 
+            height: 100%; 
+            max-width: 50%;
             padding: 8px; 
             background: var(--painting-frame); 
+            display: flex;
+            align-items: center;
             box-sizing: border-box;
         }
-        .blog-img-frame img { width: 100%; height: auto; display: block; background: #fff; }
+        .blog-img-frame img { 
+            max-height: 100%; 
+            max-width: 100%; 
+            object-fit: contain; 
+            display: block; 
+            background: #fff; 
+        }
 
         .blog-content { 
-            flex: 1; 
-            min-width: 250px; 
+            max-width: 400px;
             font-size: 0.95rem; 
             line-height: 1.6; 
-            text-align: left;
         }
         .blog-content h2 { margin: 0 0 4px; font-size: 1.6rem; text-transform: uppercase; }
         .blog-date { display: block; font-size: 0.65rem; font-weight: bold; opacity: 0.6; margin-bottom: 12px; }
 
+        /* GALLERY */
         .gallery-container {
             position: absolute; bottom: 0; width: 100vw; height: 90vh;
             display: flex; align-items: center; overflow-x: auto; overflow-y: hidden;
@@ -140,12 +162,6 @@
             z-index: 2000; text-align: center; color: var(--text-base);
         }
         .close-btn { margin-top: 20px; font-size: 0.6rem; font-weight: bold; cursor: pointer; background: none; border: 1px solid var(--theme-c3); color: var(--theme-c3); padding: 5px 10px; }
-
-        /* Responsive stack for smaller screens */
-        @media (max-width: 768px) {
-            .blog-post { flex-direction: column; text-align: center; }
-            .blog-content { text-align: center; }
-        }
     </style>
 </head>
 <body>
@@ -168,11 +184,12 @@
         </div>
     </header>
 
+    <button class="close-blog-x" id="close-x" style="display:none" onclick="closeBlog()">&times;</button>
+
     <main class="blog-container" id="blog-area">
-        <button class="close-blog-x" onclick="closeBlog()">&times;</button>
-        <article class="blog-post text-only" id="post-intro">
+        <article class="blog-post" id="post-intro">
             <div class="blog-content">
-                <h2>Portfolio Site Conception + Launch</h2>
+                <h2>Portfolio Site Conception</h2>
                 <span class="blog-date">FEBRUARY 25, 2026</span>
                 <p>After having most of my creative work live in a transient state for most of my adult life, I wanted to begin to compile things together in order to weave together the story that is my creative life.</p>
             </div>
@@ -238,33 +255,34 @@
         function scrollToPost(id, filter = 'all') {
             const blog = document.getElementById('blog-area');
             const nav = document.getElementById('blog-nav');
+            const closeX = document.getElementById('close-x');
             currentIdx = postIds.indexOf(id);
 
-            document.querySelectorAll('.blog-post').forEach(p => 
-                p.style.display = (filter === 'text-only' && !p.classList.contains('text-only')) ? 'none' : 'flex'
-            );
-
             blog.style.display = 'block';
-            nav.style.display = (filter === 'text-only') ? 'none' : 'flex';
+            nav.style.display = 'flex';
+            closeX.style.display = 'block';
             document.getElementById('gallery-container').classList.add('minimized');
 
             setTimeout(() => {
                 blog.classList.add('active');
-                document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+                const target = document.getElementById(id);
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 50);
         }
 
-        function openBlogOnly() { scrollToPost('post-intro', 'text-only'); }
+        function openBlogOnly() { scrollToPost('post-intro'); }
         function goHome() { closeBlog(); document.getElementById('modal').style.display = 'none'; }
 
         function navigatePost(dir) {
             currentIdx = (currentIdx + dir + postIds.length) % postIds.length;
-            document.getElementById(postIds[currentIdx]).scrollIntoView({ behavior: 'smooth' });
+            document.getElementById(postIds[currentIdx]).scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
         function closeBlog() {
             const blog = document.getElementById('blog-area');
+            const closeX = document.getElementById('close-x');
             blog.classList.remove('active');
+            closeX.style.display = 'none';
             document.getElementById('gallery-container').classList.remove('minimized');
             document.getElementById('blog-nav').style.display = 'none';
             setTimeout(() => { if(!blog.classList.contains('active')) blog.style.display = 'none'; }, 500);
@@ -281,8 +299,8 @@
         window.addEventListener('keydown', e => {
             if (e.key === 'Escape') goHome();
             if (document.getElementById('blog-area').classList.contains('active')) {
-                if (e.key === 'ArrowRight') navigatePost(1);
-                if (e.key === 'ArrowLeft') navigatePost(-1);
+                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigatePost(1);
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') navigatePost(-1);
             }
         });
     </script>
