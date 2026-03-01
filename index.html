@@ -98,7 +98,12 @@
             display: block; background: #fff; 
         }
 
-        .blog-content { max-width: 400px; font-size: 0.95rem; line-height: 1.6; }
+        .blog-content { 
+            max-width: 450px; 
+            font-size: 0.95rem; 
+            line-height: 1.6; 
+            text-align: center; /* Centered all text */
+        }
         .blog-content h2 { margin: 0 0 4px; font-size: 1.6rem; text-transform: none; }
         .blog-date { display: block; font-size: 0.65rem; font-weight: bold; opacity: 0.6; margin-bottom: 12px; }
 
@@ -118,7 +123,6 @@
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* Logic to hide text placeholders on home page */
         .painting-wrapper.text-item { display: none; }
         .gallery-container.minimized .painting-wrapper.text-item { display: flex; height: 14vh; margin: 0 10px; padding: 2px; }
         .gallery-container.minimized .painting-wrapper { height: 14vh; margin: 0 10px; padding: 2px; }
@@ -216,7 +220,6 @@
             const blogArea = document.getElementById('blog-area');
             const galleryScroll = document.getElementById('gallery-scroll');
             
-            // 1. Build Text Posts
             textPosts.forEach(post => {
                 postIds.push(post.id);
                 blogArea.innerHTML += `
@@ -229,21 +232,19 @@
                     </article>`;
             });
 
-            // 2. Build Painting Posts
             paintings.forEach(art => {
                 postIds.push(art.id);
                 blogArea.innerHTML += `
                     <article class="blog-post" id="${art.id}">
                         <div class="blog-img-frame"><img src="${art.img}"></div>
                         <div class="blog-content">
-                            <h2>${art.title}</h2>
+                            <h2 class="inv-grad-box">${art.title}</h2>
                             <span class="blog-date">${art.date}</span>
                             <p>${art.desc}</p>
                         </div>
                     </article>`;
             });
 
-            // 3. Build Gallery
             let galleryHTML = '';
             textPosts.forEach(post => {
                 galleryHTML += `
@@ -310,8 +311,8 @@
         function openModal(type) {
             const body = document.getElementById('modal-body');
             body.innerHTML = type === 'about' 
-                ? `<h3>Benjamin Chmieleski</h3><p>Artist & Designer in West Michigan.<br>Landscape and botanical focus.</p>`
-                : `<h3>Contact</h3><p>benchmieleski@gmail.com</p>`;
+                ? `<h3 class="inv-grad-box">Benjamin Chmieleski</h3><p>Artist & Designer in West Michigan.<br>Landscape and botanical focus.</p>`
+                : `<h3 class="inv-grad-box">Contact</h3><p>benchmieleski@gmail.com</p>`;
             document.getElementById('modal').style.display = 'block';
         }
 
@@ -323,7 +324,6 @@
             }
         });
 
-        // Initialize on load
         document.addEventListener('DOMContentLoaded', initSite);
     </script>
 </body>
