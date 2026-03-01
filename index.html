@@ -58,7 +58,7 @@
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            display: inline-block; /* Required for background-clip on some elements */
+            display: inline-block;
         }
 
         .no-grad { -webkit-text-fill-color: var(--text-base) !important; background: none !important; animation: none !important; }
@@ -161,6 +161,7 @@
         .blog-content h2 { margin: 0 0 4px; font-size: 1.6rem; text-transform: uppercase; }
         .blog-date { display: block; font-size: 0.65rem; font-weight: bold; opacity: 0.6; margin-bottom: 12px; }
 
+        /* GALLERY (Automated Slow Scroll) */
         .gallery-container {
             position: absolute; bottom: 0; width: 100vw; height: 90vh;
             display: flex; align-items: center; overflow-x: auto; overflow-y: hidden;
@@ -168,8 +169,22 @@
             -webkit-overflow-scrolling: touch;
         }
         .gallery-container.minimized { height: 20vh; }
+        .gallery-container.minimized .scroll-wrapper { animation-play-state: paused; }
 
-        .scroll-wrapper { display: flex; width: max-content; padding: 0 100px; }
+        .scroll-wrapper { 
+            display: flex; 
+            width: max-content; 
+            padding: 0 100px;
+            animation: slow-scroll 80s linear infinite;
+        }
+        
+        .scroll-wrapper:hover { animation-play-state: paused; }
+
+        @keyframes slow-scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
         .painting-wrapper { 
             height: 65vh; 
             margin: 0 40px; 
@@ -235,6 +250,11 @@
 
     <div class="gallery-container" id="gallery-container">
         <div class="scroll-wrapper">
+            <div class="painting-wrapper" onclick="scrollToPost('post-floral')"><img src="art_flowers.jpg" class="painting"></div>
+            <div class="painting-wrapper" onclick="scrollToPost('post-garden')"><img src="art_garden.jpg" class="painting"></div>
+            <div class="painting-wrapper" onclick="scrollToPost('post-riverside')"><img src="art_riverside.jpg" class="painting"></div>
+            <div class="painting-wrapper" onclick="scrollToPost('post-reflection')"><img src="art_sunset.jpg" class="painting"></div>
+            <div class="painting-wrapper" onclick="scrollToPost('post-sunset')"><img src="art_bella.jpg" class="painting"></div>
             <div class="painting-wrapper" onclick="scrollToPost('post-floral')"><img src="art_flowers.jpg" class="painting"></div>
             <div class="painting-wrapper" onclick="scrollToPost('post-garden')"><img src="art_garden.jpg" class="painting"></div>
             <div class="painting-wrapper" onclick="scrollToPost('post-riverside')"><img src="art_riverside.jpg" class="painting"></div>
