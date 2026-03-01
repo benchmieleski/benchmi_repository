@@ -50,20 +50,14 @@
         .nav-link { font-size: 0.6rem; font-weight: bold; text-decoration: none; transition: 0.2s; width: fit-content; cursor: pointer; color: inherit;}
         .nav-link:hover { transform: translateX(3px); opacity: 0.8; }
 
-        /* THEME CONTROLS */
         .color-controls-dropdown { margin-top: 15px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
         .theme-option { 
-            cursor: pointer; 
-            border: 1px solid var(--theme-c3); 
-            padding: 1px; 
-            background: #fff; 
-            display: flex; 
-            width: fit-content;
+            cursor: pointer; border: 1px solid var(--theme-c3); padding: 1px; 
+            background: #fff; display: flex; width: fit-content;
         }
         .theme-option.active { border: 2px solid var(--text-base); }
-        .swatch { width: 12px; height: 12px; } /* Slightly smaller to fit 4 */
+        .swatch { width: 12px; height: 12px; }
 
-        /* BLOG CONTAINER & POSTS */
         .blog-container {
             position: absolute; top: 80px; height: 75vh; left: 50%;
             transform: translateX(-50%); width: 90vw;
@@ -92,51 +86,39 @@
         }
 
         .blog-post { 
-            display: flex; 
-            flex-direction: column; 
-            height: 75vh; 
-            gap: 20px; 
-            align-items: center; 
-            justify-content: flex-start; 
-            scroll-snap-align: center; 
-            box-sizing: border-box; 
-            padding: 40px 0;
+            display: flex; flex-direction: column; height: 75vh; 
+            gap: 24px; align-items: center; justify-content: flex-start;
+            scroll-snap-align: center; box-sizing: border-box; padding: 40px 0;
         }
 
+        /* Frame Logic - Prevent Cropping */
         .blog-img-frame { 
-            max-height: 50%; 
-            width: auto;
+            flex-shrink: 0; /* Prevents the frame from squishing */
             padding: 8px; 
             background: var(--painting-frame); 
-            display: flex;
-            align-items: center; 
+            display: flex; align-items: center; justify-content: center;
             box-sizing: border-box;
+            max-width: 90%;
         }
         .blog-img-frame img { 
-            max-height: 45vh; 
+            max-height: 40vh; /* Reduced slightly to ensure border fits screen */
             max-width: 100%; 
             object-fit: contain; 
-            display: block; 
-            background: #fff; 
+            display: block; background: #fff; 
         }
 
         .blog-content { 
-            max-width: 600px; 
-            font-size: 0.95rem; 
-            line-height: 1.6; 
-            text-align: center;
+            max-width: 600px; font-size: 0.95rem; line-height: 1.6; text-align: center;
         }
         .blog-content h2 { margin: 0 0 4px; font-size: 1.6rem; text-transform: none; }
         .blog-date { display: block; font-size: 0.65rem; font-weight: bold; opacity: 0.6; margin-bottom: 8px; }
 
-        /* GALLERY */
         .gallery-container {
             position: absolute; bottom: 0; width: 100vw; height: 90vh;
             display: flex; align-items: center; overflow-x: auto; overflow-y: hidden;
             transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .gallery-container.minimized { height: 18vh; }
-
         .scroll-wrapper { display: flex; width: max-content; animation: scroll 65s linear infinite; padding: 0 20px; }
         .scroll-wrapper:hover { animation-play-state: paused; } 
 
@@ -149,18 +131,14 @@
         .painting-wrapper.text-item { display: none; }
         .gallery-container.minimized .painting-wrapper.text-item { display: flex; height: 12vh; margin: 0 10px; padding: 2px; }
         .gallery-container.minimized .painting-wrapper { height: 12vh; margin: 0 10px; padding: 2px; }
-        
         .painting { height: 100%; display: block; background: #fff; }
 
         .text-post-placeholder {
             width: 100%; height: 100%; background: #fff;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
             color: var(--painting-frame); border: 1px solid #eee;
-            aspect-ratio: 1 / 1; text-align: center;
-            padding: 5px; box-sizing: border-box; text-transform: uppercase;
+            aspect-ratio: 1 / 1; text-align: center; padding: 5px; box-sizing: border-box; text-transform: uppercase;
         }
-
         .placeholder-label { font-size: 0.55rem; font-weight: bold; margin-bottom: 2px; }
         .placeholder-date { font-size: 0.35rem; opacity: 0.7; }
 
