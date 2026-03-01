@@ -1,335 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ben Chmieleski | Artist & Designer</title>
-    <style>
-        :root {
-            --bg-main: #ffffff;
-            --text-base: #1a1a1a;
-            --theme-c1: #6cccb6; 
-            --theme-c2: #57648a; 
-            --theme-c3: #ab5c95; 
-            --painting-frame: #6cccb6; 
+<style>
+    /* ... existing styles ... */
+
+    header { 
+        position: fixed; 
+        top: 40px; 
+        left: 40px; 
+        /* Higher than blog-container (5) and close-x (1001) */
+        z-index: 3000; 
+        /* Prevents disappearing against white content */
+        background: transparent;
+    }
+
+    /* Ensure the wrapper doesn't get lost on scroll */
+    .site-name-wrapper { 
+        display: inline-flex; 
+        flex-direction: column; 
+        cursor: pointer; 
+        padding: 0 15px 30px 0; 
+    }
+
+    /* ... rest of your styles ... */
+</style>
+
+<script>
+    const textPosts = [
+        { 
+            id: 'post-meta', // Changed from post-intro
+            title: 'AI & Accuracy', 
+            date: 'Mar. 01, 2026', 
+            content: 'While working on the html for this portfolio site, google gemini decided to go ahead and add a second blog post beyond my "Portfolio Site Conception" post below. No thanks. In what world would that seem okay? Im not opposed to AI (clearly) but I do think the outputs should all be examined via fine-toothed comb to ensure accuracy... human (for now) Ben signing off'
+        },
+        { 
+            id: 'post-intro', 
+            title: 'Portfolio Site Conception', 
+            date: 'Feb. 25, 2026', 
+            content: 'After having most of my creative work live in a transient state for most of my adult life, I wanted to begin to compile things together in order to weave together the story that is my creative life.'
         }
+    ];
 
-        body, html {
-            margin: 0; padding: 0;
-            overflow: hidden;
-            background: var(--bg-main);
-            color: var(--text-base);
-            font-family: sans-serif;
-            height: 100vh;
-            transition: background 0.4s, color 0.4s;
-        }
-
-        header { position: fixed; top: 40px; left: 40px; z-index: 1000; }
-
-        .site-name-wrapper { display: inline-flex; flex-direction: column; cursor: pointer; padding-bottom: 30px; }
-        .site-name { font-size: 1.25rem; font-weight: bold; line-height: 1.1; }
-        .site-subheading { font-size: 0.53rem; line-height: 1; margin: 2px 0 12px; }
-
-        .inv-grad-box {
-            background: linear-gradient(to right, var(--theme-c1), var(--theme-c2), var(--theme-c3), var(--theme-c1));
-            background-size: 400% auto;
-            animation: gradient-flow 18s linear infinite;
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
-        }
-
-        .no-grad { -webkit-text-fill-color: var(--text-base) !important; background: none !important; animation: none !important; }
-
-        @keyframes gradient-flow { to { background-position: 400% center; } }
-
-        .nav-menu { display: none; flex-direction: column; gap: 6px; }
-        .site-name-wrapper:hover .nav-menu { display: flex; }
-
-        .nav-link { font-size: 0.6rem; font-weight: bold; text-decoration: none; transition: 0.2s; width: fit-content; cursor: pointer; color: inherit;}
-        .nav-link:hover { transform: translateX(3px); opacity: 0.8; }
-
-        /* THEME SWATCHES */
-        .color-controls-dropdown { margin-top: 15px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .theme-option { 
-            cursor: pointer; border: 1px solid #ccc; padding: 4px; 
-            display: flex; gap: 2px; width: fit-content; transition: border 0.2s;
-        }
-        .theme-option.active { border: 2px solid var(--text-base); padding: 3px; }
-        .swatch { width: 10px; height: 10px; border-radius: 1px; border: 1px solid rgba(0,0,0,0.05); }
-
-        /* BLOG CONTAINER */
-        .blog-container {
-            position: absolute; top: 80px; height: 75vh; left: 50%;
-            transform: translateX(-50%); width: 90vw;
-            overflow-y: scroll; overflow-x: hidden; z-index: 5; 
-            display: none; opacity: 0; transition: opacity 0.5s; 
-            scroll-behavior: smooth; scroll-snap-type: y mandatory;
-        }
-        .blog-container.active { display: block; opacity: 1; }
-
-        .close-blog-x { 
-            position: fixed; top: 20px; right: 40px; background: none; 
-            border: none; font-size: 2.5rem; cursor: pointer; 
-            color: var(--text-base); z-index: 1001; font-family: serif; 
-        }
-
-        .post-nav {
-            position: fixed; bottom: 18vh; left: 50%;
-            transform: translateX(-50%); display: none;
-            justify-content: center; gap: 15px; width: fit-content; z-index: 10;
-        }
-
-        .nav-btn {
-            background: var(--bg-main); border: 1px solid var(--text-base);
-            color: var(--text-base); padding: 6px 16px; font-size: 0.7rem;
-            font-weight: bold; cursor: pointer; text-transform: uppercase;
-        }
-
-        .blog-post { 
-            display: flex; flex-direction: column; height: 75vh; 
-            gap: 24px; align-items: center; justify-content: flex-start;
-            scroll-snap-align: center; box-sizing: border-box; padding: 40px 0;
-        }
-
-        .blog-img-frame { 
-            flex-shrink: 0; padding: 8px; background: var(--painting-frame); 
-            display: flex; align-items: center; justify-content: center;
-            box-sizing: border-box; max-width: 90%;
-        }
-        .blog-img-frame img { max-height: 40vh; max-width: 100%; object-fit: contain; display: block; background: #fff; }
-
-        .blog-content { max-width: 600px; font-size: 0.95rem; line-height: 1.6; text-align: center; }
-        .blog-content h2 { margin: 0 0 4px; font-size: 1.6rem; text-transform: none; }
-        .blog-date { display: block; font-size: 0.65rem; font-weight: bold; opacity: 0.6; margin-bottom: 8px; }
-
-        /* GALLERY */
-        .gallery-container {
-            position: absolute; bottom: 0; width: 100vw; height: 90vh;
-            display: flex; align-items: center; overflow-x: auto; overflow-y: hidden;
-            transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .gallery-container.minimized { height: 18vh; }
-        .scroll-wrapper { display: flex; width: max-content; animation: scroll 65s linear infinite; padding: 0 20px; }
-        .scroll-wrapper:hover { animation-play-state: paused; } 
-
-        .painting-wrapper { 
-            height: 65vh; margin: 0 40px; padding: 5px; 
-            background: var(--painting-frame); transition: 0.6s; cursor: pointer; 
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        .painting-wrapper.text-item { display: none; }
-        .gallery-container.minimized .painting-wrapper.text-item { display: flex; height: 12vh; margin: 0 10px; padding: 2px; }
-        .gallery-container.minimized .painting-wrapper { height: 12vh; margin: 0 10px; padding: 2px; }
-        .painting { height: 100%; display: block; background: #fff; }
-
-        .text-post-placeholder {
-            width: 100%; height: 100%; background: #fff;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: var(--painting-frame); border: 1px solid #eee;
-            aspect-ratio: 1 / 1; text-align: center; padding: 5px; box-sizing: border-box; text-transform: uppercase;
-        }
-        .placeholder-label { font-size: 0.55rem; font-weight: bold; margin-bottom: 2px; }
-        .placeholder-date { font-size: 0.35rem; opacity: 0.7; }
-
-        @keyframes scroll { to { transform: translateX(-50%); } }
-
-        /* MODAL FADE */
-        #modal {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: var(--bg-main); padding: 40px; border: 2px solid var(--theme-c1);
-            z-index: 2000; text-align: center; color: var(--text-base);
-            opacity: 0; transition: opacity 0.3s ease;
-        }
-        #modal.visible { display: block; opacity: 1; }
-        .close-btn { margin-top: 20px; font-size: 0.6rem; font-weight: bold; cursor: pointer; background: none; border: 1px solid var(--theme-c3); color: var(--theme-c3); padding: 5px 10px; }
-    </style>
-</head>
-<body>
-
-    <header>
-        <div class="site-name-wrapper" onclick="goHome()">
-            <div class="site-name inv-grad-box">Ben Chmieleski</div>
-            <div class="site-subheading inv-grad-box">Artist | Designer | Creator</div>
-            <nav class="nav-menu">
-                <a class="nav-link inv-grad-box" onclick="event.stopPropagation(); openModal('about')">About</a>
-                <a class="nav-link inv-grad-box" onclick="event.stopPropagation(); openModal('contact')">Contact</a>
-                <a class="nav-link inv-grad-box" onclick="event.stopPropagation(); openBlogOnly()">Blog</a>
-                <div class="color-controls-dropdown" id="theme-selector"></div>
-            </nav>
-        </div>
-    </header>
-
-    <button class="close-blog-x" id="close-x" style="display:none" onclick="closeBlog()">&times;</button>
-    <main class="blog-container" id="blog-area"></main>
-    <div class="post-nav" id="blog-nav">
-        <button class="nav-btn" onclick="navigatePost(-1)">Previous</button>
-        <button class="nav-btn" onclick="navigatePost(1)">Next</button>
-    </div>
-    <div class="gallery-container" id="gallery-container">
-        <div class="scroll-wrapper" id="gallery-scroll"></div>
-    </div>
-    <div id="modal">
-        <div id="modal-body"></div>
-        <button class="close-btn" onclick="closeModal()">Close</button>
-    </div>
-
-    <script>
-        // DATA DECLARED FIRST
-        const paintings = [
-            { id: 'post-floral',    img: 'art_flowers.jpg', title: 'Floral',    date: 'FEB 25, 2026', desc: 'Floral Study' },
-            { id: 'post-garden',    img: 'art_garden.jpg',  title: 'Garden',    date: 'FEB 25, 2026', desc: 'Frederik Meijer Sculpture Gardens' },
-            { id: 'post-riverside', img: 'art_riverside.jpg', title: 'Riverside', date: 'FEB 25, 2026', desc: 'Riverside Park' },
-            { id: 'post-reflection',img: 'art_sunset.jpg',  title: 'Sunset',    date: 'FEB 25, 2026', desc: 'Sunset Study' },
-            { id: 'post-sunset',    img: 'art_bella.jpg',   title: 'Bella',     date: 'FEB 25, 2026', desc: 'Frederik Meijer Sculpture Gardens' }
-        ];
-
-        const textPosts = [
-            { 
-                id: 'post-intro', 
-                title: 'Portfolio Site Conception', 
-                date: 'Mar. 01, 2026', 
-                content: 'While working on the html for this portfolio site, google gemini decided to go ahead and add a second blog post beyong my "Portfolio Site Conception" post below. No thanks. In what world would that seem okay? Im not opposed to AI (clearly) but I do think the outputs should all be examined via fine-toothed comb to ensure accuracy... human (for now) Ben signing off'
-            },
-            { 
-                id: 'post-intro', 
-                title: 'Portfolio Site Conception', 
-                date: 'Feb. 25, 2026', 
-                content: 'After having most of my creative work live in a transient state for most of my adult life, I wanted to begin to compile things together in order to weave together the story that is my creative life.'
-            }
-        ];
-
-        const themes = {
-            misty: { colors: ['#6cccb6', '#57648a', '#ab5c95'], bg: '#ffffff', text: '#1a1a1a' }, 
-            electric: { colors: ['#d9b3f2', '#b3d9d9', '#efb9da'], bg: '#ffffff', text: '#1a1a1a' },
-            monochromeDark: { colors: ['#ccc', '#eee', '#fff'], bg: '#000000', text: '#f0f0f0' },
-            monochromeStatic: { colors: ['#000', '#000', '#000'], bg: '#ffffff', text: '#1a1a1a' }
-        };
-
-        let currentIdx = 0;
-        const postIds = [];
-
-        function initSite() {
-            const blogArea = document.getElementById('blog-area');
-            const galleryScroll = document.getElementById('gallery-scroll');
-            const themeSelector = document.getElementById('theme-selector');
-            
-            // Clear to prevent duplication on re-init
-            blogArea.innerHTML = '';
-            galleryScroll.innerHTML = '';
-            themeSelector.innerHTML = '';
-            postIds.length = 0;
-
-            // Build Theme UI
-            Object.keys(themes).forEach(key => {
-                const t = themes[key];
-                const isActive = key === 'misty' ? 'active' : '';
-                themeSelector.innerHTML += `
-                    <div class="theme-option ${isActive}" style="background: ${t.bg};" onclick="event.stopPropagation(); setTheme('${key}', this)">
-                        <div class="swatch" style="background:${t.colors[0]}"></div>
-                        <div class="swatch" style="background:${t.colors[1]}"></div>
-                        <div class="swatch" style="background:${t.colors[2]}"></div>
-                    </div>`;
-            });
-
-            // Populate Post IDs and HTML
-            textPosts.forEach(post => {
-                postIds.push(post.id);
-                blogArea.innerHTML += `<article class="blog-post" id="${post.id}"><div class="blog-content"><h2 class="inv-grad-box">${post.title}</h2><span class="blog-date">${post.date}</span><p>${post.content}</p></div></article>`;
-            });
-
-            paintings.forEach(art => {
-                postIds.push(art.id);
-                blogArea.innerHTML += `<article class="blog-post" id="${art.id}"><div class="blog-content"><h2 class="inv-grad-box">${art.title}</h2><span class="blog-date">${art.date}</span><p>${art.desc}</p></div><div class="blog-img-frame"><img src="${art.img}"></div></article>`;
-            });
-
-            // Build Gallery
-            let galleryHTML = '';
-            textPosts.forEach(post => {
-                galleryHTML += `<div class="painting-wrapper text-item" onclick="scrollToPost('${post.id}')"><div class="text-post-placeholder"><div class="placeholder-label">Blog Post</div><div class="placeholder-date">${post.date}</div></div></div>`;
-            });
-            paintings.forEach(art => {
-                galleryHTML += `<div class="painting-wrapper" onclick="scrollToPost('${art.id}')"><img src="${art.img}" class="painting"></div>`;
-            });
-            galleryScroll.innerHTML = galleryHTML + galleryHTML; 
-        }
-
-        function setTheme(key, el) {
-            const t = themes[key];
-            const root = document.documentElement.style;
-            root.setProperty('--theme-c1', t.colors[0]);
-            root.setProperty('--theme-c2', t.colors[1]);
-            root.setProperty('--theme-c3', t.colors[2]);
-            root.setProperty('--bg-main', t.bg);
-            root.setProperty('--text-base', t.text);
-            root.setProperty('--painting-frame', key.includes('mono') ? '#d3d3d3' : t.colors[0]);
-            document.querySelectorAll('.inv-grad-box').forEach(b => b.classList.toggle('no-grad', key === 'monochromeStatic'));
-            document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
-            el.classList.add('active');
-        }
-
-        function scrollToPost(id) {
-            closeModal();
-            const blog = document.getElementById('blog-area');
-            blog.style.display = 'block';
-            document.getElementById('blog-nav').style.display = 'flex';
-            document.getElementById('close-x').style.display = 'block';
-            document.getElementById('gallery-container').classList.add('minimized');
-            currentIdx = postIds.indexOf(id);
-            setTimeout(() => {
-                blog.classList.add('active');
-                const target = document.getElementById(id);
-                if(target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 50);
-        }
-
-        function navigatePost(dir) {
-            currentIdx = (currentIdx + dir + postIds.length) % postIds.length;
-            const target = document.getElementById(postIds[currentIdx]);
-            if(target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-
-        function closeBlog() {
-            const blog = document.getElementById('blog-area');
-            blog.classList.remove('active');
-            document.getElementById('close-x').style.display = 'none';
-            document.getElementById('gallery-container').classList.remove('minimized');
-            document.getElementById('blog-nav').style.display = 'none';
-            setTimeout(() => { if(!blog.classList.contains('active')) blog.style.display = 'none'; }, 500);
-        }
-
-        function openModal(type) {
-            closeBlog();
-            const modal = document.getElementById('modal');
-            const body = document.getElementById('modal-body');
-            body.innerHTML = type === 'about' 
-                ? `<h3 class="inv-grad-box">Benjamin Chmieleski</h3><p>Artist & Designer in West Michigan.<br>Landscape and botanical focus.</p>`
-                : `<h3 class="inv-grad-box">Contact</h3><p>benchmieleski@gmail.com</p>`;
-            
-            modal.style.display = 'block';
-            setTimeout(() => modal.classList.add('visible'), 10);
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('modal');
-            modal.classList.remove('visible');
-            setTimeout(() => { if(!modal.classList.contains('visible')) modal.style.display = 'none'; }, 300);
-        }
-
-        function goHome() { closeModal(); closeBlog(); }
-        function openBlogOnly() { scrollToPost(postIds[0]); }
-
-        window.addEventListener('keydown', e => {
-            if (e.key === 'Escape') goHome();
-            if (document.getElementById('blog-area').classList.contains('active')) {
-                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigatePost(1);
-                if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') navigatePost(-1);
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', initSite);
-    </script>
-</body>
-</html>
+    // ... rest of your initSite and navigation logic ...
+</script>
