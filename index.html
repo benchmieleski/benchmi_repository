@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,9 +37,8 @@
 
         .site-name-wrapper { display: inline-flex; flex-direction: column; cursor: pointer; padding-bottom: 30px; align-items: flex-start; }
         
-        /* Fixed line-height for Chrome normalization */
         .site-name { font-size: 1.25rem; font-weight: bold; line-height: 1.2; margin: 0; }
-        .site-subheading { font-size: 0.53rem; line-height: 1.2; margin: 2px 0 12px; text-transform: uppercase; letter-spacing: 1px; }
+        .site-subheading { font-size: 0.53rem; line-height: 1.2; margin: 2px 0 12px; }
 
         .inv-grad-box {
             background: linear-gradient(to right, var(--theme-c1), var(--theme-c2), var(--theme-c3), var(--theme-c1));
@@ -47,7 +47,6 @@
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            /* width: fit-content ensures the gradient box doesn't stretch to the edge of the screen */
             width: fit-content;
             display: block; 
         }
@@ -102,8 +101,8 @@
         }
         .blog-img-frame img { max-height: 100%; max-width: 100%; object-fit: contain; display: block; background: #fff; }
 
-        .blog-content { max-width: 400px; font-size: 0.95rem; line-height: 1.6; }
-        .blog-content h2 { margin: 0 0 8px; font-size: 1.6rem; text-transform: uppercase; line-height: 1.2; }
+        .blog-content { max-width: 500px; font-size: 0.95rem; line-height: 1.6; text-align: center; }
+        .blog-content h2 { margin: 0 0 8px; font-size: 1.6rem; text-transform: uppercase; line-height: 1.2; display: inline-block; }
         .blog-date { display: block; font-size: 0.65rem; font-weight: bold; opacity: 0.6; margin-bottom: 12px; }
 
         .gallery-container {
@@ -142,9 +141,9 @@
             <div class="site-name inv-grad-box">Ben Chmieleski</div>
             <div class="site-subheading inv-grad-box">Artist | Designer | Creator</div>
             <nav class="nav-menu">
-                <a class="nav-link inv-grad-box" onclick="event.stopPropagation(); openModal('about')">About</a>
-                <a class="nav-link inv-grad-box" onclick="event.stopPropagation(); openModal('contact')">Contact</a>
-                <a class="nav-link inv-grad-box" onclick="event.stopPropagation(); openBlogOnly()">Blog</a>
+                <a class="nav-link inv-grad-box" onclick="event.stopPropagation(); openModal('about')">about</a>
+                <a class="nav-link inv-grad-box" onclick="event.stopPropagation(); openModal('contact')">contact</a>
+                <a class="nav-link inv-grad-box" onclick="event.stopPropagation(); openBlogOnly()">blog</a>
                 <div class="color-controls-dropdown">
                     <div class="theme-option active" onclick="event.stopPropagation(); setTheme('misty', this)"><div class="swatch" style="background:#6cccb6"></div><div class="swatch" style="background:#57648a"></div><div class="swatch" style="background:#ab5c95"></div></div>
                     <div class="theme-option" onclick="event.stopPropagation(); setTheme('electric', this)"><div class="swatch" style="background:#d9b3f2"></div><div class="swatch" style="background:#b3d9d9"></div><div class="swatch" style="background:#efb9da"></div></div>
@@ -173,6 +172,7 @@
     </div>
 
     <script>
+        // --- ADD VISUAL WORK HERE ---
         const galleryItems = [
             { id: 'post-floral', img: 'art_flowers.jpg' },
             { id: 'post-garden', img: 'art_garden.jpg' },
@@ -181,13 +181,10 @@
             { id: 'post-sunset', img: 'art_bella.jpg' }
         ];
 
+        // --- ADD TEXT-ONLY BLOG POSTS HERE ---
         const blogPosts = [
-            { id: 'post-intro', title: 'Portfolio Site Conception', date: 'FEBRUARY 25, 2026', body: 'After having most of my creative work live in a transient state for most of my adult life, I wanted to begin to compile things together in order to weave together the story that is my creative life.', img: null },
-            { id: 'post-floral', title: 'Floral', date: 'FEB 25, 2026', body: 'Floral Study', img: 'art_flowers.jpg' },
-            { id: 'post-garden', title: 'Garden', date: 'FEB 25, 2026', body: 'Frederik Meijer Sculpture Gardens', img: 'art_garden.jpg' },
-            { id: 'post-riverside', title: 'Riverside', date: 'FEB 25, 2026', body: 'Riverside Park', img: 'art_riverside.jpg' },
-            { id: 'post-reflection', title: 'Sunset', date: 'FEB 25, 2026', body: 'Sunset Study', img: 'art_sunset.jpg' },
-            { id: 'post-sunset', title: 'Bella', date: 'FEB 25, 2026', body: 'Frederik Meijer Sculpture Gardens', img: 'art_bella.jpg' }
+            { id: 'post-intro', title: 'Portfolio Site Conception', date: 'FEBRUARY 25, 2026', body: 'After having most of my creative work live in a transient state for most of my adult life, I wanted to begin to compile things together in order to weave together the story that is my creative life.' },
+            { id: 'post-philosophy', title: 'Creative Philosophy', date: 'MARCH 1, 2026', body: 'I believe in the power of art and design and their ability to inspire, challenge, and uplift. My work often explores the intersection of nature and modern structure.' }
         ];
 
         const themes = {
@@ -205,21 +202,51 @@
             const gWrapper = document.getElementById('gallery-wrapper');
             const bArea = document.getElementById('blog-area');
 
+            // Render Gallery
             const gHtml = galleryItems.map(item => `
-                <div class="painting-wrapper" onclick="scrollToPost('${item.id}')">
+                <div class="painting-wrapper" onclick="scrollToWork('${item.id}', '${item.img}')">
                     <img src="${item.img}" class="painting">
                 </div>`).join('');
             gWrapper.innerHTML = gHtml + gHtml;
 
+            // Render Blog Posts (Text Only)
             bArea.innerHTML = blogPosts.map(post => `
                 <article class="blog-post" id="${post.id}">
-                    ${post.img ? `<div class="blog-img-frame"><img src="${post.img}"></div>` : ''}
                     <div class="blog-content">
-                        <h2 class="${activeTheme === 'monochromeStatic' ? 'inv-grad-box no-grad' : 'inv-grad-box'}">${post.title}</h2>
+                        <h2 class="inv-grad-box">${post.title}</h2>
                         <span class="blog-date">${post.date}</span>
                         <p>${post.body}</p>
                     </div>
                 </article>`).join('');
+        }
+
+        // Expanded view for gallery items (remains visual)
+        function scrollToWork(id, imgPath) {
+            const bArea = document.getElementById('blog-area');
+            // Create a temporary view for the work
+            bArea.innerHTML = `
+                <article class="blog-post active">
+                    <div class="blog-img-frame"><img src="${imgPath}"></div>
+                </article>`;
+            
+            document.getElementById('blog-nav').style.display = 'none';
+            document.getElementById('close-x').style.display = 'block';
+            document.getElementById('gallery-container').classList.add('minimized');
+            bArea.style.display = 'block';
+            setTimeout(() => { bArea.classList.add('active'); }, 50);
+        }
+
+        function openBlogOnly() {
+            init(); // Reset to show the actual blog list
+            currentIdx = 0;
+            document.getElementById('blog-area').style.display = 'block';
+            document.getElementById('blog-nav').style.display = 'flex';
+            document.getElementById('close-x').style.display = 'block';
+            document.getElementById('gallery-container').classList.add('minimized');
+            setTimeout(() => {
+                document.getElementById('blog-area').classList.add('active');
+                document.getElementById(postIds[0]).scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 50);
         }
 
         function setTheme(key, el) {
@@ -237,18 +264,6 @@
             el.classList.add('active');
         }
 
-        function scrollToPost(id) {
-            currentIdx = postIds.indexOf(id);
-            document.getElementById('blog-area').style.display = 'block';
-            document.getElementById('blog-nav').style.display = 'flex';
-            document.getElementById('close-x').style.display = 'block';
-            document.getElementById('gallery-container').classList.add('minimized');
-            setTimeout(() => {
-                document.getElementById('blog-area').classList.add('active');
-                document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 50);
-        }
-
         function navigatePost(dir) {
             currentIdx = (currentIdx + dir + postIds.length) % postIds.length;
             document.getElementById(postIds[currentIdx]).scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -259,7 +274,12 @@
             document.getElementById('close-x').style.display = 'none';
             document.getElementById('gallery-container').classList.remove('minimized');
             document.getElementById('blog-nav').style.display = 'none';
-            setTimeout(() => { if(!document.getElementById('blog-area').classList.contains('active')) document.getElementById('blog-area').style.display = 'none'; }, 500);
+            setTimeout(() => { 
+                if(!document.getElementById('blog-area').classList.contains('active')) {
+                    document.getElementById('blog-area').style.display = 'none';
+                    init(); // Refresh for next interaction
+                }
+            }, 500);
         }
 
         function openModal(type) {
@@ -272,7 +292,6 @@
         }
 
         function goHome() { closeBlog(); document.getElementById('modal').style.display = 'none'; }
-        function openBlogOnly() { scrollToPost('post-intro'); }
 
         window.addEventListener('keydown', e => {
             if (e.key === 'Escape') goHome();
