@@ -90,12 +90,13 @@
         }
 
         .blog-post { 
-            display: flex; height: 70vh; gap: 40px; align-items: center; 
+            display: flex; height: 70vh; gap: 20px; align-items: center; 
             justify-content: center; scroll-snap-align: center; box-sizing: border-box; padding: 20px 0;
+            flex-direction: column; /* Stack title and image vertically */
         }
 
         .blog-img-frame { 
-            height: 100%; width: 45vw; padding: 8px; background: var(--painting-frame); 
+            height: 80%; width: auto; max-width: 80vw; padding: 8px; background: var(--painting-frame); 
             display: flex; align-items: center; justify-content: center; box-sizing: border-box;
         }
         .blog-img-frame img { max-height: 100%; max-width: 100%; object-fit: contain; display: block; background: #fff; }
@@ -214,7 +215,6 @@
                 </article>`).join('');
         }
 
-        // New Helper: Ensures clean navigation by closing existing open views
         function handleNavClick(type) {
             event.stopPropagation();
             closeModal();
@@ -228,14 +228,15 @@
         }
 
         function scrollToWork(id, imgPath, title) {
-            closeModal(); // Clean state
+            closeModal();
             const bArea = document.getElementById('blog-area');
+            // Modified: Title div placed BEFORE the image frame
             bArea.innerHTML = `
                 <article class="blog-post active">
-                    <div class="blog-img-frame"><img src="${imgPath}"></div>
                     <div class="blog-content">
                         <h2 class="inv-grad-box">${title}</h2>
                     </div>
+                    <div class="blog-img-frame"><img src="${imgPath}"></div>
                 </article>`;
             document.getElementById('blog-nav').style.display = 'none';
             document.getElementById('close-x').style.display = 'block';
