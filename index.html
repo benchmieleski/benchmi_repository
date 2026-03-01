@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,14 +31,14 @@
         ::-webkit-scrollbar-thumb { background: var(--theme-c1); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--theme-c3); }
         
-        .-container, .gallery-container { scrollbar-color: var(--theme-c1) var(--bg-main); scrollbar-width: thin; }
+        .blog-container, .gallery-container { scrollbar-color: var(--theme-c1) var(--bg-main); scrollbar-width: thin; }
 
         header { position: fixed; top: 40px; left: 40px; z-index: 1000; }
 
         .site-name-wrapper { display: inline-flex; flex-direction: column; cursor: pointer; padding-bottom: 30px; align-items: flex-start; }
         
-        .site-name { font-size: 1.25rem; font-weight: bold; line-height: 1.2; margin: 0; }
-        .site-subheading { font-size: 0.53rem; line-height: 1.2; margin: 2px 0 12px; }
+        .site-name { font-size: 1.25rem; font-weight: bold; line-height: 1.2; margin: 0; text-transform: none; }
+        .site-subheading { font-size: 0.53rem; line-height: 1.2; margin: 2px 0 12px; text-transform: none; }
 
         .inv-grad-box {
             background: linear-gradient(to right, var(--theme-c1), var(--theme-c2), var(--theme-c3), var(--theme-c1));
@@ -57,7 +58,7 @@
         .nav-menu { display: none; flex-direction: column; gap: 6px; }
         .site-name-wrapper:hover .nav-menu { display: flex; }
 
-        .nav-link { font-size: 0.6rem; font-weight: bold; text-decoration: none; transition: 0.2s; cursor: pointer; line-height: 1.2; }
+        .nav-link { font-size: 0.6rem; font-weight: bold; text-decoration: none; transition: 0.2s; cursor: pointer; line-height: 1.2; text-transform: none; }
         .nav-link:hover { transform: translateX(3px); opacity: 0.8; }
 
         .color-controls-dropdown { margin-top: 15px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
@@ -86,7 +87,7 @@
         .nav-btn {
             background: var(--bg-main); border: 1px solid var(--text-base);
             color: var(--text-base); padding: 6px 16px; font-size: 0.7rem;
-            font-weight: bold; cursor: pointer; text-transform: uppercase;
+            font-weight: bold; cursor: pointer; text-transform: none;
         }
 
         .blog-post { 
@@ -101,7 +102,7 @@
         .blog-img-frame img { max-height: 100%; max-width: 100%; object-fit: contain; display: block; background: #fff; }
 
         .blog-content { max-width: 500px; font-size: 0.95rem; line-height: 1.6; text-align: center; }
-        .blog-content h2 { margin: 0 0 8px; font-size: 1.6rem; text-transform: uppercase; line-height: 1.2; display: inline-block; }
+        .blog-content h2 { margin: 0 0 8px; font-size: 1.6rem; text-transform: none; line-height: 1.2; display: inline-block; }
         .blog-date { display: block; font-size: 0.65rem; font-weight: bold; opacity: 0.6; margin-bottom: 12px; }
 
         .gallery-container {
@@ -129,7 +130,7 @@
             background: var(--bg-main); padding: 40px; border: 2px solid var(--theme-c1);
             z-index: 2000; text-align: center; color: var(--text-base);
         }
-        #modal h3 { margin: 0 0 15px; font-size: 1.5rem; text-transform: uppercase; line-height: 1.2; }
+        #modal h3 { margin: 0 0 15px; font-size: 1.5rem; text-transform: none; line-height: 1.2; }
         .close-btn { margin-top: 20px; font-size: 0.6rem; font-weight: bold; cursor: pointer; background: none; border: 1px solid var(--theme-c3); color: var(--theme-c3); padding: 5px 10px; }
     </style>
 </head>
@@ -140,9 +141,9 @@
             <div class="site-name inv-grad-box">Ben Chmieleski</div>
             <div class="site-subheading inv-grad-box">Artist | Designer | Creator</div>
             <nav class="nav-menu">
-                <a class="nav-link inv-grad-box" onclick="event.stopPropagation(); openModal('about')">about</a>
-                <a class="nav-link inv-grad-box" onclick="event.stopPropagation(); openModal('contact')">contact</a>
-                <a class="nav-link inv-grad-box" onclick="event.stopPropagation(); openBlogOnly()">blog</a>
+                <a class="nav-link inv-grad-box" onclick="event.stopPropagation(); openModal('about')">About</a>
+                <a class="nav-link inv-grad-box" onclick="event.stopPropagation(); openModal('contact')">Contact</a>
+                <a class="nav-link inv-grad-box" onclick="event.stopPropagation(); openBlogOnly()">Blog</a>
                 <div class="color-controls-dropdown">
                     <div class="theme-option active" onclick="event.stopPropagation(); setTheme('misty', this)"><div class="swatch" style="background:#6cccb6"></div><div class="swatch" style="background:#57648a"></div><div class="swatch" style="background:#ab5c95"></div></div>
                     <div class="theme-option" onclick="event.stopPropagation(); setTheme('electric', this)"><div class="swatch" style="background:#d9b3f2"></div><div class="swatch" style="background:#b3d9d9"></div><div class="swatch" style="background:#efb9da"></div></div>
@@ -274,7 +275,7 @@
         function openModal(type) {
             const body = document.getElementById('modal-body');
             const gradClass = activeTheme === 'monochromeStatic' ? 'inv-grad-box no-grad' : 'inv-grad-box';
-            body.innerHTML = type === 'About' 
+            body.innerHTML = type === 'about' 
                 ? `<h3 class="${gradClass}">Ben Chmieleski</h3><p>Artist & Designer in West Michigan.<br>Biophilia + botanical inspirations.<br>I believe in the power of art and design and their ability to inspire, challenge, and uplift.</p>`
                 : `<h3 class="${gradClass}">Contact</h3><p>benchmieleski@gmail.com</p>`;
             document.getElementById('modal').style.display = 'block';
@@ -284,7 +285,7 @@
 
         window.addEventListener('keydown', e => {
             if (e.key === 'Escape') goHome();
-            if (document.getElementById('-area').classList.contains('active')) {
+            if (document.getElementById('blog-area').classList.contains('active')) {
                 if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigatePost(1);
                 if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') navigatePost(-1);
             }
