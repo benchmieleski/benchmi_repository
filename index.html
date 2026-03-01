@@ -136,11 +136,14 @@
 
         @keyframes scroll { to { transform: translateX(-50%); } }
 
+        /* MODAL FADE */
         #modal {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: var(--bg-main); padding: 40px; border: 2px solid var(--theme-c1);
             z-index: 2000; text-align: center; color: var(--text-base);
+            opacity: 0; transition: opacity 0.3s ease;
         }
+        #modal.visible { display: block; opacity: 1; }
         .close-btn { margin-top: 20px; font-size: 0.6rem; font-weight: bold; cursor: pointer; background: none; border: 1px solid var(--theme-c3); color: var(--theme-c3); padding: 5px 10px; }
     </style>
 </head>
@@ -174,6 +177,7 @@
     </div>
 
     <script>
+        // DATA DECLARED FIRST
         const paintings = [
             { id: 'post-floral',    img: 'art_flowers.jpg', title: 'Floral',    date: 'FEB 25, 2026', desc: 'Floral Study' },
             { id: 'post-garden',    img: 'art_garden.jpg',  title: 'Garden',    date: 'FEB 25, 2026', desc: 'Frederik Meijer Sculpture Gardens' },
@@ -184,15 +188,9 @@
 
         const textPosts = [
             { 
-                id: 'post-Overstep', 
-                title: 'AI Overstep, 
-                date: 'Mar. 01, 2026', 
-                content: 'While working on the html for this portfolio site, google gemini decided to go ahead and add a second blog post beyong my "Portfolio Site Conception" post below. No thanks. In what world would that seem okay? Im not opposed to AI (clearly) but I do think the outputs should all be examined via fine-toothed comb to ensure accuracy... human (for now) Ben signing of'
-            }
-            { 
                 id: 'post-intro', 
                 title: 'Portfolio Site Conception', 
-                date: 'Feb. 25, 2026', 
+                date: 'FEBRUARY 25, 2026', 
                 content: 'After having most of my creative work live in a transient state for most of my adult life, I wanted to begin to compile things together in order to weave together the story that is my creative life.'
             }
         ];
@@ -212,6 +210,13 @@
             const galleryScroll = document.getElementById('gallery-scroll');
             const themeSelector = document.getElementById('theme-selector');
             
+            // Clear to prevent duplication on re-init
+            blogArea.innerHTML = '';
+            galleryScroll.innerHTML = '';
+            themeSelector.innerHTML = '';
+            postIds.length = 0;
+
+            // Build Theme UI
             Object.keys(themes).forEach(key => {
                 const t = themes[key];
                 const isActive = key === 'misty' ? 'active' : '';
@@ -223,6 +228,7 @@
                     </div>`;
             });
 
+            // Populate Post IDs and HTML
             textPosts.forEach(post => {
                 postIds.push(post.id);
                 blogArea.innerHTML += `<article class="blog-post" id="${post.id}"><div class="blog-content"><h2 class="inv-grad-box">${post.title}</h2><span class="blog-date">${post.date}</span><p>${post.content}</p></div></article>`;
@@ -233,6 +239,7 @@
                 blogArea.innerHTML += `<article class="blog-post" id="${art.id}"><div class="blog-content"><h2 class="inv-grad-box">${art.title}</h2><span class="blog-date">${art.date}</span><p>${art.desc}</p></div><div class="blog-img-frame"><img src="${art.img}"></div></article>`;
             });
 
+            // Build Gallery
             let galleryHTML = '';
             textPosts.forEach(post => {
                 galleryHTML += `<div class="painting-wrapper text-item" onclick="scrollToPost('${post.id}')"><div class="text-post-placeholder"><div class="placeholder-label">Blog Post</div><div class="placeholder-date">${post.date}</div></div></div>`;
@@ -257,17 +264,8 @@
             el.classList.add('active');
         }
 
-        // NEW: Handles mutual exclusivity
-        function clearOverlays() {
-            closeModal();
-            const blog = document.getElementById('blog-area');
-            if (blog.classList.contains('active')) {
-                closeBlog();
-            }
-        }
-
         function scrollToPost(id) {
-            closeModal(); // Close any open modals first
+            closeModal();
             const blog = document.getElementById('blog-area');
             blog.style.display = 'block';
             document.getElementById('blog-nav').style.display = 'flex';
@@ -276,13 +274,15 @@
             currentIdx = postIds.indexOf(id);
             setTimeout(() => {
                 blog.classList.add('active');
-                document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'center' });
+                const target = document.getElementById(id);
+                if(target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 50);
         }
 
         function navigatePost(dir) {
             currentIdx = (currentIdx + dir + postIds.length) % postIds.length;
-            document.getElementById(postIds[currentIdx]).scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const target = document.getElementById(postIds[currentIdx]);
+            if(target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
         function closeBlog() {
@@ -294,27 +294,26 @@
             setTimeout(() => { if(!blog.classList.contains('active')) blog.style.display = 'none'; }, 500);
         }
 
-        function closeModal() {
-            document.getElementById('modal').style.display = 'none';
-        }
-
-        function goHome() { 
-            closeModal(); 
-            closeBlog(); 
-        }
-
-        function openBlogOnly() { 
-            scrollToPost(postIds[0]); 
-        }
-        
         function openModal(type) {
-            closeBlog(); // Close blog if open
+            closeBlog();
+            const modal = document.getElementById('modal');
             const body = document.getElementById('modal-body');
             body.innerHTML = type === 'about' 
                 ? `<h3 class="inv-grad-box">Benjamin Chmieleski</h3><p>Artist & Designer in West Michigan.<br>Landscape and botanical focus.</p>`
                 : `<h3 class="inv-grad-box">Contact</h3><p>benchmieleski@gmail.com</p>`;
-            document.getElementById('modal').style.display = 'block';
+            
+            modal.style.display = 'block';
+            setTimeout(() => modal.classList.add('visible'), 10);
         }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.classList.remove('visible');
+            setTimeout(() => { if(!modal.classList.contains('visible')) modal.style.display = 'none'; }, 300);
+        }
+
+        function goHome() { closeModal(); closeBlog(); }
+        function openBlogOnly() { scrollToPost(postIds[0]); }
 
         window.addEventListener('keydown', e => {
             if (e.key === 'Escape') goHome();
