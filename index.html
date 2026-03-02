@@ -5,6 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ben Chmieleski | Painting Portfolio</title>
     <style>
+/* Custom Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-main);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--theme-c1);
+            border-radius: 10px;
+            border: 2px solid var(--bg-main);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--theme-c2);
+        }
+
+        /* For Firefox */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--theme-c1) var(--bg-main);
+        }
         :root {
             --bg-main: #ffffff;
             --text-base: #1a1a1a;
