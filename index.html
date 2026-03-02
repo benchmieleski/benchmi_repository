@@ -19,10 +19,24 @@
         .site-name-wrapper:hover .nav-menu { display: flex; }
         .nav-link { font-size: 0.9rem; font-weight: bold; cursor: pointer; transition: 0.2s; color: inherit; text-decoration: none; padding: 2px 0; }
         .nav-link:hover { opacity: 0.7; transform: translateX(3px); }
-        .theme-grid { margin-top: 15px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .theme-opt { cursor: pointer; border: 1px solid #ccc; padding: 4px; display: flex; gap: 2px; }
-        .theme-opt.active { border: 2px solid var(--txt); padding: 3px; }
-        .swatch { width: 12px; height: 12px; border: 1px solid rgba(0,0,0,0.05); }
+        
+        /* Updated Theme Selector Styling */
+        .theme-grid { margin-top: 15px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .theme-opt { 
+            cursor: pointer; 
+            border: 1px solid #ccc; 
+            padding: 6px; 
+            display: flex; 
+            align-items: center;
+            gap: 8px; 
+            background: rgba(128,128,128,0.05);
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+        .theme-opt.active { border: 2px solid var(--txt); padding: 5px; background: rgba(128,128,128,0.15); }
+        .bg-swatch { width: 20px; height: 20px; border: 1px solid rgba(0,0,0,0.1); border-radius: 2px; flex-shrink: 0; }
+        .accent-group { display: flex; gap: 2px; }
+        .swatch { width: 6px; height: 18px; border-radius: 1px; }
 
         /* Gallery */
         .gallery-container { 
@@ -33,8 +47,9 @@
             display: flex; 
             align-items: center; 
             overflow-x: auto; 
+            transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1); 
         }
-
+        .gallery-container.min { top: 75vh; }
         .scroll-wrapper { display: flex; width: max-content; animation: scroll 65s linear infinite; padding: 0 40px; }
         .scroll-wrapper:hover { animation-play-state: paused; }
         @keyframes scroll { to { transform: translateX(-50%); } }
@@ -45,13 +60,31 @@
             margin: 0 40px; 
             padding: 4px; 
             background: var(--frame); 
+            cursor: pointer; 
             display: flex; 
             align-items: center; 
             transition: 0.4s; 
         }
+        
+        .item-wrapper.is-blog { display: none; }
+        .blog-mode .item-wrapper.is-blog { display: flex; }
+        .blog-mode .item-wrapper.has-img { display: none; }
+        .gallery-container.min .item-wrapper { height: 14vh; margin: 0 12px; }
+
+        .preview-card { width: 100%; height: 100%; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; aspect-ratio: 1.2/1; text-align: center; }
+        .pre-title { font-size: 0.9rem; font-weight: bold; margin-bottom: 8px; line-height: 1.2; }
+        .pre-date { font-size: 0.65rem; opacity: 0.6; font-weight: bold; }
+
+        /* Blog Content */
+        .blog-container { position: absolute; top: 140px; height: 55vh; left: 50%; transform: translateX(-50%); width: 90vw; overflow-y: scroll; z-index: 5; display: none; opacity: 0; transition: 0.5s; }
+        .blog-container.active { display: block; opacity: 1; }
+        .blog-post { display: flex; flex-direction: column; align-items: center; padding: 60px 0; }
+        .blog-content { max-width: 700px; text-align: center; line-height: 1.6; }
 
         .inv-grad-box { background: linear-gradient(to right, var(--c1), var(--c2), var(--c3), var(--c1)); background-size: 400% auto; animation: grad 18s linear infinite; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; }
         @keyframes grad { to { background-position: 400% center; } }
+
+        .close-x { position: fixed; top: 20px; right: 40px; background: none; border: none; font-size: 3rem; cursor: pointer; color: var(--txt); z-index: 6000; }
         
         #modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg); padding: 50px; border: 2px solid var(--c1); z-index: 7000; text-align: center; }
         #modal.visible { display: block; }
@@ -61,6 +94,7 @@
             .site-name { font-size: 1.6rem; }
             .gallery-container { top: 220px; }
             .item-wrapper { height: 35vh; margin: 0 15px; }
+            .theme-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
@@ -69,16 +103,20 @@
     <header>
         <div class="site-name-wrapper">
             <div onclick="goHome()">
-                <div class="site-name inv-grad-box">Ben Chmieleski</div><br>
+                <div class="site-name inv-grad-box">Ben Chmieleski</div>
                 <div class="site-subheading inv-grad-box">Artist | Designer | Creator</div>
             </div>
             <nav class="nav-menu">
                 <a class="nav-link inv-grad-box" onclick="ui.modal('about')">About</a>
                 <a class="nav-link inv-grad-box" onclick="ui.modal('contact')">Contact</a>
+                <a class="nav-link inv-grad-box" onclick="ui.blogOnly()">Blog</a>
                 <div class="theme-grid" id="theme-selector"></div>
             </nav>
         </div>
     </header>
+
+    <button class="close-x" id="close-x" style="display:none" onclick="ui.closeBlog()">&times;</button>
+    <main class="blog-container" id="blog-area"></main>
 
     <div class="gallery-container" id="gallery-container">
         <div class="scroll-wrapper" id="gallery-scroll"></div>
@@ -91,11 +129,13 @@
 
     <script>
         const POSTS = [
-            { id: 'p3', title: 'Floral', img: 'art_flowers.jpg' },
-            { id: 'p4', title: 'Garden', img: 'art_garden.jpg' },
-            { id: 'p5', title: 'Riverside', img: 'art_riverside.jpg' },
-            { id: 'p6', title: 'Sunset', img: 'art_sunset.jpg' },
-            { id: 'p7', title: 'Bella', img: 'art_bella.jpg' }
+            { id: 'p1', title: 'Site Design Complete', date: 'Mar. 01, 2026', body: 'The code portion of this site is now live.' },
+            { id: 'p2', title: 'Portfolio Site Conception', date: 'Feb. 25, 2026', body: 'A place to compile my creative work.' },
+            { id: 'p3', title: 'Floral', date: 'FEB 25, 2026', body: 'Floral Study', img: 'art_flowers.jpg' },
+            { id: 'p4', title: 'Garden', date: 'FEB 25, 2026', body: 'Frederik Meijer Sculpture Gardens', img: 'art_garden.jpg' },
+            { id: 'p5', title: 'Riverside', date: 'FEB 25, 2026', body: 'Riverside Park', img: 'art_riverside.jpg' },
+            { id: 'p6', title: 'Sunset', date: 'FEB 25, 2026', body: 'Sunset Study', img: 'art_sunset.jpg' },
+            { id: 'p7', title: 'Bella', date: 'FEB 25, 2026', body: 'Frederik Meijer Sculpture Gardens', img: 'art_bella.jpg' }
         ];
 
         const THEMES = {
@@ -107,17 +147,27 @@
 
         const ui = {
             init() {
+                const blog = document.getElementById('blog-area');
                 const scroll = document.getElementById('gallery-scroll');
                 const themes = document.getElementById('theme-selector');
                 
+                // Redesigned Theme Switcher Generation
                 Object.entries(THEMES).forEach(([k, v]) => {
-                    themes.innerHTML += `<div class="theme-opt ${k==='misty'?'active':''}" onclick="event.stopPropagation();ui.setTheme('${k}', this)">${v.c.map(c=>`<div class="swatch" style="background:${c}"></div>`).join('')}</div>`;
+                    themes.innerHTML += `
+                        <div class="theme-opt ${k==='misty'?'active':''}" onclick="event.stopPropagation();ui.setTheme('${k}', this)">
+                            <div class="bg-swatch" style="background:${v.bg}"></div>
+                            <div class="accent-group">
+                                ${v.c.map(c=>`<div class="swatch" style="background:${c}"></div>`).join('')}
+                            </div>
+                        </div>`;
                 });
 
                 let gHTML = '';
                 POSTS.forEach(p => {
-                    gHTML += `<div class="item-wrapper">
-                        <img src="${p.img}" style="height:100%" alt="${p.title}">
+                    blog.innerHTML += `<article class="blog-post" id="${p.id}"><div class="blog-content"><h2 class="inv-grad-box">${p.title}</h2><p>${p.body}</p></div>${p.img?`<img src="${p.img}" style="max-width:80%; margin-top:20px; border:4px solid var(--frame)">`:''}</article>`;
+                    gHTML += `<div class="item-wrapper ${p.img ? 'has-img' : 'is-blog'}" onclick="ui.view('${p.id}')">
+                        ${p.img ? `<img src="${p.img}" style="height:100%">` : 
+                        `<div class="preview-card"><div class="pre-title inv-grad-box">${p.title}</div><div class="pre-date">${p.date}</div></div>`}
                     </div>`;
                 });
                 scroll.innerHTML = gHTML + gHTML;
@@ -127,8 +177,25 @@
                 const r = document.documentElement.style;
                 r.setProperty('--c1', t.c[0]); r.setProperty('--c2', t.c[1]); r.setProperty('--c3', t.c[2]);
                 r.setProperty('--bg', t.bg); r.setProperty('--txt', t.txt);
+                r.setProperty('--frame', t.c[0]);
                 document.querySelectorAll('.theme-opt').forEach(o => o.classList.remove('active'));
                 el.classList.add('active');
+            },
+            view(id) {
+                const b = document.getElementById('blog-area'), g = document.getElementById('gallery-container');
+                b.style.display = 'block'; g.classList.add('min');
+                document.getElementById('close-x').style.display = 'block';
+                setTimeout(() => { b.classList.add('active'); document.getElementById(id).scrollIntoView({behavior:'smooth'}); }, 50);
+            },
+            closeBlog() {
+                const b = document.getElementById('blog-area'), g = document.getElementById('gallery-container');
+                b.classList.remove('active'); g.classList.remove('min');
+                document.getElementById('close-x').style.display = 'none';
+                setTimeout(() => { b.style.display = 'none'; }, 500);
+            },
+            blogOnly() {
+                this.closeBlog();
+                document.getElementById('gallery-container').classList.add('blog-mode');
             },
             modal(type) {
                 const m = document.getElementById('modal');
@@ -140,6 +207,8 @@
 
         function goHome() { 
             ui.closeModal(); 
+            ui.closeBlog(); 
+            document.getElementById('gallery-container').classList.remove('blog-mode'); 
         }
         document.addEventListener('DOMContentLoaded', () => ui.init());
     </script>
