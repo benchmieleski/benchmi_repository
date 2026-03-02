@@ -203,14 +203,25 @@
             document.getElementById('modal').style.display = 'block';
         }
 
-        function openSection(type) {
-            const body = document.getElementById('modal-body');
-            const gradClass = activeTheme === 'monochromeStatic' ? 'inv-grad-box no-grad' : 'inv-grad-box';
-            body.innerHTML = type === 'about' 
-                ? `<h3 class="${gradClass}" style="font-size: 1.5rem;">Ben Chmieleski</h3><p style="font-size: 0.95rem; line-height:1.6; opacity: 1;">Artist & Designer in West Michigan.<br>Biophilia + botanical inspirations.<br>I believe in the power of art to inspire and uplift.</p>`
-                : `<h3 class="${gradClass}" style="font-size: 1.5rem;">Contact</h3><p style="font-size: 0.95rem; opacity: 1;">benchmieleski@gmail.com</p>`;
-            document.getElementById('modal').style.display = 'block';
-        }
+function openSection(type) {
+    const body = document.getElementById('modal-body');
+    const gradClass = activeTheme === 'monochromeStatic' ? 'inv-grad-box no-grad' : 'inv-grad-box';
+    
+    // Added text-align: left to the <p> tags below
+    body.innerHTML = type === 'about' 
+        ? `<h3 class="${gradClass}" style="font-size: 1.5rem;">Ben Chmieleski</h3>
+           <p style="font-size: 0.95rem; line-height:1.6; opacity: 1; text-align: left;">
+             Artist & Designer in West Michigan.<br>
+             Biophilia + botanical inspirations.<br>
+             I believe in the power of art to inspire and uplift.
+           </p>`
+        : `<h3 class="${gradClass}" style="font-size: 1.5rem;">Contact</h3>
+           <p style="font-size: 0.95rem; opacity: 1; text-align: left;">
+             benchmieleski@gmail.com
+           </p>`;
+           
+    document.getElementById('modal').style.display = 'block';
+}
 
         function setTheme(key, el) {
             activeTheme = key;
