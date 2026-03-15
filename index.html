@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ben Chmieleski | Home</title>
     <style>
-        /* --- 1. THEME COLORS (Edit these to change the site look) --- */
+        /* --- 1. THEME COLORS --- */
         :root {
             --bg-main: #ffffff;
             --text-base: #1a1a1a;
@@ -23,7 +23,7 @@
 
         body, html {
             margin: 0; padding: 0;
-            overflow: hidden;
+            overflow: hidden; /* Kept for desktop */
             background: var(--bg-main);
             color: var(--text-base);
             font-family: sans-serif;
@@ -81,7 +81,11 @@
         @keyframes gradient-flow { to { background-position: 400% center; } }
 
         /* --- 6. GALLERY --- */
-        .gallery-container { position: absolute; bottom: 0; width: 100vw; height: 85vh; display: flex; align-items: center; overflow: hidden; }
+        .gallery-container { 
+            position: absolute; bottom: 0; width: 100vw; height: 85vh; 
+            display: flex; align-items: center; overflow-x: auto; overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
         .scroll-wrapper { 
             display: flex; width: max-content; padding: 0 100px; 
             animation: slow-scroll 80s linear infinite; will-change: transform; 
@@ -103,16 +107,21 @@
 
         /* --- 8. MOBILE OPTIMIZATION --- */
         @media (max-width: 768px) {
-            #game-easter-egg {
-                display: none !important;
-            }
-            header {
-                top: 20px; left: 20px; right: 20px;
-            }
+            body, html { overflow: auto; height: auto; }
+            #game-easter-egg { display: none !important; }
+            header { top: 20px; left: 20px; right: 20px; position: absolute; }
             .site-name { font-size: 1.5rem; }
             .site-subheading { font-size: 1rem; }
-            .gallery-container { height: 75vh; }
-            .item-wrapper { height: 50vh; margin: 0 20px; }
+            
+            .gallery-container { 
+                position: relative; height: auto; margin-top: 180px; 
+                overflow-x: auto; display: block; padding-bottom: 50px;
+            }
+            .scroll-wrapper { 
+                animation: none; /* Disable auto-scroll for manual swiping */
+                padding: 0 20px; 
+            }
+            .item-wrapper { height: 45vh; margin: 20px auto; display: block; width: fit-content; }
         }
     </style>
 </head>
@@ -166,12 +175,7 @@
             { path: 'art_bella.jpg', title: 'Botanics', description: 'acrylic on wood, 2026' }
         ];
 
-        const gameConfig = {
-            rows: 2,
-            paddleWidth: 60,
-            brickHeight: 16,
-            speed: 2.8
-        };
+        const gameConfig = { rows: 2, paddleWidth: 60, brickHeight: 16, speed: 2.8 };
 
         const themes = {
             misty: { colors: ['#6cccb6', '#57648a', '#ab5c95'], bg: '#fff', text: '#1a1a1a' }, 
@@ -205,7 +209,6 @@
             ctx.clearRect(0,0, canvas.width, canvas.height);
             const t = themes[activeTheme];
             let activeCount = 0;
-            
             const bWidth = (canvas.width / bricks.length) - 4;
             const startX = (canvas.width - (bricks.length * (bWidth + 4) - 4)) / 2;
 
@@ -274,7 +277,7 @@
         }
 
         function openItem(idx) {
-            const item = feedItems[idx];
+            const item = feedItems[idx % feedItems.length];
             document.getElementById('modal-body').innerHTML = `<img src="${item.path}"><h3 class="inv-grad-box ${activeTheme==='monochromeStatic'?'no-grad':''}" style="margin-top:15px;">${item.title}</h3><p>${item.description}</p>`;
             document.getElementById('modal').style.display = 'block';
         }
@@ -291,8 +294,10 @@
         window.onkeydown = e => { if (e.key === 'Escape') closeModal(); };
         window.onresize = () => { if(gameActive) initGame(); };
         
+        // Initialize Gallery - for mobile, we skip duplicating the items if the animation is off
+        const isMobile = window.innerWidth <= 768;
         const html = feedItems.map((item, idx) => `<div class="item-wrapper" onclick="openItem(${idx})"><img src="${item.path}" class="painting"></div>`).join('');
-        gallery.innerHTML = html + html;
+        gallery.innerHTML = isMobile ? html : html + html;
     </script>
 </body>
 </html>
