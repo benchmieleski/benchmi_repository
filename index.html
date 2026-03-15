@@ -1,17 +1,11 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ben Chmieleski | Home</title>
     <style>
-        /* Custom Scrollbar Styling */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-main); }
-        ::-webkit-scrollbar-thumb { background: var(--theme-c1); border-radius: 10px; border: 2px solid var(--bg-main); }
-        ::-webkit-scrollbar-thumb:hover { background: var(--theme-c2); }
-        * { scrollbar-width: thin; scrollbar-color: var(--theme-c1) var(--bg-main); }
-
+        /* --- 1. CORE VARIABLES & THEMES --- */
         :root {
             --bg-main: #ffffff;
             --text-base: #1a1a1a;
@@ -21,6 +15,12 @@
             --painting-frame: #6cccb6; 
         }
 
+        /* --- 2. GLOBAL STYLES --- */
+        * { box-sizing: border-box; scrollbar-width: thin; scrollbar-color: var(--theme-c1) var(--bg-main); }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-main); }
+        ::-webkit-scrollbar-thumb { background: var(--theme-c1); border-radius: 10px; border: 2px solid var(--bg-main); }
+        
         body, html {
             margin: 0; padding: 0;
             overflow: hidden;
@@ -31,114 +31,93 @@
             transition: background 0.4s, color 0.4s;
         }
 
+        /* --- 3. HEADER & NAVIGATION --- */
         header { 
-            position: fixed; top: 40px; left: 40px; right: 40px; 
-            z-index: 1000; display: flex; align-items: flex-start; 
+            position: fixed; top: 20px; left: 20px; right: 20px; 
+            z-index: 1000; display: flex; align-items: flex-start;
+            margin-bottom: 20px; /* Space for mobile breathing room */
         }
 
-        .site-name-wrapper { display: inline-flex; flex-direction: column; cursor: pointer; padding-bottom: 30px; align-items: flex-start; flex-shrink: 0; }
-        .site-name { font-size: 2rem; font-weight: bold; line-height: 1.2; margin: 0; text-transform: none; }
-        .site-subheading { font-size: 1.25rem; line-height: 1.2; margin: 2px 0 12px; text-transform: none; }
+        .site-name-wrapper { display: inline-flex; flex-direction: column; cursor: pointer; padding-bottom: 20px; align-items: flex-start; }
+        .site-name { font-size: 1.8rem; font-weight: bold; line-height: 1.2; margin: 0; }
+        .site-subheading { font-size: 1.1rem; line-height: 1.2; margin: 2px 0 10px; }
 
-        #game-easter-egg {
-            flex-grow: 1;
-            height: 140px;
-            margin-left: 30px;
-            position: relative;
-            cursor: crosshair;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px; /* Space between canvas and the X */
-        }
-
-        #breakoutCanvas { 
-            display: none; 
-            width: 45%;
-            height: 100%; 
-            border: 2px solid var(--theme-c1); 
-            box-sizing: border-box;
-        }
-
-        #close-game-btn {
-            display: none;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1.4rem;
-            color: var(--theme-c3);
-            user-select: none;
-            padding: 5px;
-            align-self: flex-start; /* Keeps it near the top of the canvas height */
-        }
-
-        .inv-grad-box {
-            background: linear-gradient(to right, var(--theme-c1), var(--theme-c2), var(--theme-c3), var(--theme-c1));
-            background-size: 400% auto;
-            animation: gradient-flow 18s linear infinite;
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: block; 
-        }
-
-        .no-grad { -webkit-text-fill-color: var(--text-base) !important; background: none !important; animation: none !important; }
-
-        @keyframes gradient-flow { to { background-position: 400% center; } }
-
-        .nav-menu { display: none; flex-direction: row; align-items: center; gap: 20px; }
+        .nav-menu { display: none; flex-direction: row; align-items: center; gap: 15px; margin-top: 5px; }
         .site-name-wrapper:hover .nav-menu { display: flex; }
-        .nav-links-column { display: flex; flex-direction: column; gap: 6px; }
-        .nav-link { font-size: 0.9rem; font-weight: bold; text-decoration: none; transition: 0.2s; cursor: pointer; line-height: 1.2; }
+        
+        .nav-links-column { display: flex; flex-direction: column; gap: 4px; }
+        .nav-link { font-size: 0.85rem; font-weight: bold; text-decoration: none; transition: 0.2s; cursor: pointer; }
         .nav-link:hover { transform: translateX(3px); opacity: 0.8; }
 
-        .color-controls-dropdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .theme-option { cursor: pointer; border: 1px solid var(--theme-c3); padding: 1px; background: #fff; display: flex; align-items: center; justify-content: center; height: 20px; }
+        /* Theme Pickers */
+        .color-controls-dropdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+        .theme-option { cursor: pointer; border: 1px solid var(--theme-c3); padding: 1px; background: #fff; display: flex; height: 18px; align-items: center; }
         .theme-option.active { border: 2px solid var(--text-base); }
-        .swatch { width: 10px; height: 10px; margin: 0 1px; }
+        .swatch { width: 8px; height: 8px; margin: 0 1px; }
 
+        /* --- 4. THE GAME CANVAS --- */
+        #game-easter-egg { flex-grow: 1; height: 100px; margin-left: 20px; position: relative; cursor: crosshair; display: flex; align-items: center; gap: 10px; }
+        #breakoutCanvas { display: none; width: 45%; height: 100%; border: 2px solid var(--theme-c1); }
+        #close-game-btn { display: none; cursor: pointer; font-weight: bold; font-size: 1.2rem; color: var(--theme-c3); }
+
+        /* --- 5. GALLERY SCROLL --- */
         .gallery-container {
             position: absolute; 
             bottom: 0; 
             width: 100vw; 
-            height: 85vh;
+            height: 75vh; /* Adjusted to prevent clipping */
             display: flex; 
             align-items: center; 
-            overflow-x: auto; 
-            overflow-y: hidden;
+            overflow: hidden;
         }
 
         .scroll-wrapper { 
             display: flex; 
             width: max-content; 
-            padding: 0 100px; 
-            animation: slow-scroll 80s linear infinite; 
+            padding: 0 50px; 
+            animation: slow-scroll 60s linear infinite; 
             will-change: transform;
-            backface-visibility: hidden;
-            transform: translate3d(0,0,0);
         }
-        
         .scroll-wrapper:hover, .scroll-wrapper.paused { animation-play-state: paused; }
 
-        @keyframes slow-scroll { 
-            from { transform: translate3d(0, 0, 0); } 
-            to { transform: translate3d(-50%, 0, 0); } 
-        }
+        @keyframes slow-scroll { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
 
         .item-wrapper { 
-            height: 60vh; 
-            margin: 0 40px; padding: 5px; background: var(--painting-frame); 
-            transition: 0.6s; cursor: pointer; flex-shrink: 0;
+            height: 55vh; 
+            margin: 0 30px; padding: 5px; background: var(--painting-frame); 
+            transition: 0.4s; cursor: pointer; flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
         }
         .painting { height: 100%; display: block; background: #fff; }
 
+        /* --- 6. MODALS & UI --- */
         #modal {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: var(--bg-main); padding: 40px; border: 2px solid var(--theme-c1);
-            z-index: 2000; text-align: center; color: var(--text-base); max-width: 85vw;
+            background: var(--bg-main); padding: 30px; border: 2px solid var(--theme-c1);
+            z-index: 2000; text-align: center; max-width: 90vw; width: 400px;
         }
-        #modal-body img { max-height: 60vh; max-width: 100%; object-fit: contain; }
-        .close-btn { margin-top: 25px; font-size: 0.6rem; font-weight: bold; cursor: pointer; background: none; border: 1px solid var(--theme-c3); color: var(--theme-c3); padding: 5px 15px; }
+        #modal-body img { max-height: 50vh; max-width: 100%; object-fit: contain; }
+        .close-btn { margin-top: 20px; font-size: 0.7rem; font-weight: bold; cursor: pointer; background: none; border: 1px solid var(--theme-c3); color: var(--theme-c3); padding: 5px 15px; }
+
+        /* Utility: Gradient Text */
+        .inv-grad-box {
+            background: linear-gradient(to right, var(--theme-c1), var(--theme-c2), var(--theme-c3), var(--theme-c1));
+            background-size: 400% auto;
+            animation: gradient-flow 18s linear infinite;
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .no-grad { -webkit-text-fill-color: var(--text-base) !important; background: none !important; animation: none !important; }
+        @keyframes gradient-flow { to { background-position: 400% center; } }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            header { top: 15px; left: 15px; }
+            .site-name { font-size: 1.4rem; }
+            .site-subheading { font-size: 0.9rem; }
+            .gallery-container { height: 65vh; }
+            .item-wrapper { height: 45vh; margin: 0 15px; }
+            .contact-links { font-size: 0.85rem; white-space: nowrap; } /* Forces single line */
+        }
     </style>
 </head>
 <body>
@@ -155,7 +134,7 @@
                 <div class="color-controls-dropdown">
                     <div class="theme-option active" onclick="event.stopPropagation(); setTheme('misty', this)"><div class="swatch" style="background:#6cccb6"></div><div class="swatch" style="background:#57648a"></div><div class="swatch" style="background:#ab5c95"></div></div>
                     <div class="theme-option" onclick="event.stopPropagation(); setTheme('electric', this)"><div class="swatch" style="background:#d9b3f2"></div><div class="swatch" style="background:#b3d9d9"></div><div class="swatch" style="background:#efb9da"></div></div>
-                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('monochromeDark', this)" style="background:#000; border-color: #555;"><div class="swatch" style="background:#fff"></div><div class="swatch" style="background:#fff"></div><div class="swatch" style="background:#fff"></div></div>
+                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('monochromeDark', this)" style="background:#000;"><div class="swatch" style="background:#fff"></div><div class="swatch" style="background:#fff"></div><div class="swatch" style="background:#fff"></div></div>
                     <div class="theme-option" onclick="event.stopPropagation(); setTheme('monochromeStatic', this)"><div class="swatch" style="background:#000"></div><div class="swatch" style="background:#000"></div><div class="swatch" style="background:#000"></div></div>
                 </div>
             </nav>
@@ -177,6 +156,7 @@
     </div>
 
     <script>
+        /* --- EDITABLE CONTENT --- */
         const feedItems = [
             { path: 'art_flowers.jpg', title: 'Flowers', description: 'oil on paper, 2025' },
             { path: 'art_garden.jpg', title: 'Garden', description: 'oil on paper, 2025' },
@@ -185,6 +165,18 @@
             { path: 'art_bella.jpg', title: 'Botanics', description: 'acrylic on wood, 2026' }
         ];
 
+        const pageContent = {
+            about: {
+                title: "Ben Chmieleski",
+                body: "Artist & Designer located in West Michigan."
+            },
+            contact: {
+                title: "Contact",
+                email: "benchmieleski@gmail.com",
+                linkedin: "https://www.linkedin.com/in/benjamin-chmieleski-29045256/"
+            }
+        };
+
         const themes = {
             misty: { colors: ['#6cccb6', '#57648a', '#ab5c95'], bg: '#fff', text: '#1a1a1a' }, 
             electric: { colors: ['#d9b3f2', '#b3d9d9', '#efb9da'], bg: '#fff', text: '#1a1a1a' },
@@ -192,171 +184,28 @@
             monochromeStatic: { colors: ['#000', '#000', '#000'], bg: '#fff', text: '#1a1a1a' }
         };
 
+        /* --- STATE VARIABLES --- */
         let activeTheme = 'misty';
-
-        // --- GAME LOGIC ---
         const canvas = document.getElementById('breakoutCanvas');
         const ctx = canvas.getContext('2d');
         const triggerZone = document.getElementById('game-easter-egg');
         const closeGameBtn = document.getElementById('close-game-btn');
         const galleryWrapper = document.getElementById('gallery-wrapper');
         
-        let gameActive = false;
-        let ballReleased = false;
-        let x, y, dx, dy, paddleX, bricks;
-        let gradOffset = 0;
-        let starRain = [];
-        
-        const brickRowCount = 2;
-        const paddleWidth = 60; 
-        const brickHeight = 16;
-        const baseSpeed = 2.8;
+        let gameActive = false, ballReleased = false;
+        let x, y, dx, dy, paddleX, bricks, starRain = [];
+        const brickRowCount = 2, paddleWidth = 60, brickHeight = 16, baseSpeed = 2.8;
 
-        function initGame() {
-            canvas.width = triggerZone.offsetWidth * 0.45;
-            canvas.height = triggerZone.offsetHeight;
-            
-            const brickColumnCount = Math.floor(canvas.width / 34);
-            paddleX = (canvas.width - paddleWidth) / 2;
-            ballReleased = false;
-            starRain = [];
-            x = paddleX + paddleWidth / 2;
-            y = canvas.height - 15; 
-            dx = baseSpeed; 
-            dy = -baseSpeed;
-            bricks = [];
-            for(let c=0; c<brickColumnCount; c++) {
-                bricks[c] = [];
-                for(let r=0; r<brickRowCount; r++) {
-                    bricks[c][r] = { status: 1 };
-                }
-            }
-        }
-
-        function closeGame() {
-            gameActive = false;
-            ballReleased = false;
-            canvas.style.display = 'none';
-            closeGameBtn.style.display = 'none';
-            galleryWrapper.classList.remove('paused');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-
-        function createStarRain() {
-            const t = themes[activeTheme];
-            for (let i = 0; i < 45; i++) {
-                starRain.push({
-                    x: Math.random() * canvas.width,
-                    y: -Math.random() * 100,
-                    speed: 1 + Math.random() * 1.8,
-                    color: t.colors[Math.floor(Math.random() * t.colors.length)],
-                    opacity: 1
-                });
-            }
-        }
-
-        function drawGame() {
-            if(!gameActive) return;
-            ctx.clearRect(0,0, canvas.width, canvas.height);
-            const t = themes[activeTheme];
-            let activeBricks = 0;
-            const bWidth = (canvas.width / bricks.length) - 4;
-
-            gradOffset = (gradOffset + 2) % (canvas.width * 2);
-
-            if (starRain.length > 0) {
-                starRain.forEach((s, i) => {
-                    ctx.globalAlpha = s.opacity;
-                    ctx.fillStyle = s.color;
-                    ctx.font = "16px sans-serif";
-                    ctx.fillText("*", s.x, s.y);
-                    s.y += s.speed;
-                    if (s.y > canvas.height) s.opacity -= 0.01;
-                    if (s.opacity <= 0) starRain.splice(i, 1);
-                });
-                ctx.globalAlpha = 1;
-                if (starRain.length === 0) {
-                    closeGame();
-                }
-            } else {
-                bricks.forEach((col, i) => {
-                    col.forEach((b, r) => {
-                        if(b.status === 1) {
-                            activeBricks++;
-                            const bX = i * (bWidth + 4); 
-                            const bY = r * (brickHeight + 12) + 5; 
-                            const grad = ctx.createLinearGradient(bX - gradOffset, 0, bX + canvas.width - gradOffset, 0);
-                            grad.addColorStop(0, t.colors[0]);
-                            grad.addColorStop(0.33, t.colors[1]);
-                            grad.addColorStop(0.66, t.colors[2]);
-                            grad.addColorStop(1, t.colors[0]);
-                            ctx.fillStyle = (activeTheme === 'monochromeStatic') ? t.text : grad;
-                            ctx.fillRect(bX, bY, bWidth, brickHeight);
-                            if(ballReleased && x > bX && x < bX + bWidth && y > bY && y < bY + brickHeight) {
-                                dy = -dy;
-                                b.status = 0;
-                            }
-                        }
-                    });
-                });
-
-                if(activeBricks === 0) {
-                    createStarRain();
-                } else {
-                    ctx.fillStyle = t.text; 
-                    ctx.fillRect(paddleX, canvas.height - 10, paddleWidth, 5);
-                    if (!ballReleased) { x = paddleX + paddleWidth / 2; y = canvas.height - 15; }
-                    ctx.beginPath(); 
-                    ctx.arc(x, y, 4, 0, Math.PI*2); 
-                    ctx.fill();
-                    if (ballReleased) {
-                        if(x + dx > canvas.width || x + dx < 0) dx = -dx;
-                        if(y + dy < 0) dy = -dy;
-                        else if(y + dy > canvas.height - 10) {
-                            if(x > paddleX && x < paddleX + paddleWidth) {
-                                let hitPos = (x - (paddleX + paddleWidth / 2)) / (paddleWidth / 2);
-                                dx = hitPos * (baseSpeed + 2);
-                                dy = -dy;
-                            } else { 
-                                ballReleased = false; 
-                                galleryWrapper.classList.remove('paused');
-                            }
-                        }
-                        x += dx; y += dy;
-                    }
-                }
-            }
-            requestAnimationFrame(drawGame);
-        }
-
-        triggerZone.addEventListener('click', () => {
-            if (!gameActive) {
-                gameActive = true;
-                canvas.style.display = 'block';
-                closeGameBtn.style.display = 'block';
-                galleryWrapper.classList.add('paused');
-                initGame();
-                drawGame();
-            } else { 
-                ballReleased = true; 
-                galleryWrapper.classList.add('paused'); 
-            }
-        });
-
-        triggerZone.addEventListener('mousemove', e => {
-            if(!gameActive) return;
-            const rect = canvas.getBoundingClientRect();
-            paddleX = e.clientX - rect.left - paddleWidth / 2;
-            if(paddleX < 0) paddleX = 0;
-            if(paddleX > canvas.width - paddleWidth) paddleX = canvas.width - paddleWidth;
-        });
+        /* --- FUNCTIONS --- */
 
         function init() {
-            const gWrapper = document.getElementById('gallery-wrapper');
-            const gHtml = feedItems.map((item, idx) => {
-                return `<div class="item-wrapper" onclick="openItem(${idx})"><img src="${item.path}" class="painting" alt="${item.title}"></div>`;
-            }).join('');
-            gWrapper.innerHTML = gHtml + gHtml;
+            // Build gallery
+            const gHtml = feedItems.map((item, idx) => `
+                <div class="item-wrapper" onclick="openItem(${idx})">
+                    <img src="${item.path}" class="painting" alt="${item.title}">
+                </div>
+            `).join('');
+            galleryWrapper.innerHTML = gHtml + gHtml; // Duplicate for infinite effect
         }
 
         function setTheme(key, el) {
@@ -371,7 +220,6 @@
             root.setProperty('--painting-frame', key === 'monochromeStatic' ? '#000' : t.colors[0]);
             
             canvas.style.borderColor = t.colors[0];
-
             document.querySelectorAll('.inv-grad-box').forEach(b => b.classList.toggle('no-grad', key === 'monochromeStatic'));
             document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
             el.classList.add('active');
@@ -380,9 +228,12 @@
 
         function openItem(index) {
             const item = feedItems[index];
-            const body = document.getElementById('modal-body');
             const gradClass = activeTheme === 'monochromeStatic' ? 'inv-grad-box no-grad' : 'inv-grad-box';
-            body.innerHTML = `<img src="${item.path}"><h3 class="${gradClass}" style="margin-top:15px; font-size: 1.2rem;">${item.title}</h3><p>${item.description}</p>`;
+            document.getElementById('modal-body').innerHTML = `
+                <img src="${item.path}">
+                <h3 class="${gradClass}" style="margin-top:15px; font-size: 1.2rem;">${item.title}</h3>
+                <p>${item.description}</p>
+            `;
             document.getElementById('modal').style.display = 'block';
         }
 
@@ -391,22 +242,99 @@
             const gradClass = activeTheme === 'monochromeStatic' ? 'inv-grad-box no-grad' : 'inv-grad-box';
             
             if (type === 'about') {
-                body.innerHTML = `<h3 class="${gradClass}" style="font-size: 1.5rem;">Ben Chmieleski</h3><p>Artist & Designer located in West Michigan.</p>`;
+                body.innerHTML = `<h3 class="${gradClass}" style="font-size: 1.5rem;">${pageContent.about.title}</h3><p>${pageContent.about.body}</p>`;
             } else {
                 body.innerHTML = `
-                    <h3 class="${gradClass}" style="font-size: 1.5rem;">Contact</h3>
-                    <p>
-                        <a href="mailto:benchmieleski@gmail.com" style="color: inherit; text-decoration: underline;">Email</a>
-                        <span style="margin: 0 7px;">|</span>
-                        <a href="https://www.linkedin.com/in/benjamin-chmieleski-29045256/" target="_blank" style="color: inherit; text-decoration: underline;">LinkedIn</a>
+                    <h3 class="${gradClass}" style="font-size: 1.5rem;">${pageContent.contact.title}</h3>
+                    <p class="contact-links">
+                        <a href="mailto:${pageContent.contact.email}" style="color: inherit; text-decoration: underline;">Email</a>
+                        <span style="margin: 0 10px;">|</span>
+                        <a href="${pageContent.contact.linkedin}" target="_blank" style="color: inherit; text-decoration: underline;">LinkedIn</a>
                     </p>`;
             }
             document.getElementById('modal').style.display = 'block';
         }
 
         function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+        /* --- GAME ENGINE (Simplified) --- */
+        function initGame() {
+            canvas.width = triggerZone.offsetWidth * 0.45;
+            canvas.height = triggerZone.offsetHeight;
+            const brickCols = Math.floor(canvas.width / 34);
+            paddleX = (canvas.width - paddleWidth) / 2;
+            ballReleased = false; starRain = [];
+            x = paddleX + paddleWidth / 2; y = canvas.height - 15;
+            dx = baseSpeed; dy = -baseSpeed;
+            bricks = Array.from({length: brickCols}, () => Array.from({length: brickRowCount}, () => ({status: 1})));
+        }
+
+        function closeGame() {
+            gameActive = false; canvas.style.display = 'none'; closeGameBtn.style.display = 'none';
+            galleryWrapper.classList.remove('paused');
+        }
+
+        function drawGame() {
+            if(!gameActive) return;
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+            const t = themes[activeTheme];
+            let activeBricks = 0;
+            const bWidth = (canvas.width / bricks.length) - 4;
+
+            if (starRain.length > 0) {
+                starRain.forEach((s, i) => {
+                    ctx.globalAlpha = s.opacity; ctx.fillStyle = s.color; ctx.fillText("*", s.x, s.y);
+                    s.y += s.speed; if (s.y > canvas.height) s.opacity -= 0.01;
+                    if (s.opacity <= 0) starRain.splice(i, 1);
+                });
+                if (starRain.length === 0) closeGame();
+            } else {
+                bricks.forEach((col, i) => {
+                    col.forEach((b, r) => {
+                        if(b.status === 1) {
+                            activeBricks++;
+                            const bX = i * (bWidth + 4), bY = r * (brickHeight + 12) + 5; 
+                            ctx.fillStyle = (activeTheme === 'monochromeStatic') ? t.text : t.colors[0];
+                            ctx.fillRect(bX, bY, bWidth, brickHeight);
+                            if(ballReleased && x > bX && x < bX + bWidth && y > bY && y < bY + brickHeight) { dy = -dy; b.status = 0; }
+                        }
+                    });
+                });
+
+                if(activeBricks === 0) {
+                    for (let i = 0; i < 30; i++) starRain.push({x: Math.random()*canvas.width, y: 0, speed: 1+Math.random()*2, color: t.colors[Math.floor(Math.random()*3)], opacity: 1});
+                } else {
+                    ctx.fillStyle = t.text; ctx.fillRect(paddleX, canvas.height - 10, paddleWidth, 5);
+                    if (!ballReleased) { x = paddleX + paddleWidth / 2; y = canvas.height - 15; }
+                    ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI*2); ctx.fill();
+                    if (ballReleased) {
+                        if(x + dx > canvas.width || x + dx < 0) dx = -dx;
+                        if(y + dy < 0) dy = -dy;
+                        else if(y + dy > canvas.height - 10) {
+                            if(x > paddleX && x < paddleX + paddleWidth) dy = -dy;
+                            else ballReleased = false;
+                        }
+                        x += dx; y += dy;
+                    }
+                }
+            }
+            requestAnimationFrame(drawGame);
+        }
+
+        /* --- LISTENERS --- */
+        triggerZone.addEventListener('click', () => {
+            if (!gameActive) { gameActive = true; canvas.style.display = 'block'; closeGameBtn.style.display = 'block'; initGame(); drawGame(); }
+            else { ballReleased = true; galleryWrapper.classList.add('paused'); }
+        });
+
+        triggerZone.addEventListener('mousemove', e => {
+            const rect = canvas.getBoundingClientRect();
+            paddleX = Math.max(0, Math.min(canvas.width - paddleWidth, e.clientX - rect.left - paddleWidth / 2));
+        });
+
         window.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
         window.addEventListener('resize', () => { if(gameActive) initGame(); });
+        
         init();
     </script>
 </body>
