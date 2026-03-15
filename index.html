@@ -42,8 +42,8 @@
 
         #game-easter-egg {
             flex-grow: 1;
-            height: 140px; /* Slightly taller for more play area */
-            margin-left: 20px; /* Decreased breathing room by half */
+            height: 140px;
+            margin-left: 30px; /* Adjusted gap to balance 45% width */
             position: relative;
             cursor: crosshair;
             display: flex;
@@ -52,7 +52,7 @@
 
         #breakoutCanvas { 
             display: none; 
-            width: 60%; /* Increased game area */
+            width: 45%; /* Set to 45% as requested */
             height: 100%; 
             border: 2px solid var(--theme-c1); 
             box-sizing: border-box;
@@ -193,15 +193,16 @@
         let starRain = [];
         
         const brickRowCount = 2;
-        const paddleWidth = 65;  /* Slightly wider paddle for the wider canvas */
+        const paddleWidth = 60; 
         const brickHeight = 16;
-        const baseSpeed = 3.0; /* Snappier speed for wider area */
+        const baseSpeed = 2.8;
 
         function initGame() {
-            canvas.width = triggerZone.offsetWidth * 0.6;
+            // Set internal drawing resolution to 45% of trigger zone
+            canvas.width = triggerZone.offsetWidth * 0.45;
             canvas.height = triggerZone.offsetHeight;
             
-            const brickColumnCount = Math.floor(canvas.width / 36);
+            const brickColumnCount = Math.floor(canvas.width / 34);
             paddleX = (canvas.width - paddleWidth) / 2;
             ballReleased = false;
             starRain = [];
@@ -220,11 +221,11 @@
 
         function createStarRain() {
             const t = themes[activeTheme];
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 45; i++) {
                 starRain.push({
                     x: Math.random() * canvas.width,
                     y: -Math.random() * 100,
-                    speed: 1 + Math.random() * 2,
+                    speed: 1 + Math.random() * 1.8,
                     color: t.colors[Math.floor(Math.random() * t.colors.length)],
                     opacity: 1
                 });
