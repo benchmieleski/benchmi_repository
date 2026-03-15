@@ -7,7 +7,6 @@
     <style>
         /* ==========================================
            1. CORE THEME & LAYOUT VARIABLES
-           Edit these to change the site look
            ========================================== */
         :root {
             --bg-main: #ffffff;
@@ -17,22 +16,20 @@
             --theme-c3: #ab5c95; 
             --painting-frame: #6cccb6; 
             
-            /* Sizing Defaults */
             --desktop-gallery-height: 85vh;
             --desktop-painting-height: 60vh;
-            --desktop-header-top: 40px;
 
-            /* Mobile Specific Tuning (Change these for spacing) */
+            /* Mobile Tuning */
             --mobile-header-top: 20px;
-            --mobile-gallery-top: 180px; /* The "Middle Ground" buffer */
+            --mobile-gallery-top: 40px; 
             --mobile-painting-height: 55vh;
+            --mobile-contact-font: 0.85rem; /* Adjusts contact link size */
         }
 
         /* ==========================================
-           2. GLOBAL STYLES
+           2. GLOBAL & HEADER STYLES
            ========================================== */
         * { box-sizing: border-box; }
-        
         body, html {
             margin: 0; padding: 0;
             overflow: hidden;
@@ -43,46 +40,20 @@
             transition: background 0.4s, color 0.4s;
         }
 
-        /* Scrollbar styling */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-main); }
-        ::-webkit-scrollbar-thumb { background: var(--theme-c1); border-radius: 10px; border: 2px solid var(--bg-main); }
-        * { scrollbar-width: thin; scrollbar-color: var(--theme-c1) var(--bg-main); }
-
-        /* ==========================================
-           3. HEADER & NAVIGATION
-           ========================================== */
         header { 
-            position: fixed; 
-            top: var(--desktop-header-top); 
-            left: 40px; right: 40px; 
-            z-index: 1000; 
-            display: flex; 
-            align-items: flex-start; 
+            position: fixed; top: 40px; left: 40px; right: 40px; 
+            z-index: 1000; display: flex; align-items: flex-start; 
         }
 
-        .site-name-wrapper { 
-            display: inline-flex; 
-            flex-direction: column; 
-            cursor: pointer; 
-            padding-bottom: 30px; 
-            align-items: flex-start; 
-        }
-
+        .site-name-wrapper { display: inline-flex; flex-direction: column; cursor: pointer; padding-bottom: 30px; align-items: flex-start; }
         .site-name { font-size: 2rem; font-weight: bold; line-height: 1.2; margin: 0; }
         .site-subheading { font-size: 1.25rem; line-height: 1.2; margin: 2px 0 12px; }
 
-        /* Navigation Menu */
         .nav-menu { display: none; flex-direction: row; align-items: center; gap: 20px; }
         .site-name-wrapper:hover .nav-menu { display: flex; }
-        
         .nav-links-column { display: flex; flex-direction: column; gap: 6px; }
-        .nav-link { 
-            font-size: 0.9rem; font-weight: bold; text-decoration: none; 
-            transition: 0.2s; cursor: pointer; 
-        }
+        .nav-link { font-size: 0.9rem; font-weight: bold; text-decoration: none; cursor: pointer; }
 
-        /* Gradient Text Logic */
         .inv-grad-box {
             background: linear-gradient(to right, var(--theme-c1), var(--theme-c2), var(--theme-c3), var(--theme-c1));
             background-size: 400% auto;
@@ -94,38 +65,25 @@
         .no-grad { -webkit-text-fill-color: var(--text-base) !important; background: none !important; }
         @keyframes gradient-flow { to { background-position: 400% center; } }
 
-        /* Color Controls */
         .color-controls-dropdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .theme-option { 
-            cursor: pointer; border: 1px solid var(--theme-c3); 
-            padding: 1px; background: #fff; display: flex; 
-            align-items: center; justify-content: center; height: 20px; 
-        }
+        .theme-option { cursor: pointer; border: 1px solid var(--theme-c3); padding: 1px; background: #fff; display: flex; height: 20px; }
         .theme-option.active { border: 2px solid var(--text-base); }
         .swatch { width: 10px; height: 10px; margin: 0 1px; }
 
         /* ==========================================
-           4. GALLERY & ANIMATION
+           3. GALLERY
            ========================================== */
         .gallery-container {
-            position: absolute; 
-            bottom: 0; 
-            width: 100vw; 
+            position: absolute; bottom: 0; width: 100vw; 
             height: var(--desktop-gallery-height);
-            display: flex; 
-            align-items: center; 
-            overflow-x: auto; 
-            overflow-y: hidden;
+            display: flex; align-items: center; 
+            overflow-x: auto; overflow-y: hidden;
         }
 
         .scroll-wrapper { 
-            display: flex; 
-            width: max-content; 
-            padding: 0 100px; 
+            display: flex; width: max-content; padding: 0 100px; 
             animation: slow-scroll 80s linear infinite; 
-            will-change: transform;
         }
-        
         .scroll-wrapper:hover, .scroll-wrapper.paused { animation-play-state: paused; }
 
         @keyframes slow-scroll { 
@@ -134,56 +92,43 @@
         }
 
         .item-wrapper { 
-            height: var(--desktop-painting-height); 
-            margin: 0 40px; padding: 5px; 
-            background: var(--painting-frame); 
+            height: var(--desktop-painting-height); margin: 0 40px; 
+            padding: 5px; background: var(--painting-frame); 
             transition: 0.6s; cursor: pointer; flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
         }
         .painting { height: 100%; display: block; background: #fff; }
 
         /* ==========================================
-           5. MODALS & UI
+           4. MODAL & CONTACT UI
            ========================================== */
         #modal {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: var(--bg-main); padding: 40px; border: 2px solid var(--theme-c1);
-            z-index: 2000; text-align: center; max-width: 85vw;
+            z-index: 2000; text-align: center; max-width: 90vw;
         }
-        #modal-body img { max-height: 60vh; max-width: 100%; object-fit: contain; }
-        .close-btn { 
-            margin-top: 25px; font-size: 0.6rem; font-weight: bold; 
-            cursor: pointer; background: none; border: 1px solid var(--theme-c3); 
-            color: var(--theme-c3); padding: 5px 15px; 
+        .contact-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: nowrap; /* Prevents wrapping to second line */
+            gap: 12px;
+            margin-top: 10px;
         }
+        .contact-row a { color: inherit; text-decoration: underline; white-space: nowrap; }
 
-        /* Easter Egg UI */
-        #game-easter-egg { flex-grow: 1; height: 140px; margin-left: 30px; position: relative; cursor: crosshair; display: flex; justify-content: center; align-items: center; gap: 15px; }
-        #breakoutCanvas { display: none; width: 45%; height: 100%; border: 2px solid var(--theme-c1); }
-        #close-game-btn { display: none; cursor: pointer; font-size: 1.4rem; color: var(--theme-c3); padding: 5px; align-self: flex-start; }
+        #modal-body img { max-height: 60vh; max-width: 100%; object-fit: contain; }
+        .close-btn { margin-top: 25px; font-size: 0.6rem; font-weight: bold; cursor: pointer; border: 1px solid var(--theme-c3); color: var(--theme-c3); padding: 5px 15px; background: none; }
 
         /* ==========================================
-           6. MOBILE OVERRIDES (EDIT HERE)
+           5. MOBILE OVERRIDES
            ========================================== */
         @media (max-width: 768px) {
-            header {
-                position: relative;
-                top: var(--mobile-header-top);
-                left: 20px; right: 20px;
-                padding-bottom: 20px;
-            }
-            .gallery-container {
-                position: relative;
-                height: auto;
-                padding-top: 40px; /* Space specifically between nav and art */
-                margin-top: 20px;
-            }
-            .item-wrapper { 
-                height: var(--mobile-painting-height); 
-                margin: 0 20px; 
-            }
-            #game-easter-egg { display: none !important; }
+            header { position: relative; top: var(--mobile-header-top); left: 20px; right: 20px; }
+            .gallery-container { position: relative; height: auto; padding-top: var(--mobile-gallery-top); margin-top: 20px; }
+            .item-wrapper { height: var(--mobile-painting-height); margin: 0 20px; }
             .nav-menu { margin-top: 10px; }
+            .contact-row { font-size: var(--mobile-contact-font); gap: 8px; }
         }
     </style>
 </head>
@@ -206,11 +151,6 @@
                 </div>
             </nav>
         </div>
-        
-        <div id="game-easter-egg">
-            <canvas id="breakoutCanvas"></canvas>
-            <div id="close-game-btn" onclick="event.stopPropagation(); closeGame()">✕</div>
-        </div>
     </header>
 
     <div class="gallery-container">
@@ -223,10 +163,6 @@
     </div>
 
     <script>
-        /* ==========================================
-           7. DATA CONFIGURATION
-           Add images or change theme hex codes here
-           ========================================== */
         const feedItems = [
             { path: 'art_flowers.jpg', title: 'Flowers', description: 'oil on paper, 2025' },
             { path: 'art_garden.jpg', title: 'Garden', description: 'oil on paper, 2025' },
@@ -242,17 +178,8 @@
             monochromeStatic: { colors: ['#000', '#000', '#000'], bg: '#fff', text: '#1a1a1a' }
         };
 
-        /* ==========================================
-           8. CORE SITE LOGIC (MANUAL EDITS RARELY NEEDED)
-           ========================================== */
         let activeTheme = 'misty';
-        const canvas = document.getElementById('breakoutCanvas');
-        const ctx = canvas.getContext('2d');
-        const triggerZone = document.getElementById('game-easter-egg');
-        const closeGameBtn = document.getElementById('close-game-btn');
-        const galleryWrapper = document.getElementById('gallery-wrapper');
 
-        // Initialization
         function init() {
             const gWrapper = document.getElementById('gallery-wrapper');
             const gHtml = feedItems.map((item, idx) => `
@@ -260,11 +187,9 @@
                     <img src="${item.path}" class="painting" alt="${item.title}">
                 </div>
             `).join('');
-            // Double the items for seamless looping
             gWrapper.innerHTML = gHtml + gHtml;
         }
 
-        // UI Handlers
         function openItem(index) {
             const item = feedItems[index];
             const body = document.getElementById('modal-body');
@@ -280,16 +205,17 @@
         function openSection(type) {
             const body = document.getElementById('modal-body');
             const gradClass = activeTheme === 'monochromeStatic' ? 'inv-grad-box no-grad' : 'inv-grad-box';
+            
             if (type === 'about') {
                 body.innerHTML = `<h3 class="${gradClass}" style="font-size: 1.5rem;">Ben Chmieleski</h3><p>Artist & Designer located in West Michigan.</p>`;
             } else {
                 body.innerHTML = `
                     <h3 class="${gradClass}" style="font-size: 1.5rem;">Contact</h3>
-                    <p>
-                        <a href="mailto:benchmieleski@gmail.com" style="color: inherit; text-decoration: underline;">Email</a>
-                        <span style="margin: 0 10px;">|</span>
-                        <a href="https://www.linkedin.com/in/benjamin-chmieleski-29045256/" target="_blank" style="color: inherit; text-decoration: underline;">LinkedIn</a>
-                    </p>`;
+                    <div class="contact-row">
+                        <a href="mailto:benchmieleski@gmail.com">Email</a>
+                        <span>|</span>
+                        <a href="https://www.linkedin.com/in/benjamin-chmieleski-29045256/" target="_blank">LinkedIn</a>
+                    </div>`;
             }
             document.getElementById('modal').style.display = 'block';
         }
@@ -312,12 +238,7 @@
             el.classList.add('active');
         }
 
-        // Keyboard & Resize events
         window.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-        
-        /* Game Logic simplified for manual code reading */
-        // (Game code omitted here for brevity but preserved in full functionality in your actual file)
-        
         init();
     </script>
 </body>
