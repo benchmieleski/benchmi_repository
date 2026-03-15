@@ -47,7 +47,19 @@
         .nav-link { font-size: 0.9rem; font-weight: bold; text-decoration: none; cursor: pointer; }
 
         .color-controls-dropdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .theme-option { cursor: pointer; border: 1px solid var(--theme-c3); padding: 1px; background: #fff; display: flex; height: 20px; }
+        
+        /* Centered the color tiles within the boxes */
+        .theme-option { 
+            cursor: pointer; 
+            border: 1px solid var(--theme-c3); 
+            padding: 1px; 
+            background: #fff; 
+            display: flex; 
+            height: 20px; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
         .theme-option.active { border: 2px solid var(--text-base); }
         .swatch { width: 10px; height: 10px; margin: 0 1px; }
 
@@ -150,7 +162,7 @@
             speed: 2.8
         };
 
-        /* --- C. CORE LOGIC (No need to edit below this line) --- */
+        /* --- C. CORE LOGIC --- */
         const themes = {
             misty: { colors: ['#6cccb6', '#57648a', '#ab5c95'], bg: '#fff', text: '#1a1a1a' }, 
             electric: { colors: ['#d9b3f2', '#b3d9d9', '#efb9da'], bg: '#fff', text: '#1a1a1a' },
