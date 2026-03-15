@@ -87,19 +87,34 @@
             position: absolute; 
             bottom: 0; 
             width: 100vw; 
-            height: 85vh; /* Reduced height slightly to create breathing room above items */
+            height: 85vh;
             display: flex; 
             align-items: center; 
             overflow-x: auto; 
             overflow-y: hidden;
         }
 
-        .scroll-wrapper { display: flex; width: max-content; padding: 0 100px; animation: slow-scroll 80s linear infinite; }
-        .scroll-wrapper:hover { animation-play-state: paused; }
-        @keyframes slow-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        .scroll-wrapper { 
+            display: flex; 
+            width: max-content; 
+            padding: 0 100px; 
+            animation: slow-scroll 80s linear infinite; 
+            /* Fix: Hardware Acceleration */
+            will-change: transform;
+            backface-visibility: hidden;
+            transform: translate3d(0,0,0);
+        }
+        
+        /* Stop animation when game is playing or hovered */
+        .scroll-wrapper:hover, .scroll-wrapper.paused { animation-play-state: paused; }
+
+        @keyframes slow-scroll { 
+            from { transform: translate3d(0, 0, 0); } 
+            to { transform: translate3d(-50%, 0, 0); } 
+        }
 
         .item-wrapper { 
-            height: 60vh; /* Scaled down slightly to maintain proportions with new container height */
+            height: 60vh; 
             margin: 0 40px; padding: 5px; background: var(--painting-frame); 
             transition: 0.6s; cursor: pointer; flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
@@ -171,6 +186,7 @@
         const canvas = document.getElementById('breakoutCanvas');
         const ctx = canvas.getContext('2d');
         const triggerZone = document.getElementById('game-easter-egg');
+        const galleryWrapper = document.getElementById('gallery-wrapper');
         
         let gameActive = false;
         let ballReleased = false;
@@ -240,6 +256,7 @@
                 if (starRain.length === 0) {
                     gameActive = false;
                     canvas.style.display = 'none';
+                    galleryWrapper.classList.remove('paused'); // Resume gallery
                 }
             } else {
                 bricks.forEach((col, i) => {
@@ -280,7 +297,10 @@
                                 let hitPos = (x - (paddleX + paddleWidth / 2)) / (paddleWidth / 2);
                                 dx = hitPos * (baseSpeed + 2);
                                 dy = -dy;
-                            } else { ballReleased = false; }
+                            } else { 
+                                ballReleased = false; 
+                                galleryWrapper.classList.remove('paused'); // Resume if ball drops
+                            }
                         }
                         x += dx; y += dy;
                     }
@@ -293,9 +313,13 @@
             if (!gameActive) {
                 gameActive = true;
                 canvas.style.display = 'block';
+                galleryWrapper.classList.add('paused'); // Pause gallery when game starts
                 initGame();
                 drawGame();
-            } else { ballReleased = true; }
+            } else { 
+                ballReleased = true; 
+                galleryWrapper.classList.add('paused'); 
+            }
         });
 
         triggerZone.addEventListener('mousemove', e => {
