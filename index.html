@@ -46,8 +46,14 @@
             margin-left: 40px;
             position: relative;
             cursor: crosshair;
+            display: flex;
+            justify-content: center; /* Centers the canvas horizontally */
         }
-        #breakoutCanvas { display: none; width: 100%; height: 100%; }
+        #breakoutCanvas { 
+            display: none; 
+            width: 33.33%; /* 1/3 of the area width */
+            height: 100%; 
+        }
 
         .inv-grad-box {
             background: linear-gradient(to right, var(--theme-c1), var(--theme-c2), var(--theme-c3), var(--theme-c1));
@@ -164,12 +170,14 @@
         
         const brickRowCount = 2;
         const paddleWidth = 53;  
-        const brickHeight = 32;  // Doubled from 16
+        const brickHeight = 16;  // Reverted from 32
         const baseSpeed = 2.7; 
 
         function initGame() {
-            canvas.width = triggerZone.offsetWidth;
+            // Fix: set internal canvas width to match its visual/CSS width (1/3 of the trigger zone)
+            canvas.width = triggerZone.offsetWidth / 3;
             canvas.height = triggerZone.offsetHeight;
+            
             const brickColumnCount = Math.floor(canvas.width / 32);
             paddleX = (canvas.width - paddleWidth) / 2;
             ballReleased = false;
@@ -284,6 +292,7 @@
         triggerZone.addEventListener('mousemove', e => {
             if(!gameActive) return;
             const rect = canvas.getBoundingClientRect();
+            // Offset paddle calculation based on the centered canvas position
             paddleX = e.clientX - rect.left - paddleWidth / 2;
             if(paddleX < 0) paddleX = 0;
             if(paddleX > canvas.width - paddleWidth) paddleX = canvas.width - paddleWidth;
