@@ -49,43 +49,26 @@
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-
-        /* Container for canvas + connected close button */
-        .game-window-wrapper {
-            position: relative;
-            display: none; 
-            width: 45%;
-            height: 100%;
+            gap: 15px;
         }
 
         #breakoutCanvas { 
-            width: 100%; 
+            display: none; 
+            width: 45%; /* Restored width from index-37.html */
             height: 100%; 
             border: 2px solid var(--theme-c1); 
             box-sizing: border-box;
-            background: transparent; 
-            display: block;
-            border-radius: 4px;
         }
 
-        #close-game-btn { 
-            position: absolute;
-            top: -12px;
-            right: -12px;
-            width: 24px;
-            height: 24px;
-            background: var(--bg-main);
-            border: 2px solid var(--theme-c1);
-            color: var(--theme-c3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        #close-game-btn {
+            display: none;
             cursor: pointer;
             font-weight: bold;
-            font-size: 0.9rem;
-            border-radius: 4px;
-            z-index: 10;
+            font-size: 1.4rem;
+            color: var(--theme-c3);
+            user-select: none;
+            padding: 5px;
+            align-self: flex-start;
         }
 
         .inv-grad-box {
@@ -179,10 +162,8 @@
         </div>
         
         <div id="game-easter-egg">
-            <div class="game-window-wrapper" id="game-wrapper">
-                <canvas id="breakoutCanvas"></canvas>
-                <div id="close-game-btn" onclick="event.stopPropagation(); closeGame()">✕</div>
-            </div>
+            <canvas id="breakoutCanvas"></canvas>
+            <div id="close-game-btn" onclick="event.stopPropagation(); closeGame()">✕</div>
         </div>
     </header>
 
@@ -223,7 +204,7 @@
         const canvas = document.getElementById('breakoutCanvas');
         const ctx = canvas.getContext('2d');
         const triggerZone = document.getElementById('game-easter-egg');
-        const gameUIWrapper = document.getElementById('game-wrapper');
+        const closeGameBtn = document.getElementById('close-game-btn');
         const galleryWrapper = document.getElementById('gallery-wrapper');
         
         let gameActive = false;
@@ -261,7 +242,8 @@
         function closeGame() {
             gameActive = false;
             ballReleased = false;
-            gameUIWrapper.style.display = 'none';
+            canvas.style.display = 'none';
+            closeGameBtn.style.display = 'none';
             galleryWrapper.classList.remove('paused');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
@@ -285,11 +267,10 @@
             const t = themes[activeTheme];
             let activeBricks = 0;
             
-            // Calculate centering offset
-            const brickGap = 4;
-            const bWidth = (canvas.width / bricks.length) - brickGap;
-            const totalBrickArea = bricks.length * (bWidth + brickGap) - brickGap;
-            const offsetX = (canvas.width - totalBrickArea) / 2;
+            // Logic to center the brick block within the canvas width
+            const bWidth = (canvas.width / bricks.length) - 4;
+            const totalWidthOfBricks = bricks.length * (bWidth + 4) - 4;
+            const startX = (canvas.width - totalWidthOfBricks) / 2;
 
             gradOffset = (gradOffset + 2) % (canvas.width * 2);
 
@@ -312,23 +293,15 @@
                     col.forEach((b, r) => {
                         if(b.status === 1) {
                             activeBricks++;
-                            const bX = offsetX + i * (bWidth + brickGap); 
+                            const bX = startX + i * (bWidth + 4); 
                             const bY = r * (brickHeight + 12) + 5; 
-                            
                             const grad = ctx.createLinearGradient(bX - gradOffset, 0, bX + canvas.width - gradOffset, 0);
                             grad.addColorStop(0, t.colors[0]);
                             grad.addColorStop(0.33, t.colors[1]);
                             grad.addColorStop(0.66, t.colors[2]);
                             grad.addColorStop(1, t.colors[0]);
-                            
                             ctx.fillStyle = (activeTheme === 'monochromeStatic') ? t.text : grad;
-                            
-                            // Rounded bricks
-                            const radius = 4;
-                            ctx.beginPath();
-                            ctx.roundRect(bX, bY, bWidth, brickHeight, radius);
-                            ctx.fill();
-
+                            ctx.fillRect(bX, bY, bWidth, brickHeight);
                             if(ballReleased && x > bX && x < bX + bWidth && y > bY && y < bY + brickHeight) {
                                 dy = -dy;
                                 b.status = 0;
@@ -366,11 +339,11 @@
             requestAnimationFrame(drawGame);
         }
 
-        triggerZone.addEventListener('click', (e) => {
-            if (e.target.id === 'close-game-btn') return;
+        triggerZone.addEventListener('click', () => {
             if (!gameActive) {
                 gameActive = true;
-                gameUIWrapper.style.display = 'block';
+                canvas.style.display = 'block';
+                closeGameBtn.style.display = 'block';
                 galleryWrapper.classList.add('paused');
                 initGame();
                 drawGame();
