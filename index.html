@@ -43,7 +43,7 @@
         #game-easter-egg {
             flex-grow: 1;
             height: 140px;
-            margin-left: 30px; /* Adjusted gap to balance 45% width */
+            margin-left: 30px;
             position: relative;
             cursor: crosshair;
             display: flex;
@@ -52,7 +52,7 @@
 
         #breakoutCanvas { 
             display: none; 
-            width: 45%; /* Set to 45% as requested */
+            width: 45%; 
             height: 100%; 
             border: 2px solid var(--theme-c1); 
             box-sizing: border-box;
@@ -124,8 +124,32 @@
             background: var(--bg-main); padding: 40px; border: 2px solid var(--theme-c1);
             z-index: 2000; text-align: center; color: var(--text-base); max-width: 85vw;
         }
+        #modal-body { display: flex; flex-direction: column; align-items: center; }
         #modal-body img { max-height: 60vh; max-width: 100%; object-fit: contain; }
         .close-btn { margin-top: 25px; font-size: 0.6rem; font-weight: bold; cursor: pointer; background: none; border: 1px solid var(--theme-c3); color: var(--theme-c3); padding: 5px 15px; }
+
+        /* Contact Section Styling */
+        .contact-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .contact-icon-link {
+            transition: transform 0.3s ease, opacity 0.2s;
+            text-decoration: none;
+        }
+        .contact-icon-link:hover {
+            transform: scale(1.1);
+            opacity: 0.8;
+        }
+        .thumb-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--theme-c1);
+            object-fit: cover;
+        }
     </style>
 </head>
 <body>
@@ -198,7 +222,6 @@
         const baseSpeed = 2.8;
 
         function initGame() {
-            // Set internal drawing resolution to 45% of trigger zone
             canvas.width = triggerZone.offsetWidth * 0.45;
             canvas.height = triggerZone.offsetHeight;
             
@@ -367,9 +390,22 @@
         function openSection(type) {
             const body = document.getElementById('modal-body');
             const gradClass = activeTheme === 'monochromeStatic' ? 'inv-grad-box no-grad' : 'inv-grad-box';
-            body.innerHTML = type === 'about' 
-                ? `<h3 class="${gradClass}" style="font-size: 1.5rem;">Ben Chmieleski</h3><p>Artist & Designer located in West Michigan.</p>`
-                : `<h3 class="${gradClass}" style="font-size: 1.5rem;">Contact</h3><p>benchmieleski@gmail.com</p>`;
+            if (type === 'about') {
+                body.innerHTML = `<h3 class="${gradClass}" style="font-size: 1.5rem;">Ben Chmieleski</h3><p>Artist & Designer located in West Michigan.</p>`;
+            } else {
+                body.innerHTML = `
+                    <h3 class="${gradClass}" style="font-size: 1.5rem;">Contact</h3>
+                    <div class="contact-icons">
+                        <a href="mailto:benchmieleski@gmail.com" class="contact-icon-link">
+                            <img src="gmailthumb.jpg" alt="Email" class="thumb-img">
+                        </a>
+                        <a href="https://www.linkedin.com/in/benjamin-chmieleski-29045256/" target="_blank" rel="noopener noreferrer" class="contact-icon-link">
+                            <img src="linkedinthumb.jpg" alt="LinkedIn" class="thumb-img">
+                        </a>
+                    </div>
+                   
+                `;
+            }
             document.getElementById('modal').style.display = 'block';
         }
 
