@@ -116,20 +116,27 @@
                 top: 0;
                 left: 0;
                 right: 0;
-                padding: 40px 20px 0 20px; /* Increased top/side padding */
-                margin-bottom: 60px; /* Increased visible white space below links */
+                padding: 30px 20px 0 20px;
+                margin-bottom: 20px;
+                height: auto;
             }
             .gallery-container {
                 position: relative;
-                height: 55vh; /* Slightly reduced height to ensure it fits without crowding */
-                margin-top: auto;
+                height: 75vh; /* Increased container height */
+                margin-top: 0;
+                display: flex;
+                align-items: center;
             }
             #game-easter-egg {
                 display: none !important;
             }
             .nav-menu {
-                margin-top: 15px; /* More space between title and menu */
+                margin-top: 15px;
                 padding-bottom: 10px;
+            }
+            .item-wrapper { 
+                height: 65vh !important; /* Force paintings to be larger */
+                margin: 0 20px; 
             }
         }
 
@@ -155,10 +162,6 @@
             margin: 0 40px; padding: 5px; background: var(--painting-frame); 
             transition: 0.6s; cursor: pointer; flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
-        }
-        
-        @media (max-width: 768px) {
-            .item-wrapper { height: 50vh; } /* Scale down paintings slightly on mobile */
         }
 
         .painting { height: 100%; display: block; background: #fff; }
