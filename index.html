@@ -53,7 +53,7 @@
         .theme-option.active { border: 2px solid var(--text-base); }
         .swatch { width: 8px; height: 8px; margin: 0 1px; }
 
-        /* --- 4. CENTERED GAME CANVAS (Scaled 50%) --- */
+        /* --- 4. CENTERED GAME WINDOW --- */
         #game-easter-egg { 
             flex: 1; 
             height: 100px; 
@@ -63,8 +63,41 @@
             position: relative; 
             cursor: crosshair;
         }
-        #breakoutCanvas { display: none; width: 25%; height: 100px; border: 2px solid var(--theme-c1); background: transparent; }
-        #close-game-btn { display: none; cursor: pointer; font-weight: bold; font-size: 1.2rem; color: var(--theme-c3); padding: 5px 10px; }
+        
+        /* Container for canvas + connected close button */
+        .game-window-wrapper {
+            position: relative;
+            display: none; /* Controlled by JS */
+            width: 25%;
+            height: 100px;
+        }
+
+        #breakoutCanvas { 
+            width: 100%; 
+            height: 100%; 
+            border: 2px solid var(--theme-c1); 
+            background: transparent; 
+            display: block;
+        }
+
+        #close-game-btn { 
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            width: 24px;
+            height: 24px;
+            background: var(--bg-main);
+            border: 2px solid var(--theme-c1);
+            color: var(--theme-c3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            z-index: 10;
+        }
 
         /* --- 5. GALLERY SCROLL --- */
         .gallery-container {
@@ -119,7 +152,7 @@
             .site-subheading { font-size: 0.95rem; }
             .gallery-container { top: 165px; bottom: 20px; }
             .item-wrapper { margin: 0 15px; padding: 5px; }
-            #breakoutCanvas { width: 50%; } 
+            .game-window-wrapper { width: 50%; } 
         }
     </style>
 </head>
@@ -144,10 +177,13 @@
         </div>
         
         <div id="game-easter-egg">
-            <canvas id="breakoutCanvas"></canvas>
+            <div class="game-window-wrapper" id="game-wrapper">
+                <canvas id="breakoutCanvas"></canvas>
+                <div id="close-game-btn" onclick="event.stopPropagation(); closeGame()">✕</div>
+            </div>
         </div>
 
-        <div id="close-game-btn" onclick="event.stopPropagation(); closeGame()">✕</div>
+        <div style="width: 200px; flex-shrink: 0; display: block;" class="mobile-hide"></div>
     </header>
 
     <div class="gallery-container">
@@ -247,7 +283,7 @@
         const canvas = document.getElementById('breakoutCanvas');
         const ctx = canvas.getContext('2d');
         const triggerZone = document.getElementById('game-easter-egg');
-        const closeGameBtn = document.getElementById('close-game-btn');
+        const gameUIWrapper = document.getElementById('game-wrapper');
         
         let gameActive = false, ballReleased = false;
         let x, y, dx, dy, paddleX, bricks, starRain = [];
@@ -259,7 +295,6 @@
             canvas.height = 100 * scale;
             
             const brickCols = Math.floor(canvas.width / (34 * scale));
-            // Force exactly 2 rows, ensuring they stay within roughly the top 25%
             const rows = 2;
 
             paddleX = (canvas.width - paddleWidth) / 2;
@@ -275,7 +310,7 @@
 
         function closeGame() {
             gameActive = false; ballReleased = false;
-            canvas.style.display = 'none'; closeGameBtn.style.display = 'none';
+            gameUIWrapper.style.display = 'none';
             galleryWrapper.classList.remove('paused');
         }
 
@@ -329,8 +364,9 @@
             requestAnimationFrame(drawGame);
         }
 
-        triggerZone.addEventListener('click', () => {
-            if (!gameActive) { gameActive = true; canvas.style.display = 'block'; closeGameBtn.style.display = 'block'; initGame(); drawGame(); }
+        triggerZone.addEventListener('click', (e) => {
+            if (e.target.id === 'close-game-btn') return;
+            if (!gameActive) { gameActive = true; gameUIWrapper.style.display = 'block'; initGame(); drawGame(); }
             else { ballReleased = true; galleryWrapper.classList.add('paused'); }
         });
 
