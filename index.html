@@ -5,7 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ben Chmieleski | Home</title>
     <style>
-        /* --- 1. CORE THEME VARIABLES --- */
+        /* Custom Scrollbar Styling */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-main); }
+        ::-webkit-scrollbar-thumb { background: var(--theme-c1); border-radius: 10px; border: 2px solid var(--bg-main); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--theme-c2); }
+        * { scrollbar-width: thin; scrollbar-color: var(--theme-c1) var(--bg-main); }
+
         :root {
             --bg-main: #ffffff;
             --text-base: #1a1a1a;
@@ -15,9 +21,6 @@
             --painting-frame: #6cccb6; 
         }
 
-        /* --- 2. GLOBAL STYLES --- */
-        * { box-sizing: border-box; }
-        
         body, html {
             margin: 0; padding: 0;
             overflow: hidden;
@@ -28,56 +31,42 @@
             transition: background 0.4s, color 0.4s;
         }
 
-        /* --- 3. HEADER & NAVIGATION --- */
         header { 
-            position: fixed; 
-            top: 30px; left: 30px; right: 30px; 
-            z-index: 1000; 
-            display: flex; 
-            align-items: flex-start;
-            justify-content: space-between;
+            position: fixed; top: 40px; left: 40px; right: 40px; 
+            z-index: 1000; display: flex; align-items: flex-start; 
         }
 
-        .site-name-wrapper { display: inline-flex; flex-direction: column; cursor: pointer; padding-bottom: 20px; align-items: flex-start; flex-shrink: 0; }
-        .site-name { font-size: 1.8rem; font-weight: bold; line-height: 1.2; margin: 0; }
-        .site-subheading { font-size: 1.1rem; line-height: 1.2; margin: 2px 0 10px; }
+        .site-name-wrapper { display: inline-flex; flex-direction: column; cursor: pointer; padding-bottom: 30px; align-items: flex-start; flex-shrink: 0; }
+        .site-name { font-size: 2rem; font-weight: bold; line-height: 1.2; margin: 0; text-transform: none; }
+        .site-subheading { font-size: 1.25rem; line-height: 1.2; margin: 2px 0 12px; text-transform: none; }
 
-        .nav-menu { display: none; flex-direction: row; align-items: center; gap: 15px; margin-top: 5px; }
-        .site-name-wrapper:hover .nav-menu { display: flex; }
-        
-        .nav-links-column { display: flex; flex-direction: column; gap: 4px; }
-        .nav-link { font-size: 0.85rem; font-weight: bold; text-decoration: none; transition: 0.2s; cursor: pointer; }
-
-        .color-controls-dropdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-        .theme-option { cursor: pointer; border: 1px solid var(--theme-c3); padding: 1px; background: #fff; display: flex; height: 18px; align-items: center; }
-        .theme-option.active { border: 2px solid var(--text-base); }
-        .swatch { width: 8px; height: 8px; margin: 0 1px; }
-
-        /* --- 4. CENTERED GAME WINDOW --- */
-        #game-easter-egg { 
-            flex: 1; 
-            height: 100px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            position: relative; 
+        #game-easter-egg {
+            flex-grow: 1;
+            height: 140px;
+            margin-left: 30px;
+            position: relative;
             cursor: crosshair;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        
+
+        /* Container for canvas + connected close button */
         .game-window-wrapper {
             position: relative;
             display: none; 
-            width: 25%;
-            height: 100px;
+            width: 45%;
+            height: 100%;
         }
 
         #breakoutCanvas { 
             width: 100%; 
             height: 100%; 
             border: 2px solid var(--theme-c1); 
+            box-sizing: border-box;
             background: transparent; 
             display: block;
-            border-radius: 4px; /* Matched to X button */
+            border-radius: 4px;
         }
 
         #close-game-btn { 
@@ -99,61 +88,74 @@
             z-index: 10;
         }
 
-        /* --- 5. GALLERY SCROLL --- */
+        .inv-grad-box {
+            background: linear-gradient(to right, var(--theme-c1), var(--theme-c2), var(--theme-c3), var(--theme-c1));
+            background-size: 400% auto;
+            animation: gradient-flow 18s linear infinite;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block; 
+        }
+
+        .no-grad { -webkit-text-fill-color: var(--text-base) !important; background: none !important; animation: none !important; }
+
+        @keyframes gradient-flow { to { background-position: 400% center; } }
+
+        .nav-menu { display: none; flex-direction: row; align-items: center; gap: 20px; }
+        .site-name-wrapper:hover .nav-menu { display: flex; }
+        .nav-links-column { display: flex; flex-direction: column; gap: 6px; }
+        .nav-link { font-size: 0.9rem; font-weight: bold; text-decoration: none; transition: 0.2s; cursor: pointer; line-height: 1.2; }
+        .nav-link:hover { transform: translateX(3px); opacity: 0.8; }
+
+        .color-controls-dropdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .theme-option { cursor: pointer; border: 1px solid var(--theme-c3); padding: 1px; background: #fff; display: flex; align-items: center; justify-content: center; height: 20px; }
+        .theme-option.active { border: 2px solid var(--text-base); }
+        .swatch { width: 10px; height: 10px; margin: 0 1px; }
+
         .gallery-container {
             position: absolute; 
-            top: 190px; 
-            bottom: 40px; 
+            bottom: 0; 
             width: 100vw; 
+            height: 85vh;
             display: flex; 
             align-items: center; 
-            overflow: hidden;
+            overflow-x: auto; 
+            overflow-y: hidden;
         }
 
         .scroll-wrapper { 
             display: flex; 
             width: max-content; 
-            height: 100%;
-            padding: 0 50px; 
-            animation: slow-scroll 60s linear infinite; 
+            padding: 0 100px; 
+            animation: slow-scroll 80s linear infinite; 
             will-change: transform;
+            backface-visibility: hidden;
+            transform: translate3d(0,0,0);
         }
+        
         .scroll-wrapper:hover, .scroll-wrapper.paused { animation-play-state: paused; }
 
-        @keyframes slow-scroll { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
+        @keyframes slow-scroll { 
+            from { transform: translate3d(0, 0, 0); } 
+            to { transform: translate3d(-50%, 0, 0); } 
+        }
 
         .item-wrapper { 
-            height: 100%; margin: 0 30px; padding: 8px; background: var(--painting-frame); 
-            transition: 0.4s; cursor: pointer; flex-shrink: 0;
+            height: 60vh; 
+            margin: 0 40px; padding: 5px; background: var(--painting-frame); 
+            transition: 0.6s; cursor: pointer; flex-shrink: 0;
             display: flex; align-items: center; justify-content: center;
         }
-        .painting { height: 100%; width: auto; display: block; background: #fff; }
+        .painting { height: 100%; display: block; background: #fff; }
 
-        /* --- 6. MODALS --- */
         #modal {
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: var(--bg-main); padding: 30px; border: 2px solid var(--theme-c1);
-            z-index: 2000; text-align: center; max-width: 90vw; width: 450px;
+            background: var(--bg-main); padding: 40px; border: 2px solid var(--theme-c1);
+            z-index: 2000; text-align: center; color: var(--text-base); max-width: 85vw;
         }
-        #modal-body img { max-height: 50vh; max-width: 100%; object-fit: contain; }
-        .close-btn { margin-top: 20px; font-size: 0.7rem; font-weight: bold; cursor: pointer; background: none; border: 1px solid var(--theme-c3); color: var(--theme-c3); padding: 5px 15px; }
-
-        .inv-grad-box {
-            background: linear-gradient(to right, var(--theme-c1), var(--theme-c2), var(--theme-c3), var(--theme-c1));
-            background-size: 400% auto;
-            animation: gradient-flow 18s linear infinite;
-            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        .no-grad { -webkit-text-fill-color: var(--text-base) !important; background: none !important; animation: none !important; }
-
-        @media (max-width: 600px) {
-            header { top: 20px; left: 20px; right: 20px; }
-            .site-name { font-size: 1.5rem; }
-            .site-subheading { font-size: 0.95rem; }
-            .gallery-container { top: 165px; bottom: 20px; }
-            .item-wrapper { margin: 0 15px; padding: 5px; }
-            .game-window-wrapper { width: 50%; } 
-        }
+        #modal-body img { max-height: 60vh; max-width: 100%; object-fit: contain; }
+        .close-btn { margin-top: 25px; font-size: 0.6rem; font-weight: bold; cursor: pointer; background: none; border: 1px solid var(--theme-c3); color: var(--theme-c3); padding: 5px 15px; }
     </style>
 </head>
 <body>
@@ -170,7 +172,7 @@
                 <div class="color-controls-dropdown">
                     <div class="theme-option active" onclick="event.stopPropagation(); setTheme('misty', this)"><div class="swatch" style="background:#6cccb6"></div><div class="swatch" style="background:#57648a"></div><div class="swatch" style="background:#ab5c95"></div></div>
                     <div class="theme-option" onclick="event.stopPropagation(); setTheme('electric', this)"><div class="swatch" style="background:#d9b3f2"></div><div class="swatch" style="background:#b3d9d9"></div><div class="swatch" style="background:#efb9da"></div></div>
-                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('monochromeDark', this)" style="background:#000;"><div class="swatch" style="background:#fff"></div><div class="swatch" style="background:#fff"></div><div class="swatch" style="background:#fff"></div></div>
+                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('monochromeDark', this)" style="background:#000; border-color: #555;"><div class="swatch" style="background:#fff"></div><div class="swatch" style="background:#fff"></div><div class="swatch" style="background:#fff"></div></div>
                     <div class="theme-option" onclick="event.stopPropagation(); setTheme('monochromeStatic', this)"><div class="swatch" style="background:#000"></div><div class="swatch" style="background:#000"></div><div class="swatch" style="background:#000"></div></div>
                 </div>
             </nav>
@@ -182,8 +184,6 @@
                 <div id="close-game-btn" onclick="event.stopPropagation(); closeGame()">✕</div>
             </div>
         </div>
-
-        <div style="width: 200px; flex-shrink: 0; display: block;" class="mobile-hide"></div>
     </header>
 
     <div class="gallery-container">
@@ -196,7 +196,6 @@
     </div>
 
     <script>
-        /* --- 1. EDITABLE CONTENT --- */
         const feedItems = [
             { path: 'art_flowers.jpg', title: 'Flowers', description: 'oil on paper, 2025' },
             { path: 'art_garden.jpg', title: 'Garden', description: 'oil on paper, 2025' },
@@ -205,12 +204,6 @@
             { path: 'art_bella.jpg', title: 'Botanics', description: 'acrylic on wood, 2026' }
         ];
 
-        const pageContent = {
-            about: "Artist & Designer located in West Michigan. I am inspired by nature and the world around me.",
-            email: "benchmieleski@gmail.com",
-            linkedin: "https://www.linkedin.com/in/benjamin-chmieleski-29045256/"
-        };
-
         const themes = {
             misty: { colors: ['#6cccb6', '#57648a', '#ab5c95'], bg: '#fff', text: '#1a1a1a' }, 
             electric: { colors: ['#d9b3f2', '#b3d9d9', '#efb9da'], bg: '#fff', text: '#1a1a1a' },
@@ -218,17 +211,189 @@
             monochromeStatic: { colors: ['#000', '#000', '#000'], bg: '#fff', text: '#1a1a1a' }
         };
 
-        /* --- 2. GALLERY & THEME LOGIC --- */
+        const pageContent = {
+            about: "Artist & Designer located in West Michigan. I am inspired by nature and the world around me.",
+            email: "benchmieleski@gmail.com",
+            linkedin: "https://www.linkedin.com/in/benjamin-chmieleski-29045256/"
+        };
+
         let activeTheme = 'misty';
+
+        // --- GAME LOGIC ---
+        const canvas = document.getElementById('breakoutCanvas');
+        const ctx = canvas.getContext('2d');
+        const triggerZone = document.getElementById('game-easter-egg');
+        const gameUIWrapper = document.getElementById('game-wrapper');
         const galleryWrapper = document.getElementById('gallery-wrapper');
         
+        let gameActive = false;
+        let ballReleased = false;
+        let x, y, dx, dy, paddleX, bricks;
+        let gradOffset = 0;
+        let starRain = [];
+        
+        const brickRowCount = 2;
+        const paddleWidth = 60; 
+        const brickHeight = 16;
+        const baseSpeed = 2.8;
+
+        function initGame() {
+            canvas.width = triggerZone.offsetWidth * 0.45;
+            canvas.height = triggerZone.offsetHeight;
+            
+            const brickColumnCount = Math.floor(canvas.width / 34);
+            paddleX = (canvas.width - paddleWidth) / 2;
+            ballReleased = false;
+            starRain = [];
+            x = paddleX + paddleWidth / 2;
+            y = canvas.height - 15; 
+            dx = baseSpeed; 
+            dy = -baseSpeed;
+            bricks = [];
+            for(let c=0; c<brickColumnCount; c++) {
+                bricks[c] = [];
+                for(let r=0; r<brickRowCount; r++) {
+                    bricks[c][r] = { status: 1 };
+                }
+            }
+        }
+
+        function closeGame() {
+            gameActive = false;
+            ballReleased = false;
+            gameUIWrapper.style.display = 'none';
+            galleryWrapper.classList.remove('paused');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function createStarRain() {
+            const t = themes[activeTheme];
+            for (let i = 0; i < 45; i++) {
+                starRain.push({
+                    x: Math.random() * canvas.width,
+                    y: -Math.random() * 100,
+                    speed: 1 + Math.random() * 1.8,
+                    color: t.colors[Math.floor(Math.random() * t.colors.length)],
+                    opacity: 1
+                });
+            }
+        }
+
+        function drawGame() {
+            if(!gameActive) return;
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+            const t = themes[activeTheme];
+            let activeBricks = 0;
+            
+            // Calculate centering offset
+            const brickGap = 4;
+            const bWidth = (canvas.width / bricks.length) - brickGap;
+            const totalBrickArea = bricks.length * (bWidth + brickGap) - brickGap;
+            const offsetX = (canvas.width - totalBrickArea) / 2;
+
+            gradOffset = (gradOffset + 2) % (canvas.width * 2);
+
+            if (starRain.length > 0) {
+                starRain.forEach((s, i) => {
+                    ctx.globalAlpha = s.opacity;
+                    ctx.fillStyle = s.color;
+                    ctx.font = "16px sans-serif";
+                    ctx.fillText("*", s.x, s.y);
+                    s.y += s.speed;
+                    if (s.y > canvas.height) s.opacity -= 0.01;
+                    if (s.opacity <= 0) starRain.splice(i, 1);
+                });
+                ctx.globalAlpha = 1;
+                if (starRain.length === 0) {
+                    closeGame();
+                }
+            } else {
+                bricks.forEach((col, i) => {
+                    col.forEach((b, r) => {
+                        if(b.status === 1) {
+                            activeBricks++;
+                            const bX = offsetX + i * (bWidth + brickGap); 
+                            const bY = r * (brickHeight + 12) + 5; 
+                            
+                            const grad = ctx.createLinearGradient(bX - gradOffset, 0, bX + canvas.width - gradOffset, 0);
+                            grad.addColorStop(0, t.colors[0]);
+                            grad.addColorStop(0.33, t.colors[1]);
+                            grad.addColorStop(0.66, t.colors[2]);
+                            grad.addColorStop(1, t.colors[0]);
+                            
+                            ctx.fillStyle = (activeTheme === 'monochromeStatic') ? t.text : grad;
+                            
+                            // Rounded bricks
+                            const radius = 4;
+                            ctx.beginPath();
+                            ctx.roundRect(bX, bY, bWidth, brickHeight, radius);
+                            ctx.fill();
+
+                            if(ballReleased && x > bX && x < bX + bWidth && y > bY && y < bY + brickHeight) {
+                                dy = -dy;
+                                b.status = 0;
+                            }
+                        }
+                    });
+                });
+
+                if(activeBricks === 0) {
+                    createStarRain();
+                } else {
+                    ctx.fillStyle = t.text; 
+                    ctx.fillRect(paddleX, canvas.height - 10, paddleWidth, 5);
+                    if (!ballReleased) { x = paddleX + paddleWidth / 2; y = canvas.height - 15; }
+                    ctx.beginPath(); 
+                    ctx.arc(x, y, 4, 0, Math.PI*2); 
+                    ctx.fill();
+                    if (ballReleased) {
+                        if(x + dx > canvas.width || x + dx < 0) dx = -dx;
+                        if(y + dy < 0) dy = -dy;
+                        else if(y + dy > canvas.height - 10) {
+                            if(x > paddleX && x < paddleX + paddleWidth) {
+                                let hitPos = (x - (paddleX + paddleWidth / 2)) / (paddleWidth / 2);
+                                dx = hitPos * (baseSpeed + 2);
+                                dy = -dy;
+                            } else { 
+                                ballReleased = false; 
+                                galleryWrapper.classList.remove('paused');
+                            }
+                        }
+                        x += dx; y += dy;
+                    }
+                }
+            }
+            requestAnimationFrame(drawGame);
+        }
+
+        triggerZone.addEventListener('click', (e) => {
+            if (e.target.id === 'close-game-btn') return;
+            if (!gameActive) {
+                gameActive = true;
+                gameUIWrapper.style.display = 'block';
+                galleryWrapper.classList.add('paused');
+                initGame();
+                drawGame();
+            } else { 
+                ballReleased = true; 
+                galleryWrapper.classList.add('paused'); 
+            }
+        });
+
+        triggerZone.addEventListener('mousemove', e => {
+            if(!gameActive) return;
+            const rect = canvas.getBoundingClientRect();
+            paddleX = e.clientX - rect.left - paddleWidth / 2;
+            if(paddleX < 0) paddleX = 0;
+            if(paddleX > canvas.width - paddleWidth) paddleX = canvas.width - paddleWidth;
+        });
+
         function init() {
-            const itemsHtml = feedItems.map((item, idx) => `
-                <div class="item-wrapper" onclick="openItem(${idx})">
-                    <img src="${item.path}" class="painting" alt="${item.title}">
-                </div>
-            `).join('');
-            galleryWrapper.innerHTML = itemsHtml + itemsHtml; 
+            const gWrapper = document.getElementById('gallery-wrapper');
+            const gHtml = feedItems.map((item, idx) => {
+                return `<div class="item-wrapper" onclick="openItem(${idx})"><img src="${item.path}" class="painting" alt="${item.title}"></div>`;
+            }).join('');
+            gWrapper.innerHTML = gHtml + gHtml;
         }
 
         function setTheme(key, el) {
@@ -242,35 +407,35 @@
             root.setProperty('--text-base', t.text);
             root.setProperty('--painting-frame', key === 'monochromeStatic' ? '#000' : t.colors[0]);
             
+            canvas.style.borderColor = t.colors[0];
+
             document.querySelectorAll('.inv-grad-box').forEach(b => b.classList.toggle('no-grad', key === 'monochromeStatic'));
             document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
             el.classList.add('active');
-            if(gameActive) initGame();
+            if(gameActive) initGame(); 
         }
 
         function openItem(index) {
             const item = feedItems[index];
+            const body = document.getElementById('modal-body');
             const gradClass = activeTheme === 'monochromeStatic' ? 'inv-grad-box no-grad' : 'inv-grad-box';
-            document.getElementById('modal-body').innerHTML = `
-                <img src="${item.path}">
-                <h3 class="${gradClass}" style="margin-top:15px; font-size:1.2rem;">${item.title}</h3>
-                <p>${item.description}</p>
-            `;
+            body.innerHTML = `<img src="${item.path}"><h3 class="${gradClass}" style="margin-top:15px; font-size: 1.2rem;">${item.title}</h3><p>${item.description}</p>`;
             document.getElementById('modal').style.display = 'block';
         }
 
         function openSection(type) {
             const body = document.getElementById('modal-body');
             const gradClass = activeTheme === 'monochromeStatic' ? 'inv-grad-box no-grad' : 'inv-grad-box';
+            
             if (type === 'about') {
-                body.innerHTML = `<h3 class="${gradClass}" style="font-size:1.5rem;">Ben Chmieleski</h3><p>${pageContent.about}</p>`;
+                body.innerHTML = `<h3 class="${gradClass}" style="font-size: 1.5rem;">Ben Chmieleski</h3><p>${pageContent.about}</p>`;
             } else {
                 body.innerHTML = `
-                    <h3 class="${gradClass}" style="font-size:1.5rem;">Contact</h3>
-                    <p class="contact-links">
-                        <a href="mailto:${pageContent.email}" style="color:inherit">Email</a>
-                        <span style="margin:0 10px">|</span>
-                        <a href="${pageContent.linkedin}" target="_blank" style="color:inherit">LinkedIn</a>
+                    <h3 class="${gradClass}" style="font-size: 1.5rem;">Contact</h3>
+                    <p>
+                        <a href="mailto:${pageContent.email}" style="color: inherit; text-decoration: underline;">Email</a>
+                        <span style="margin: 0 7px;">|</span>
+                        <a href="${pageContent.linkedin}" target="_blank" style="color: inherit; text-decoration: underline;">LinkedIn</a>
                     </p>`;
             }
             document.getElementById('modal').style.display = 'block';
@@ -278,105 +443,6 @@
 
         function closeModal() { document.getElementById('modal').style.display = 'none'; }
         window.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-        /* --- 3. GAME LOGIC --- */
-        const canvas = document.getElementById('breakoutCanvas');
-        const ctx = canvas.getContext('2d');
-        const triggerZone = document.getElementById('game-easter-egg');
-        const gameUIWrapper = document.getElementById('game-wrapper');
-        
-        let gameActive = false, ballReleased = false;
-        let x, y, dx, dy, paddleX, bricks, starRain = [];
-        const scale = 2; 
-        const paddleWidth = 60 * scale, brickHeight = 10 * scale, baseSpeed = 2.8 * scale;
-
-        function initGame() {
-            canvas.width = (triggerZone.offsetWidth * (window.innerWidth < 600 ? 0.5 : 0.25)) * scale;
-            canvas.height = 100 * scale;
-            
-            const brickCols = Math.floor(canvas.width / (34 * scale));
-            const rows = 2;
-
-            paddleX = (canvas.width - paddleWidth) / 2;
-            ballReleased = false; starRain = [];
-            x = paddleX + paddleWidth / 2; y = canvas.height - (15 * scale);
-            dx = baseSpeed; dy = -baseSpeed;
-            bricks = [];
-            for(let c=0; c<brickCols; c++) {
-                bricks[c] = [];
-                for(let r=0; r<rows; r++) bricks[c][r] = { status: 1 };
-            }
-        }
-
-        function closeGame() {
-            gameActive = false; ballReleased = false;
-            gameUIWrapper.style.display = 'none';
-            galleryWrapper.classList.remove('paused');
-        }
-
-        function drawGame() {
-            if(!gameActive) return;
-            ctx.clearRect(0,0, canvas.width, canvas.height);
-            const t = themes[activeTheme];
-            let activeBricks = 0;
-            const bWidth = (canvas.width / bricks.length) - (4 * scale);
-
-            if (starRain.length > 0) {
-                starRain.forEach((s, i) => {
-                    ctx.globalAlpha = s.opacity; ctx.fillStyle = s.color; ctx.font = (10 * scale) + "px sans-serif";
-                    ctx.fillText("*", s.x, s.y);
-                    s.y += s.speed; if (s.y > canvas.height) s.opacity -= 0.01;
-                    if (s.opacity <= 0) starRain.splice(i, 1);
-                });
-                if (starRain.length === 0) closeGame();
-            } else {
-                bricks.forEach((col, i) => {
-                    col.forEach((b, r) => {
-                        if(b.status === 1) {
-                            activeBricks++;
-                            const bX = i * (bWidth + (4 * scale)), bY = r * (brickHeight + (4 * scale)) + (5 * scale); 
-                            ctx.fillStyle = (activeTheme === 'monochromeStatic') ? t.text : t.colors[0];
-                            ctx.fillRect(bX, bY, bWidth, brickHeight);
-                            if(ballReleased && x > bX && x < bX + bWidth && y > bY && y < bY + brickHeight) { dy = -dy; b.status = 0; }
-                        }
-                    });
-                });
-
-                if(activeBricks === 0 && bricks.length > 0) {
-                    for (let i = 0; i < 30; i++) starRain.push({x: Math.random()*canvas.width, y: 0, speed: (1+Math.random()*2)*scale, color: t.colors[Math.floor(Math.random()*3)], opacity: 1});
-                } else {
-                    ctx.fillStyle = t.text; ctx.fillRect(paddleX, canvas.height - (10 * scale), paddleWidth, 5 * scale);
-                    if (!ballReleased) { x = paddleX + paddleWidth / 2; y = canvas.height - (15 * scale); }
-                    ctx.beginPath(); ctx.arc(x, y, 4 * scale, 0, Math.PI*2); ctx.fill();
-                    if (ballReleased) {
-                        if(x + dx > canvas.width || x + dx < 0) dx = -dx;
-                        if(y + dy < 0) dy = -dy;
-                        else if(y + dy > canvas.height - (10 * scale)) {
-                            if(x > paddleX && x < paddleX + paddleWidth) {
-                                let hitPos = (x - (paddleX + paddleWidth / 2)) / (paddleWidth / 2);
-                                dx = hitPos * (baseSpeed + (2 * scale)); dy = -dy;
-                            } else { ballReleased = false; galleryWrapper.classList.remove('paused'); }
-                        }
-                        x += dx; y += dy;
-                    }
-                }
-            }
-            requestAnimationFrame(drawGame);
-        }
-
-        triggerZone.addEventListener('click', (e) => {
-            if (e.target.id === 'close-game-btn') return;
-            if (!gameActive) { gameActive = true; gameUIWrapper.style.display = 'block'; initGame(); drawGame(); }
-            else { ballReleased = true; galleryWrapper.classList.add('paused'); }
-        });
-
-        triggerZone.addEventListener('mousemove', e => {
-            const rect = canvas.getBoundingClientRect();
-            let visualX = e.clientX - rect.left;
-            paddleX = (visualX * scale) - (paddleWidth / 2);
-            paddleX = Math.max(0, Math.min(canvas.width - paddleWidth, paddleX));
-        });
-
         window.addEventListener('resize', () => { if(gameActive) initGame(); });
         init();
     </script>
