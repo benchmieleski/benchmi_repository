@@ -53,7 +53,7 @@
         .theme-option.active { border: 2px solid var(--text-base); }
         .swatch { width: 10px; height: 10px; margin: 0 1px; }
 
-        /* --- 4. GAME AREA --- */
+        /* --- GAME AREA --- */
         #game-easter-egg {
             flex-grow: 1; height: 260px; margin-left: 30px;
             position: relative; cursor: crosshair; display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -61,6 +61,7 @@
         #breakoutCanvas { 
             display: none; width: 45%; height: 220px; 
             border: 2px solid var(--theme-c1); border-radius: 15px;
+            background: var(--bg-main); /* Ensure it has a solid background when it opens */
         }
         #game-hud {
             display: none;
@@ -93,7 +94,18 @@
         .no-grad { -webkit-text-fill-color: var(--text-base) !important; background: none !important; animation: none !important; }
         @keyframes gradient-flow { to { background-position: 400% center; } }
 
-        .gallery-container { position: absolute; bottom: 0; width: 100vw; height: 85vh; display: flex; align-items: center; overflow: hidden; }
+        /* --- GALLERY FADE --- */
+        .gallery-container { 
+            position: absolute; bottom: 0; width: 100vw; height: 85vh; 
+            display: flex; align-items: center; overflow: hidden;
+            transition: opacity 0.5s ease-in-out; 
+            opacity: 1;
+        }
+        .gallery-container.faded {
+            opacity: 0;
+            pointer-events: none;
+        }
+
         .scroll-wrapper { 
             display: flex; width: max-content; padding: 0 100px; 
             animation: slow-scroll 80s linear infinite; will-change: transform; 
@@ -152,7 +164,7 @@
         </div>
     </header>
 
-    <div class="gallery-container">
+    <div class="gallery-container" id="main-gallery">
         <div class="scroll-wrapper" id="gallery-wrapper"></div>
     </div>
 
@@ -176,7 +188,7 @@
             { path: 'art_bella.jpg', title: 'Botanics', description: 'acrylic on wood, 2026' }
         ];
 
-        const gameConfig = { rows: 2, paddleWidth: 60, brickHeight: 16, speed: 2.8 };
+        const gameConfig = { cols: 5, rows: 2, paddleWidth: 60, brickHeight: 16, speed: 2.8 }; // 5x2 = 10 bricks
 
         const themes = {
             misty: { colors: ['#6cccb6', '#57648a', '#ab5c95'], bg: '#fff', text: '#1a1a1a' }, 
@@ -188,6 +200,7 @@
         const canvas = document.getElementById('breakoutCanvas');
         const ctx = canvas.getContext('2d');
         const triggerZone = document.getElementById('game-easter-egg');
+        const mainGallery = document.getElementById('main-gallery');
         const hud = document.getElementById('game-hud');
         const closeBtn = document.getElementById('close-game-btn');
         const gallery = document.getElementById('gallery-wrapper');
@@ -201,13 +214,13 @@
         }
 
         function resetBricks() {
-            const cols = Math.floor(canvas.width / 34);
-            bricks = Array.from({length: cols}, () => Array.from({length: gameConfig.rows}, () => ({status: 1})));
+            // Force 5 columns and 2 rows for exactly 10 bricks
+            bricks = Array.from({length: gameConfig.cols}, () => Array.from({length: gameConfig.rows}, () => ({status: 1})));
         }
 
         function initGame(fullReset = true) {
             canvas.width = triggerZone.offsetWidth * 0.45;
-            canvas.height = 220; // DOUBLED HEIGHT
+            canvas.height = 220; 
             paddleX = (canvas.width - gameConfig.paddleWidth) / 2;
             ballReleased = false; 
             starRain = [];
@@ -231,8 +244,9 @@
             ctx.clearRect(0,0, canvas.width, canvas.height);
             const t = themes[activeTheme];
             let activeCount = 0;
-            const bWidth = (canvas.width / bricks.length) - 4;
-            const startX = (canvas.width - (bricks.length * (bWidth + 4) - 4)) / 2;
+            const bWidth = (canvas.width / gameConfig.cols) - 10; // Extra spacing
+            const totalWidth = gameConfig.cols * (bWidth + 10) - 10;
+            const startX = (canvas.width - totalWidth) / 2;
 
             if (starRain.length > 0) {
                 starRain.forEach((s, i) => {
@@ -251,7 +265,7 @@
                     col.forEach((b, r) => {
                         if(b.status === 1) {
                             activeCount++;
-                            const bX = startX + i * (bWidth + 4), bY = r * (gameConfig.brickHeight + 12) + 5;
+                            const bX = startX + i * (bWidth + 10), bY = r * (gameConfig.brickHeight + 12) + 15;
                             
                             if (activeTheme === 'monochromeStatic') {
                                 ctx.fillStyle = t.text;
@@ -289,8 +303,7 @@
                                 lives--;
                                 ballReleased = false; 
                                 if (lives <= 0) {
-                                    initGame(true); 
-                                    gallery.classList.remove('paused');
+                                    closeGame(); // Return to normal on game over
                                 } else {
                                     initGame(false); 
                                 }
@@ -304,19 +317,26 @@
             requestAnimationFrame(drawGame);
         }
 
-        triggerZone.onclick = () => {
+        triggerZone.onclick = (e) => {
             if (window.innerWidth <= 768) return; 
             if (!gameActive) { 
                 gameActive = true; 
                 canvas.style.display = 'block'; 
                 hud.style.display = 'block';
                 closeBtn.style.display = 'flex'; 
-                gallery.classList.add('paused'); 
+                mainGallery.classList.add('faded'); // Fade out the gallery
                 initGame(true); 
                 drawGame(); 
             }
             else ballReleased = true;
         };
+
+        // Close when clicking outside the game area but within header if game is active
+        window.addEventListener('click', (e) => {
+            if(gameActive && !triggerZone.contains(e.target) && !document.querySelector('.site-name-wrapper').contains(e.target)) {
+                closeGame();
+            }
+        });
 
         triggerZone.onmousemove = e => {
             if(!gameActive) return;
@@ -329,7 +349,7 @@
             canvas.style.display = 'none'; 
             hud.style.display = 'none';
             closeBtn.style.display = 'none'; 
-            gallery.classList.remove('paused'); 
+            mainGallery.classList.remove('faded'); // Restore gallery
         }
 
         function setTheme(key, el) {
