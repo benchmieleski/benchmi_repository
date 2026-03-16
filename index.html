@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -81,8 +82,8 @@
 
         #breakoutCanvas { 
             display: none; 
-            height: 80%; /* Takes height of container */
-            aspect-ratio: 4 / 3; /* STRICT 4:3 Ratio */
+            height: 80%; 
+            aspect-ratio: 4 / 3; 
             border: 2px solid var(--theme-c1); border-radius: 15px;
             background: var(--bg-main);
             image-rendering: pixelated; 
@@ -201,8 +202,8 @@
             { path: 'art_bella.jpg', title: 'Botanics', description: 'acrylic on wood, 2026' }
         ];
 
-        // 2:1 Brick Ratio logic: 400 wide / 8 cols = 50. 50 wide / 2 = 25 height.
-        const gameConfig = { cols: 8, rows: 3, paddleWidth: 60, brickHeight: 20, speed: 3.5 };
+        // ROWS SET TO 2
+        const gameConfig = { cols: 8, rows: 2, paddleWidth: 60, brickHeight: 20, speed: 3.8 };
         const themes = {
             misty: { colors: ['#6cccb6', '#57648a', '#ab5c95'], bg: '#fff', text: '#1a1a1a' }, 
             electric: { colors: ['#d9b3f2', '#b3d9d9', '#efb9da'], bg: '#fff', text: '#1a1a1a' },
@@ -225,7 +226,7 @@
         function resetBricks() { bricks = Array.from({length: gameConfig.cols}, () => Array.from({length: gameConfig.rows}, () => ({status: 1}))); }
 
         function initGame(fullReset = true) {
-            canvas.width = 400; canvas.height = 300; // Hard 4:3 ratio
+            canvas.width = 400; canvas.height = 300; 
             paddleX = (canvas.width - gameConfig.paddleWidth) / 2;
             ballReleased = false; starRain = [];
             if (fullReset) { score = 0; level = 1; lives = 3; resetBricks(); }
@@ -259,7 +260,7 @@
                             const grd = ctx.createLinearGradient(bX, bY, bX + bWidth, bY);
                             grd.addColorStop(0, t.colors[0]); grd.addColorStop(1, t.colors[2]);
                             ctx.fillStyle = activeTheme === 'monochromeStatic' ? t.text : grd;
-                            ctx.fillRect(bX, bY, bWidth, gameConfig.brickHeight); // BRICK
+                            ctx.fillRect(bX, bY, bWidth, gameConfig.brickHeight);
                             if(ballReleased && x > bX && x < bX + bWidth && y > bY && y < bY + gameConfig.brickHeight) { dy = -dy; b.status = 0; score += 1; updateHud(); }
                         }
                     });
