@@ -21,18 +21,18 @@
 
         body, html {
             margin: 0; padding: 0;
-            overflow: hidden;
+            overflow-x: hidden;
             background: var(--bg-main);
             color: var(--text-base);
             font-family: sans-serif;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
         header { 
             position: fixed; top: 0; left: 0; right: 0; 
-            padding: 40px 40px 0 40px;
+            padding: 40px;
             z-index: 1000; 
             display: flex; 
             flex-direction: row; 
@@ -59,56 +59,55 @@
         .theme-option.active { border: 2px solid var(--text-base); }
         .swatch { width: 10px; height: 10px; margin: 0 1px; }
 
-        .universal-close {
-            display: none; cursor: pointer; position: absolute;
-            width: 28px; height: 28px;
-            background: var(--bg-main);
-            border: 2px solid var(--theme-c1);
-            border-radius: 4px; 
-            color: var(--text-base); font-size: 0.9rem; font-weight: bold;
-            align-items: center; justify-content: center;
-            z-index: 2005;
-            top: 0; right: 0;
-            transform: translate(50%, -50%);
-        }
-        .universal-close:hover { background: var(--theme-c1); color: var(--bg-main); }
-
+        /* Game Desktop Only */
+        .desktop-only { display: flex; }
         #game-easter-egg {
             flex-grow: 1; height: 140px; pointer-events: auto; cursor: crosshair; 
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             transition: height 0.5s ease-in-out; z-index: 900;
         }
-        
         body.game-on #game-easter-egg { position: absolute; top: 0; left: 0; right: 0; height: 60vh; background: var(--bg-main); }
-        .canvas-container { position: relative; display: none; height: 80%; aspect-ratio: 4 / 3; overflow: visible; }
+        .canvas-container { position: relative; display: none; height: 80%; aspect-ratio: 4 / 3; }
         body.game-on .canvas-container { display: block; }
-
-        #breakoutCanvas { width: 100%; height: 100%; border: 2px solid var(--theme-c1); border-radius: 10px; background: var(--bg-main); image-rendering: pixelated; }
+        #breakoutCanvas { width: 100%; height: 100%; border: 2px solid var(--theme-c1); border-radius: 10px; background: var(--bg-main); }
         #game-hud { display: none; font-size: 0.75rem; font-weight: bold; padding: 10px 0; text-transform: uppercase; letter-spacing: 0.1em; }
+
+        .universal-close {
+            display: none; cursor: pointer; position: absolute;
+            width: 28px; height: 28px;
+            background: var(--bg-main); border: 2px solid var(--theme-c1); border-radius: 4px; 
+            color: var(--text-base); font-size: 0.9rem; font-weight: bold;
+            align-items: center; justify-content: center; z-index: 2005; top: 0; right: 0; transform: translate(50%, -50%);
+        }
 
         .gallery-container { flex: 1; width: 100vw; display: flex; align-items: center; overflow: hidden; transition: flex 0.5s ease-in-out; margin-top: 140px; }
         body.game-on .gallery-container { margin-top: 60vh; flex: 0 0 40vh; }
-        .scroll-wrapper { display: flex; width: max-content; padding: 0 100px; animation: slow-scroll 80s linear infinite; will-change: transform; }
-        .scroll-wrapper:hover { animation-play-state: paused; }
-        @keyframes slow-scroll { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
+        .scroll-wrapper { display: flex; width: max-content; padding: 0 100px; animation: slow-scroll 80s linear infinite; }
+        @keyframes slow-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
         
         .item-wrapper { 
-            height: 60vh; margin: 20px 40px; padding: 5px; 
-            background: var(--painting-frame); transition: 0.6s; 
-            cursor: pointer; flex-shrink: 0;
-            border-radius: 10px; overflow: hidden;
-            /* Update to a soft shadow that also covers the bottom */
+            height: 60vh; margin: 20px 40px; padding: 5px; background: var(--painting-frame); 
+            transition: 0.6s; cursor: pointer; flex-shrink: 0; border-radius: 10px; 
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
-        /* Increased shadow and lift on hover for the full gallery items */
         .item-wrapper:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
         body.game-on .item-wrapper { height: 30vh; } 
         .painting { height: 100%; display: block; background: #fff; border-radius: 8px; }
 
-        #modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg-main); padding: 40px; border: 2px solid var(--theme-c1); z-index: 2000; text-align: center; max-width: 85vw; border-radius: 10px; overflow: visible; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
-        #modal-body img { max-height: 60vh; max-width: 100%; object-fit: contain; border-radius: 5px; }
+        #modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg-main); padding: 40px; border: 2px solid var(--theme-c1); z-index: 2000; text-align: center; max-width: 85vw; border-radius: 10px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        #modal-body img { max-height: 60vh; max-width: 100%; border-radius: 5px; }
 
-        @media (max-width: 768px) { #game-easter-egg { display: none !important; } .gallery-container { margin-top: 180px; display: block; overflow-y: auto; height: auto; } .scroll-wrapper { animation: none; display: block; width: 100%; padding: 0; } .item-wrapper { height: auto; width: 100%; max-width: 400px; margin: 0 auto 40px auto; } }
+        /* Mobile Simplified Styling */
+        @media (max-width: 768px) {
+            .desktop-only { display: none !important; }
+            header { position: relative; padding: 20px; pointer-events: auto; }
+            .nav-menu { display: flex; margin-top: 10px; }
+            .gallery-container { margin-top: 20px; overflow-y: auto; display: block; height: auto; }
+            .scroll-wrapper { animation: none; display: flex; flex-direction: column; width: 100%; padding: 0 20px; }
+            .item-wrapper { height: auto; width: 100%; margin: 0 0 30px 0; }
+            .painting { width: 100%; height: auto; }
+            body { overflow-y: auto; }
+        }
 
         .inv-grad-box { background: linear-gradient(to right, var(--theme-c1), var(--theme-c2), var(--theme-c3), var(--theme-c1)); background-size: 400% auto; animation: gradient-flow 18s linear infinite; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
         .no-grad { -webkit-text-fill-color: var(--text-base) !important; background: none !important; animation: none !important; }
@@ -135,7 +134,7 @@
             </nav>
         </div>
 
-        <div id="game-easter-egg" onclick="handleTriggerClick(event)">
+        <div id="game-easter-egg" class="desktop-only" onclick="handleTriggerClick(event)">
             <div class="canvas-container">
                 <canvas id="breakoutCanvas"></canvas>
                 <div id="close-game-btn" class="universal-close" onclick="event.stopPropagation(); closeGame()">✕</div>
@@ -179,13 +178,13 @@
         
         let gameActive = false, ballReleased = false, activeTheme = 'misty', gameWon = false;
         let paddleX, paddleWidth, bricks, starRain = [], powerUps = [], balls = [], bullets = [];
-        let score = 0, level = 1, lives = 3, frameCount = 0;
-        let laserTimer = 0, levelTransitioning = false;
+        let score = 0, level = 1, lives = 3, frameCount = 0, laserTimer = 0, levelTransitioning = false;
 
         function updateHud() { hud.innerText = `Score: ${score} | Level: ${level} | Lives: ${lives}`; }
         function resetBricks() { bricks = Array.from({length: gameConfig.cols}, () => Array.from({length: gameConfig.rows}, () => ({status: 1}))); }
 
         function initGame(fullReset = true) {
+            if(!canvas) return;
             canvas.width = 400; canvas.height = 300; 
             levelTransitioning = false;
             if (fullReset) { score = 0; level = 1; lives = 3; paddleWidth = gameConfig.basePaddleWidth; resetBricks(); gameWon = false; }
@@ -196,16 +195,17 @@
         }
 
         function spawnPowerUp(x, y) {
-            if (Math.random() < 0.10) {
-                const types = ['shrink', 'expand', 'multi', 'laser'];
-                powerUps.push({ x, y, type: types[Math.floor(Math.random() * types.length)], dy: 1.8 });
+            const rand = Math.random();
+            if (rand < 0.12) {
+                const types = ['shrink', 'expand', 'multi', 'laser', 'life'];
+                const type = rand < 0.02 ? 'life' : types[Math.floor(Math.random() * (types.length - 1))];
+                powerUps.push({ x, y, type, dy: 1.8 });
             }
         }
 
         function fireLasers() {
             if (laserTimer <= 0) return;
-            bullets.push({x: paddleX + 3, y: canvas.height - 25, dy: -5});
-            bullets.push({x: paddleX + paddleWidth - 3, y: canvas.height - 25, dy: -5});
+            bullets.push({x: paddleX + 3, y: canvas.height - 25, dy: -5}, {x: paddleX + paddleWidth - 3, y: canvas.height - 25, dy: -5});
         }
 
         function drawGame() {
@@ -219,19 +219,16 @@
             const t = themes[activeTheme];
             
             let activeCount = 0;
-            const padding = 6;
-            const bWidth = (canvas.width / gameConfig.cols) - padding;
-            const startX = padding / 2;
+            const padding = 6, bWidth = (canvas.width / gameConfig.cols) - padding, startX = padding / 2;
 
             if (gameWon) {
                 ctx.font = "bold 40px sans-serif"; ctx.textAlign = "center";
-                const shift = Math.sin(frameCount * 0.1) * 10;
                 ctx.fillStyle = [c1, c2, c3][Math.floor((frameCount/15)%3)];
-                ctx.fillText("YOU WIN!", canvas.width / 2, canvas.height / 2 + shift);
+                ctx.fillText("YOU WIN!", canvas.width / 2, canvas.height / 2);
             } else if (starRain.length > 0) {
                 starRain.forEach((s, i) => {
-                    ctx.globalAlpha = s.opacity; ctx.fillStyle = s.color; ctx.font = "14px sans-serif";
-                    ctx.fillText("*", s.x, s.y); s.y += s.speed; if (s.y > canvas.height) s.opacity -= 0.01;
+                    ctx.globalAlpha = s.opacity; ctx.fillStyle = s.color; ctx.fillText("*", s.x, s.y); s.y += s.speed;
+                    if (s.y > canvas.height) s.opacity -= 0.01;
                     if (s.opacity <= 0) starRain.splice(i, 1);
                 });
                 if (starRain.length === 0 && levelTransitioning) {
@@ -244,20 +241,12 @@
                         if(b.status === 1) {
                             activeCount++;
                             const bX = startX + i * (bWidth + padding), bY = r * (gameConfig.brickHeight + padding) + 50;
-                            const cycle = (frameCount % 1080) / 1080; 
-                            const grd = ctx.createLinearGradient(bX - (canvas.width * cycle), bY, bX + bWidth + (canvas.width * (1-cycle)), bY);
-                            grd.addColorStop(0, c1); grd.addColorStop(0.33, c2); grd.addColorStop(0.66, c3); grd.addColorStop(1, c1);
-                            ctx.fillStyle = activeTheme === 'monochromeStatic' ? t.text : grd;
+                            ctx.fillStyle = activeTheme === 'monochromeStatic' ? t.text : c1;
                             ctx.fillRect(bX, bY, bWidth, gameConfig.brickHeight);
                             
                             balls.forEach(ball => {
                                 if(ballReleased && ball.x > bX && ball.x < bX + bWidth && ball.y > bY && ball.y < bY + gameConfig.brickHeight) {
                                     ball.dy = -ball.dy; b.status = 0; score += 1; updateHud(); spawnPowerUp(bX + bWidth/2, bY);
-                                }
-                            });
-                            bullets.forEach((bull, bi) => {
-                                if(bull.x > bX && bull.x < bX + bWidth && bull.y > bY && bull.y < bY + gameConfig.brickHeight) {
-                                    b.status = 0; score += 1; updateHud(); bullets.splice(bi, 1); spawnPowerUp(bX + bWidth/2, bY);
                                 }
                             });
                         }
@@ -266,53 +255,35 @@
 
                 if(activeCount === 0 && !levelTransitioning) {
                     levelTransitioning = true; ballReleased = false;
-                    for(let i=0; i<30; i++) starRain.push({x: Math.random()*canvas.width, y: -Math.random()*50, speed: 1.5+Math.random(), color: [c1, c2, c3][Math.floor(Math.random()*3)], opacity: 1});
+                    for(let i=0; i<30; i++) starRain.push({x: Math.random()*canvas.width, y: -Math.random()*50, speed: 1.5+Math.random(), color: c2, opacity: 1});
                 } else {
                     ctx.fillStyle = t.text; ctx.fillRect(paddleX, canvas.height - 15, paddleWidth, 8);
                     
-                    if (laserTimer > 0) {
-                        laserTimer -= 1/60;
-                        ctx.beginPath();
-                        ctx.moveTo(paddleX, canvas.height - 15); ctx.lineTo(paddleX + 3, canvas.height - 25); ctx.lineTo(paddleX + 6, canvas.height - 15);
-                        ctx.moveTo(paddleX + paddleWidth - 6, canvas.height - 15); ctx.lineTo(paddleX + paddleWidth - 3, canvas.height - 25); ctx.lineTo(paddleX + paddleWidth, canvas.height - 15);
-                        ctx.fill();
-                    }
-
-                    bullets.forEach((bull, i) => {
-                        bull.y += bull.dy; ctx.beginPath(); ctx.arc(bull.x, bull.y, 3, 0, Math.PI*2); ctx.fill();
-                        if (bull.y < 0) bullets.splice(i, 1);
-                    });
-
                     powerUps.forEach((p, i) => {
                         p.y += p.dy;
-                        ctx.beginPath(); ctx.arc(p.x, p.y, 10, 0, Math.PI*2);
-                        ctx.strokeStyle = t.text; ctx.stroke();
-                        ctx.fillStyle = t.text; ctx.textAlign = "center";
-                        if (p.type === 'shrink') { ctx.font = "bold 14px sans-serif"; ctx.fillText("-", p.x, p.y + 5); }
-                        else if (p.type === 'expand') { ctx.font = "bold 14px sans-serif"; ctx.fillText("+", p.x, p.y + 5); }
-                        else if (p.type === 'laser') { ctx.fillStyle = "#ff0000"; ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2); ctx.fill(); }
-                        else if (p.type === 'multi') { ctx.font = "bold 13px sans-serif"; ctx.fillText("3", p.x, p.y + 5); }
+                        ctx.beginPath(); ctx.arc(p.x, p.y, 10, 0, Math.PI*2); ctx.stroke();
+                        ctx.font = "bold 12px sans-serif"; ctx.textAlign = "center";
+                        if (p.type === 'life') ctx.fillText("♥", p.x, p.y + 4);
+                        else if (p.type === 'expand') ctx.fillText("+", p.x, p.y + 4);
+                        else if (p.type === 'shrink') ctx.fillText("-", p.x, p.y + 4);
+                        else ctx.fillText("?", p.x, p.y + 4);
 
                         if(p.y > canvas.height - 25 && p.x > paddleX && p.x < paddleX + paddleWidth) {
-                            if(p.type === 'shrink') paddleWidth = Math.max(30, paddleWidth - 20);
-                            if(p.type === 'expand') paddleWidth = Math.min(120, paddleWidth + 30);
-                            if(p.type === 'multi') { 
-                                balls.push({x: balls[0].x, y: balls[0].y, dx: -balls[0].dx, dy: balls[0].dy}); 
-                                balls.push({x: balls[0].x, y: balls[0].y, dx: balls[0].dx * 0.5, dy: -balls[0].dy}); 
-                            }
-                            if(p.type === 'laser') laserTimer = 5;
-                            powerUps.splice(i, 1);
+                            if(p.type === 'life') lives++;
+                            if(p.type === 'expand') paddleWidth = Math.min(120, paddleWidth + 20);
+                            if(p.type === 'shrink') paddleWidth = Math.max(30, paddleWidth - 15);
+                            updateHud(); powerUps.splice(i, 1);
                         } else if (p.y > canvas.height) powerUps.splice(i, 1);
                     });
 
                     balls.forEach((ball, i) => {
                         if (!ballReleased) { ball.x = paddleX + paddleWidth / 2; ball.y = canvas.height - 23; }
-                        ctx.beginPath(); ctx.arc(ball.x, ball.y, 5, 0, Math.PI*2); ctx.fillStyle = t.text; ctx.fill();
+                        ctx.beginPath(); ctx.arc(ball.x, ball.y, 5, 0, Math.PI*2); ctx.fill();
                         if (ballReleased) {
                             if(ball.x + ball.dx > canvas.width || ball.x + ball.dx < 0) ball.dx = -ball.dx;
                             if(ball.y + ball.dy < 0) ball.dy = -ball.dy;
                             else if(ball.y + ball.dy > canvas.height - 15) {
-                                if(ball.x > paddleX && ball.x < paddleX + paddleWidth) { ball.dy = -ball.dy; }
+                                if(ball.x > paddleX && ball.x < paddleX + paddleWidth) ball.dy = -ball.dy;
                                 else { balls.splice(i, 1); if (balls.length === 0) { lives--; ballReleased = false; if (lives <= 0) initGame(true); else initGame(false); updateHud(); } }
                             }
                             ball.x += ball.dx; ball.y += ball.dy;
@@ -326,18 +297,16 @@
         function handleTriggerClick(e) { 
             if (window.innerWidth <= 768) return; 
             if (!gameActive) { gameActive = true; document.body.classList.add('game-on'); hud.style.display = 'block'; closeBtn.style.display = 'flex'; initGame(true); drawGame(); } 
-            else if (!ballReleased) { ballReleased = true; } 
-            else if (laserTimer > 0) { fireLasers(); }
+            else if (!ballReleased) ballReleased = true; 
         }
 
-        triggerZone.onmousemove = e => { if(!gameActive) return; let rect = canvas.getBoundingClientRect(); let scaleX = canvas.width / rect.width; paddleX = (e.clientX - rect.left) * scaleX - paddleWidth / 2; paddleX = Math.max(0, Math.min(canvas.width - paddleWidth, paddleX)); };
+        triggerZone.onmousemove = e => { if(!gameActive) return; let rect = canvas.getBoundingClientRect(); paddleX = (e.clientX - rect.left) * (canvas.width / rect.width) - paddleWidth / 2; paddleX = Math.max(0, Math.min(canvas.width - paddleWidth, paddleX)); };
         function closeGame() { gameActive = false; document.body.classList.remove('game-on'); hud.style.display = 'none'; closeBtn.style.display = 'none'; }
-        function setTheme(key, el) { activeTheme = key; const t = themes[key]; const root = document.documentElement.style; root.setProperty('--theme-c1', t.colors[0]); root.setProperty('--theme-c2', t.colors[1]); root.setProperty('--theme-c3', t.colors[2]); root.setProperty('--bg-main', t.bg); root.setProperty('--text-base', t.text); root.setProperty('--painting-frame', key === 'monochromeStatic' ? '#000' : t.colors[0]); document.querySelectorAll('.inv-grad-box').forEach(b => b.classList.toggle('no-grad', key === 'monochromeStatic')); document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active')); el.classList.add('active'); if(gameActive) initGame(false); }
-        function openItem(idx) { const item = feedItems[idx % feedItems.length]; document.getElementById('modal-body').innerHTML = `<img src="${item.path}"><h3 class="inv-grad-box ${activeTheme==='monochromeStatic'?'no-grad':''}" style="margin-top:15px;">${item.title}</h3><p>${item.description}</p>`; document.getElementById('modal').style.display = 'block'; }
-        function openSection(type) { const body = document.getElementById('modal-body'); const grad = activeTheme==='monochromeStatic'?'no-grad':''; if (type === 'about') body.innerHTML = `<h3 class="inv-grad-box ${grad}">Ben Chmieleski</h3><p>Artist & Designer located in West Michigan.</p>`; else body.innerHTML = `<h3 class="inv-grad-box ${grad}">Contact</h3><p>benchmieleski@gmail.com</p>`; document.getElementById('modal').style.display = 'block'; }
+        function setTheme(key, el) { activeTheme = key; const t = themes[key]; const root = document.documentElement.style; root.setProperty('--theme-c1', t.colors[0]); root.setProperty('--theme-c2', t.colors[1]); root.setProperty('--theme-c3', t.colors[2]); root.setProperty('--bg-main', t.bg); root.setProperty('--text-base', t.text); document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active')); el.classList.add('active'); }
+        function openItem(idx) { const item = feedItems[idx % feedItems.length]; document.getElementById('modal-body').innerHTML = `<img src="${item.path}"><h3 style="margin-top:15px;">${item.title}</h3><p>${item.description}</p>`; document.getElementById('modal').style.display = 'block'; }
+        function openSection(type) { const body = document.getElementById('modal-body'); body.innerHTML = type === 'about' ? `<h3>Ben Chmieleski</h3><p>Artist & Designer in West Michigan.</p>` : `<h3>Contact</h3><p>benchmieleski@gmail.com</p>`; document.getElementById('modal').style.display = 'block'; }
         function closeModal() { document.getElementById('modal').style.display = 'none'; }
-        window.onkeydown = e => { if (e.key === 'Escape') closeModal(); };
-        window.onresize = () => { if(gameActive) initGame(false); };
+        
         const isMobile = window.innerWidth <= 768;
         const html = feedItems.map((item, idx) => `<div class="item-wrapper" onclick="openItem(${idx})"><img src="${item.path}" class="painting"></div>`).join('');
         gallery.innerHTML = isMobile ? html : html + html;
