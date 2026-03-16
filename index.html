@@ -59,7 +59,6 @@
         .theme-option.active { border: 2px solid var(--text-base); }
         .swatch { width: 10px; height: 10px; margin: 0 1px; }
 
-        /* Game Desktop Only */
         .desktop-only { display: flex; }
         #game-easter-egg {
             flex-grow: 1; height: 140px; pointer-events: auto; cursor: crosshair; 
@@ -88,23 +87,23 @@
         .item-wrapper { 
             height: 60vh; margin: 20px 40px; padding: 5px; background: var(--painting-frame); 
             transition: 0.6s; cursor: pointer; flex-shrink: 0; border-radius: 10px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
         }
-        .item-wrapper:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+        .item-wrapper:hover { transform: translateY(-8px); box-shadow: 0 25px 50px rgba(0,0,0,0.35); }
+        
         body.game-on .item-wrapper { height: 30vh; } 
         .painting { height: 100%; display: block; background: #fff; border-radius: 8px; }
 
-        #modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg-main); padding: 40px; border: 2px solid var(--theme-c1); z-index: 2000; text-align: center; max-width: 85vw; border-radius: 10px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        #modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--bg-main); padding: 40px; border: 2px solid var(--theme-c1); z-index: 2000; text-align: center; max-width: 85vw; border-radius: 10px; box-shadow: 0 30px 60px rgba(0,0,0,0.4); }
         #modal-body img { max-height: 60vh; max-width: 100%; border-radius: 5px; }
 
-        /* Mobile Simplified Styling */
         @media (max-width: 768px) {
             .desktop-only { display: none !important; }
             header { position: relative; padding: 20px; pointer-events: auto; }
             .nav-menu { display: flex; margin-top: 10px; }
             .gallery-container { margin-top: 20px; overflow-y: auto; display: block; height: auto; }
             .scroll-wrapper { animation: none; display: flex; flex-direction: column; width: 100%; padding: 0 20px; }
-            .item-wrapper { height: auto; width: 100%; margin: 0 0 30px 0; }
+            .item-wrapper { height: auto; width: 100%; margin: 0 0 30px 0; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
             .painting { width: 100%; height: auto; }
             body { overflow-y: auto; }
         }
@@ -180,7 +179,7 @@
         let paddleX, paddleWidth, bricks, starRain = [], powerUps = [], balls = [], bullets = [];
         let score = 0, level = 1, lives = 3, frameCount = 0, laserTimer = 0, levelTransitioning = false;
 
-        function updateHud() { hud.innerText = `Score: ${score} | Level: ${level} | Lives: ${lives}`; }
+        function updateHud() { if(hud) hud.innerText = `Score: ${score} | Level: ${level} | Lives: ${lives}`; }
         function resetBricks() { bricks = Array.from({length: gameConfig.cols}, () => Array.from({length: gameConfig.rows}, () => ({status: 1}))); }
 
         function initGame(fullReset = true) {
@@ -197,25 +196,18 @@
         function spawnPowerUp(x, y) {
             const rand = Math.random();
             if (rand < 0.12) {
+                // Removed unknown types
                 const types = ['shrink', 'expand', 'multi', 'laser', 'life'];
                 const type = rand < 0.02 ? 'life' : types[Math.floor(Math.random() * (types.length - 1))];
                 powerUps.push({ x, y, type, dy: 1.8 });
             }
         }
 
-        function fireLasers() {
-            if (laserTimer <= 0) return;
-            bullets.push({x: paddleX + 3, y: canvas.height - 25, dy: -5}, {x: paddleX + paddleWidth - 3, y: canvas.height - 25, dy: -5});
-        }
-
         function drawGame() {
-            if(!gameActive) return;
+            if(!gameActive || !ctx) return;
             frameCount++;
             ctx.clearRect(0,0, canvas.width, canvas.height);
             const style = getComputedStyle(document.documentElement);
-            const c1 = style.getPropertyValue('--theme-c1').trim();
-            const c2 = style.getPropertyValue('--theme-c2').trim();
-            const c3 = style.getPropertyValue('--theme-c3').trim();
             const t = themes[activeTheme];
             
             let activeCount = 0;
@@ -223,8 +215,7 @@
 
             if (gameWon) {
                 ctx.font = "bold 40px sans-serif"; ctx.textAlign = "center";
-                ctx.fillStyle = [c1, c2, c3][Math.floor((frameCount/15)%3)];
-                ctx.fillText("YOU WIN!", canvas.width / 2, canvas.height / 2);
+                ctx.fillStyle = t.text; ctx.fillText("YOU WIN!", canvas.width / 2, canvas.height / 2);
             } else if (starRain.length > 0) {
                 starRain.forEach((s, i) => {
                     ctx.globalAlpha = s.opacity; ctx.fillStyle = s.color; ctx.fillText("*", s.x, s.y); s.y += s.speed;
@@ -241,7 +232,7 @@
                         if(b.status === 1) {
                             activeCount++;
                             const bX = startX + i * (bWidth + padding), bY = r * (gameConfig.brickHeight + padding) + 50;
-                            ctx.fillStyle = activeTheme === 'monochromeStatic' ? t.text : c1;
+                            ctx.fillStyle = style.getPropertyValue('--theme-c1');
                             ctx.fillRect(bX, bY, bWidth, gameConfig.brickHeight);
                             
                             balls.forEach(ball => {
@@ -255,7 +246,7 @@
 
                 if(activeCount === 0 && !levelTransitioning) {
                     levelTransitioning = true; ballReleased = false;
-                    for(let i=0; i<30; i++) starRain.push({x: Math.random()*canvas.width, y: -Math.random()*50, speed: 1.5+Math.random(), color: c2, opacity: 1});
+                    for(let i=0; i<30; i++) starRain.push({x: Math.random()*canvas.width, y: -Math.random()*50, speed: 1.5+Math.random(), color: style.getPropertyValue('--theme-c2'), opacity: 1});
                 } else {
                     ctx.fillStyle = t.text; ctx.fillRect(paddleX, canvas.height - 15, paddleWidth, 8);
                     
@@ -266,12 +257,15 @@
                         if (p.type === 'life') ctx.fillText("♥", p.x, p.y + 4);
                         else if (p.type === 'expand') ctx.fillText("+", p.x, p.y + 4);
                         else if (p.type === 'shrink') ctx.fillText("-", p.x, p.y + 4);
-                        else ctx.fillText("?", p.x, p.y + 4);
+                        else if (p.type === 'multi') ctx.fillText("3", p.x, p.y + 4);
+                        else if (p.type === 'laser') ctx.fillText("L", p.x, p.y + 4);
 
                         if(p.y > canvas.height - 25 && p.x > paddleX && p.x < paddleX + paddleWidth) {
                             if(p.type === 'life') lives++;
                             if(p.type === 'expand') paddleWidth = Math.min(120, paddleWidth + 20);
                             if(p.type === 'shrink') paddleWidth = Math.max(30, paddleWidth - 15);
+                            if(p.type === 'multi') { balls.push({x: balls[0].x, y: balls[0].y, dx: -balls[0].dx, dy: balls[0].dy}); }
+                            if(p.type === 'laser') laserTimer = 5;
                             updateHud(); powerUps.splice(i, 1);
                         } else if (p.y > canvas.height) powerUps.splice(i, 1);
                     });
@@ -296,20 +290,20 @@
 
         function handleTriggerClick(e) { 
             if (window.innerWidth <= 768) return; 
-            if (!gameActive) { gameActive = true; document.body.classList.add('game-on'); hud.style.display = 'block'; closeBtn.style.display = 'flex'; initGame(true); drawGame(); } 
+            if (!gameActive) { gameActive = true; document.body.classList.add('game-on'); if(hud) hud.style.display = 'block'; if(closeBtn) closeBtn.style.display = 'flex'; initGame(true); drawGame(); } 
             else if (!ballReleased) ballReleased = true; 
         }
 
         triggerZone.onmousemove = e => { if(!gameActive) return; let rect = canvas.getBoundingClientRect(); paddleX = (e.clientX - rect.left) * (canvas.width / rect.width) - paddleWidth / 2; paddleX = Math.max(0, Math.min(canvas.width - paddleWidth, paddleX)); };
-        function closeGame() { gameActive = false; document.body.classList.remove('game-on'); hud.style.display = 'none'; closeBtn.style.display = 'none'; }
+        function closeGame() { gameActive = false; document.body.classList.remove('game-on'); if(hud) hud.style.display = 'none'; if(closeBtn) closeBtn.style.display = 'none'; }
         function setTheme(key, el) { activeTheme = key; const t = themes[key]; const root = document.documentElement.style; root.setProperty('--theme-c1', t.colors[0]); root.setProperty('--theme-c2', t.colors[1]); root.setProperty('--theme-c3', t.colors[2]); root.setProperty('--bg-main', t.bg); root.setProperty('--text-base', t.text); document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active')); el.classList.add('active'); }
         function openItem(idx) { const item = feedItems[idx % feedItems.length]; document.getElementById('modal-body').innerHTML = `<img src="${item.path}"><h3 style="margin-top:15px;">${item.title}</h3><p>${item.description}</p>`; document.getElementById('modal').style.display = 'block'; }
         function openSection(type) { const body = document.getElementById('modal-body'); body.innerHTML = type === 'about' ? `<h3>Ben Chmieleski</h3><p>Artist & Designer in West Michigan.</p>` : `<h3>Contact</h3><p>benchmieleski@gmail.com</p>`; document.getElementById('modal').style.display = 'block'; }
         function closeModal() { document.getElementById('modal').style.display = 'none'; }
         
-        const isMobile = window.innerWidth <= 768;
-        const html = feedItems.map((item, idx) => `<div class="item-wrapper" onclick="openItem(${idx})"><img src="${item.path}" class="painting"></div>`).join('');
-        gallery.innerHTML = isMobile ? html : html + html;
+        const isMobileView = window.innerWidth <= 768;
+        const galleryHtml = feedItems.map((item, idx) => `<div class="item-wrapper" onclick="openItem(${idx})"><img src="${item.path}" class="painting"></div>`).join('');
+        gallery.innerHTML = isMobileView ? galleryHtml : galleryHtml + galleryHtml;
     </script>
 </body>
 </html>
