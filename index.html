@@ -61,29 +61,28 @@
         .theme-option.active { border: 2px solid var(--text-base); }
         .swatch { width: 10px; height: 10px; margin: 0 1px; }
 
-        /* --- GAME AREA (60% Height) --- */
+        /* --- GAME AREA --- */
         #game-easter-egg {
-            flex-grow: 1;
-            height: 140px; 
+            flex: 0 0 140px; /* Locked height until triggered */
+            width: 100%;
             position: relative; cursor: crosshair; 
             display: flex; flex-direction: column; 
-            justify-content: center; /* Center the canvas so it doesn't clip at top/bottom */
+            justify-content: center;
             align-items: center;
-            transition: height 0.5s ease-in-out;
+            transition: flex-basis 0.5s ease-in-out;
             overflow: hidden;
             pointer-events: auto; 
             z-index: 900;
-            padding-top: 40px; /* Offset for the header text height */
         }
         
         body.game-on #game-easter-egg {
-            height: 60vh;
+            flex: 0 0 60vh; /* Takes exactly 60% of viewport */
         }
 
         #breakoutCanvas { 
             display: none; 
-            width: 70%; 
-            height: auto;
+            max-width: 80%; 
+            max-height: 70%; /* Ensures it doesn't clip the bottom HUD */
             aspect-ratio: 4 / 3;
             border: 2px solid var(--theme-c1); border-radius: 15px;
             background: var(--bg-main);
@@ -94,7 +93,7 @@
             display: none;
             font-size: 0.75rem;
             font-weight: bold;
-            margin-top: 15px;
+            padding: 15px 0;
             width: 70%;
             text-align: center;
             text-transform: uppercase;
@@ -103,7 +102,7 @@
 
         #close-game-btn { 
             display: none; cursor: pointer; position: absolute;
-            top: 60px; right: 15%; /* Lowered so it doesn't hide behind browser chrome */
+            top: 50px; right: 40px; 
             width: 24px; height: 24px;
             background: var(--bg-main);
             border: 2px solid var(--theme-c1);
@@ -121,18 +120,13 @@
         .no-grad { -webkit-text-fill-color: var(--text-base) !important; background: none !important; animation: none !important; }
         @keyframes gradient-flow { to { background-position: 400% center; } }
 
-        /* --- GALLERY (40% Height) --- */
+        /* --- GALLERY --- */
         .gallery-container { 
-            flex: 1;
+            flex: 1; /* Takes remaining 40% when game is on */
             width: 100vw;
             display: flex; align-items: center; overflow: hidden;
-            transition: all 0.5s ease-in-out;
+            transition: flex 0.5s ease-in-out;
             z-index: 5;
-        }
-
-        body.game-on .gallery-container {
-            flex: 0 0 40vh;
-            margin-top: 0; /* Let flexbox handle the distribution */
         }
 
         .scroll-wrapper { 
@@ -143,7 +137,7 @@
         @keyframes slow-scroll { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
 
         .item-wrapper { height: 60vh; margin: 0 40px; padding: 5px; background: var(--painting-frame); transition: 0.6s; cursor: pointer; flex-shrink: 0; }
-        body.game-on .item-wrapper { height: 35vh; } 
+        body.game-on .item-wrapper { height: 30vh; } 
         .painting { height: 100%; display: block; background: #fff; }
 
         #modal {
@@ -204,12 +198,6 @@
     </div>
 
     <script>
-        const pageContent = {
-            about: "Artist & Designer located in West Michigan. I am inspired by nature and the world around me.",
-            email: "benchmieleski@gmail.com",
-            linkedin: "https://www.linkedin.com/in/benjamin-chmieleski-29045256/"
-        };
-
         const feedItems = [
             { path: 'art_flowers.jpg', title: 'Flowers', description: 'oil on paper, 2025' },
             { path: 'art_garden.jpg', title: 'Garden', description: 'oil on paper, 2025' },
@@ -218,14 +206,7 @@
             { path: 'art_bella.jpg', title: 'Botanics', description: 'acrylic on wood, 2026' }
         ];
 
-        const gameConfig = { 
-            cols: 10, 
-            rows: 2, 
-            paddleWidth: 60, 
-            brickHeight: 12, 
-            speed: 3.0 
-        };
-
+        const gameConfig = { cols: 10, rows: 2, paddleWidth: 60, brickHeight: 12, speed: 3.0 };
         const themes = {
             misty: { colors: ['#6cccb6', '#57648a', '#ab5c95'], bg: '#fff', text: '#1a1a1a' }, 
             electric: { colors: ['#d9b3f2', '#b3d9d9', '#efb9da'], bg: '#fff', text: '#1a1a1a' },
@@ -255,21 +236,14 @@
         function initGame(fullReset = true) {
             canvas.width = 400; 
             canvas.height = 300; 
-            
             paddleX = (canvas.width - gameConfig.paddleWidth) / 2;
             ballReleased = false; 
             starRain = [];
-            
-            if (fullReset) {
-                score = 0; level = 1; lives = 3;
-                resetBricks();
-            }
-            
+            if (fullReset) { score = 0; level = 1; lives = 3; resetBricks(); }
             updateHud();
             x = paddleX + gameConfig.paddleWidth / 2; 
-            y = canvas.height - 20;
-            dx = gameConfig.speed; 
-            dy = -gameConfig.speed;
+            y = canvas.height - 25;
+            dx = gameConfig.speed; dy = -gameConfig.speed;
         }
 
         function drawGame() {
@@ -277,7 +251,6 @@
             ctx.clearRect(0,0, canvas.width, canvas.height);
             const t = themes[activeTheme];
             let activeCount = 0;
-            
             const padding = 4;
             const bWidth = (canvas.width / gameConfig.cols) - padding;
             const startX = (canvas.width - (gameConfig.cols * (bWidth + padding) - padding)) / 2;
@@ -288,43 +261,33 @@
                     ctx.fillText("*", s.x, s.y); s.y += s.speed; if (s.y > canvas.height) s.opacity -= 0.01;
                     if (s.opacity <= 0) starRain.splice(i, 1);
                 });
-                if (starRain.length === 0) {
-                    level++; resetBricks(); initGame(false);
-                }
+                if (starRain.length === 0) { level++; resetBricks(); initGame(false); }
             } else {
                 bricks.forEach((col, i) => {
                     col.forEach((b, r) => {
                         if(b.status === 1) {
                             activeCount++;
-                            // Changed bY logic to add more margin from the top edge
-                            const bY = r * (gameConfig.brickHeight + 8) + 45; 
-                            const grd = ctx.createLinearGradient(bX = startX + i * (bWidth + padding), bY, bX + bWidth, bY);
-                            grd.addColorStop(0, t.colors[0]); grd.addColorStop(0.5, t.colors[1]); grd.addColorStop(1, t.colors[2]);
+                            const bX = startX + i * (bWidth + padding), bY = r * (gameConfig.brickHeight + 8) + 50;
+                            const grd = ctx.createLinearGradient(bX, bY, bX + bWidth, bY);
+                            grd.addColorStop(0, t.colors[0]); grd.addColorStop(1, t.colors[2]);
                             ctx.fillStyle = activeTheme === 'monochromeStatic' ? t.text : grd;
                             ctx.fillRect(bX, bY, bWidth, gameConfig.brickHeight);
-                            if(ballReleased && x > bX && x < bX + bWidth && y > bY && y < bY + gameConfig.brickHeight) { 
-                                dy = -dy; b.status = 0; score += 1; updateHud();
-                            }
+                            if(ballReleased && x > bX && x < bX + bWidth && y > bY && y < bY + gameConfig.brickHeight) { dy = -dy; b.status = 0; score += 1; updateHud(); }
                         }
                     });
                 });
-
                 if(activeCount === 0) {
                     for(let i=0; i<30; i++) starRain.push({x: Math.random()*canvas.width, y: -Math.random()*50, speed: 1.5+Math.random(), color: t.colors[Math.floor(Math.random()*3)], opacity: 1});
                 } else {
-                    ctx.fillStyle = t.text; ctx.fillRect(paddleX, canvas.height - 12, gameConfig.paddleWidth, 6);
-                    if (!ballReleased) { x = paddleX + gameConfig.paddleWidth / 2; y = canvas.height - 18; }
+                    ctx.fillStyle = t.text; ctx.fillRect(paddleX, canvas.height - 15, gameConfig.paddleWidth, 8);
+                    if (!ballReleased) { x = paddleX + gameConfig.paddleWidth / 2; y = canvas.height - 23; }
                     ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI*2); ctx.fill();
                     if (ballReleased) {
                         if(x + dx > canvas.width || x + dx < 0) dx = -dx;
                         if(y + dy < 0) dy = -dy;
-                        else if(y + dy > canvas.height - 12) {
+                        else if(y + dy > canvas.height - 15) {
                             if(x > paddleX && x < paddleX + gameConfig.paddleWidth) { dy = -dy; }
-                            else { 
-                                lives--; ballReleased = false; 
-                                if (lives <= 0) closeGame(); else initGame(false);
-                                updateHud();
-                            }
+                            else { lives--; ballReleased = false; if (lives <= 0) closeGame(); else initGame(false); updateHud(); }
                         }
                         x += dx; y += dy;
                     }
@@ -341,10 +304,8 @@
                 canvas.style.display = 'block'; 
                 hud.style.display = 'block';
                 closeBtn.style.display = 'flex'; 
-                setTimeout(() => { initGame(true); drawGame(); }, 500);
-            } else {
-                ballReleased = true;
-            }
+                setTimeout(() => { initGame(true); drawGame(); }, 100);
+            } else { ballReleased = true; }
         }
 
         triggerZone.onmousemove = e => {
@@ -356,11 +317,8 @@
         };
 
         function closeGame() { 
-            gameActive = false; 
-            document.body.classList.remove('game-on');
-            canvas.style.display = 'none'; 
-            hud.style.display = 'none';
-            closeBtn.style.display = 'none'; 
+            gameActive = false; document.body.classList.remove('game-on');
+            canvas.style.display = 'none'; hud.style.display = 'none'; closeBtn.style.display = 'none'; 
         }
 
         function setTheme(key, el) {
@@ -382,8 +340,8 @@
         function openSection(type) {
             const body = document.getElementById('modal-body');
             const grad = activeTheme==='monochromeStatic'?'no-grad':'';
-            if (type === 'about') body.innerHTML = `<h3 class="inv-grad-box ${grad}" style="font-size:1.5rem;">Ben Chmieleski</h3><p>${pageContent.about}</p>`;
-            else body.innerHTML = `<h3 class="inv-grad-box ${grad}" style="font-size:1.5rem;">Contact</h3><p><a href="mailto:${pageContent.email}" style="color:inherit">Email</a> | <a href="${pageContent.linkedin}" target="_blank" style="color:inherit">LinkedIn</a></p>`;
+            if (type === 'about') body.innerHTML = `<h3 class="inv-grad-box ${grad}" style="font-size:1.5rem;">Ben Chmieleski</h3><p>Artist & Designer located in West Michigan.</p>`;
+            else body.innerHTML = `<h3 class="inv-grad-box ${grad}" style="font-size:1.5rem;">Contact</h3><p>benchmieleski@gmail.com</p>`;
             document.getElementById('modal').style.display = 'block';
         }
 
