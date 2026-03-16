@@ -34,9 +34,13 @@
         header { 
             position: fixed; top: 40px; left: 40px; right: 40px; 
             z-index: 1000; display: flex; align-items: flex-start; 
+            pointer-events: none; /* Allows clicks to pass through to trigger area behind it if necessary */
         }
 
-        .site-name-wrapper { display: inline-flex; flex-direction: column; cursor: pointer; padding-bottom: 30px; }
+        .site-name-wrapper { 
+            display: inline-flex; flex-direction: column; cursor: pointer; padding-bottom: 30px; 
+            pointer-events: auto; /* Re-enable clicks for the name/nav */
+        }
         .site-name { font-size: 2rem; font-weight: bold; line-height: 1.2; margin: 0; }
         .site-subheading { font-size: 1.25rem; line-height: 1.2; margin: 2px 0 12px; }
 
@@ -58,26 +62,27 @@
 
         /* --- GAME AREA (60% Height) --- */
         #game-easter-egg {
-            flex: 0 0 140px; 
-            width: 100%;
+            flex: 1; /* Takes up all space to the right of the header text */
+            height: 140px;
             position: relative; cursor: crosshair; 
             display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
-            transition: flex 0.5s ease-in-out;
+            transition: flex 0.5s ease-in-out, height 0.5s ease-in-out;
             overflow: hidden;
-            padding-bottom: 20px;
-            z-index: 500;
+            pointer-events: auto; 
+            z-index: 10;
         }
         body.game-on #game-easter-egg {
             flex: 0 0 60vh;
+            height: 60vh;
         }
 
         #breakoutCanvas { 
             display: none; 
-            width: 60%; /* Visual width */
+            width: 60%; 
             aspect-ratio: 4 / 3;
             border: 2px solid var(--theme-c1); border-radius: 15px;
             background: var(--bg-main);
-            image-rendering: pixelated; /* Keeps it sharp when scaled */
+            image-rendering: pixelated; /* Retro chunky look */
         }
 
         #game-hud {
@@ -118,11 +123,10 @@
             width: 100vw;
             display: flex; align-items: center; overflow: hidden;
             transition: flex 0.5s ease-in-out;
-            z-index: 100;
+            z-index: 5;
         }
         body.game-on .gallery-container {
             flex: 0 0 40vh;
-            /* Interaction remains ENABLED */
         }
 
         .scroll-wrapper { 
@@ -177,7 +181,7 @@
             </nav>
         </div>
 
-        <div id="game-easter-egg" onclick="handleEasterEggClick(event)">
+        <div id="game-easter-egg" onclick="handleTriggerClick(event)">
             <canvas id="breakoutCanvas"></canvas>
             <div id="game-hud" class="inv-grad-box">Score: 0 | Level: 1 | Lives: 3</div>
             <div id="close-game-btn" onclick="event.stopPropagation(); closeGame()">✕</div>
@@ -208,11 +212,11 @@
             { path: 'art_bella.jpg', title: 'Botanics', description: 'acrylic on wood, 2026' }
         ];
 
-        // Adjusted config for "larger pixels"
+        // Chunky pixel config
         const gameConfig = { 
             cols: 10, 
             rows: 2, 
-            paddleWidth: 40, // Scaled down because resolution is lower
+            paddleWidth: 40, 
             brickHeight: 10, 
             speed: 2.2 
         };
@@ -244,10 +248,10 @@
         }
 
         function initGame(fullReset = true) {
-            // "Pixel Scale" logic: half the width and height of the container
+            // Half-resolution for chunky pixels
             const displayWidth = window.innerWidth * 0.6;
-            canvas.width = (displayWidth / 2); 
-            canvas.height = (canvas.width * 0.75); 
+            canvas.width = displayWidth / 2; 
+            canvas.height = canvas.width * 0.75; 
             
             paddleX = (canvas.width - gameConfig.paddleWidth) / 2;
             ballReleased = false; 
@@ -325,7 +329,7 @@
             requestAnimationFrame(drawGame);
         }
 
-        function handleEasterEggClick(e) {
+        function handleTriggerClick(e) {
             if (window.innerWidth <= 768) return; 
             if (!gameActive) { 
                 gameActive = true; 
@@ -341,8 +345,8 @@
 
         triggerZone.onmousemove = e => {
             if(!gameActive) return;
-            // Precise alignment for scaled canvas
             let rect = canvas.getBoundingClientRect();
+            // Scale mouse position to chunky canvas resolution
             let scaleX = canvas.width / rect.width;
             paddleX = (e.clientX - rect.left) * scaleX - gameConfig.paddleWidth / 2;
             paddleX = Math.max(0, Math.min(canvas.width - gameConfig.paddleWidth, paddleX));
