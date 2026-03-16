@@ -297,7 +297,11 @@
                             if(p.type === 'life') lives++;
                             if(p.type === 'expand') paddleWidth = Math.min(120, paddleWidth + 20);
                             if(p.type === 'shrink') paddleWidth = Math.max(30, paddleWidth - 15);
-                            if(p.type === 'multi') balls.push({x: balls[0].x, y: balls[0].y, dx: -balls[0].dx, dy: balls[0].dy});
+                            if(p.type === 'multi') {
+                                // Add 2 more balls to create a trio
+                                balls.push({x: balls[0].x, y: balls[0].y, dx: -balls[0].dx, dy: balls[0].dy});
+                                balls.push({x: balls[0].x, y: balls[0].y, dx: balls[0].dx * 0.5, dy: balls[0].dy});
+                            }
                             updateHud(); powerUps.splice(i, 1);
                         } else if (p.y > canvas.height) powerUps.splice(i, 1);
                     });
