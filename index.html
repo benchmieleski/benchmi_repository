@@ -170,13 +170,14 @@
         let gameActive = false, ballReleased = false, activeTheme = 'misty', gameWon = false;
         let paddleX, paddleWidth, bricks, starRain = [], powerUps = [], balls = [], bullets = [];
         let score = 0, level = 1, lives = 3, frameCount = 0;
-        let laserTimer = 0;
+        let laserTimer = 0, levelTransitioning = false;
 
         function updateHud() { hud.innerText = `Score: ${score} | Level: ${level} | Lives: ${lives}`; }
         function resetBricks() { bricks = Array.from({length: gameConfig.cols}, () => Array.from({length: gameConfig.rows}, () => ({status: 1}))); }
 
         function initGame(fullReset = true) {
             canvas.width = 400; canvas.height = 300; 
+            levelTransitioning = false;
             if (fullReset) { score = 0; level = 1; lives = 3; paddleWidth = gameConfig.basePaddleWidth; resetBricks(); gameWon = false; }
             paddleX = (canvas.width - paddleWidth) / 2;
             ballReleased = false; starRain = []; powerUps = []; bullets = []; laserTimer = 0;
@@ -185,17 +186,16 @@
         }
 
         function spawnPowerUp(x, y) {
-            const r = Math.random();
-            if (r < 0.20) {
-                const types = ['shrink', 'expand', 'multi', 'reset', 'laser'];
+            if (Math.random() < 0.07) {
+                const types = ['shrink', 'expand', 'multi', 'laser'];
                 powerUps.push({ x, y, type: types[Math.floor(Math.random() * types.length)], dy: 1.8 });
             }
         }
 
         function fireLasers() {
             if (laserTimer <= 0) return;
-            bullets.push({x: paddleX + 5, y: canvas.height - 25, dy: -5});
-            bullets.push({x: paddleX + paddleWidth - 5, y: canvas.height - 25, dy: -5});
+            bullets.push({x: paddleX + 3, y: canvas.height - 25, dy: -5});
+            bullets.push({x: paddleX + paddleWidth - 3, y: canvas.height - 25, dy: -5});
         }
 
         function drawGame() {
@@ -218,28 +218,25 @@
                 const shift = Math.sin(frameCount * 0.1) * 10;
                 ctx.fillStyle = [c1, c2, c3][Math.floor((frameCount/15)%3)];
                 ctx.fillText("YOU WIN!", canvas.width / 2, canvas.height / 2 + shift);
-                ctx.font = "bold 14px sans-serif"; ctx.fillStyle = t.text;
-                ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2 + 40);
             } else if (starRain.length > 0) {
                 starRain.forEach((s, i) => {
                     ctx.globalAlpha = s.opacity; ctx.fillStyle = s.color; ctx.font = "14px sans-serif";
                     ctx.fillText("*", s.x, s.y); s.y += s.speed; if (s.y > canvas.height) s.opacity -= 0.01;
                     if (s.opacity <= 0) starRain.splice(i, 1);
                 });
-                if (starRain.length === 0) { if (level < 10) { level++; initGame(false); } else { gameWon = true; ballReleased = false; } }
+                if (starRain.length === 0 && levelTransitioning) {
+                    levelTransitioning = false;
+                    if (level < 10) { level++; resetBricks(); initGame(false); } else { gameWon = true; ballReleased = false; }
+                }
             } else {
                 bricks.forEach((col, i) => {
                     col.forEach((b, r) => {
                         if(b.status === 1) {
                             activeCount++;
                             const bX = startX + i * (bWidth + padding), bY = r * (gameConfig.brickHeight + padding) + 50;
-                            
-                            // MIRROR THE TEXT GRADIENT (CSS VARIABLE SYNCED)
-                            // 18s loop to match the 18s header animation
                             const cycle = (frameCount % 1080) / 1080; 
                             const grd = ctx.createLinearGradient(bX - (canvas.width * cycle), bY, bX + bWidth + (canvas.width * (1-cycle)), bY);
                             grd.addColorStop(0, c1); grd.addColorStop(0.33, c2); grd.addColorStop(0.66, c3); grd.addColorStop(1, c1);
-                            
                             ctx.fillStyle = activeTheme === 'monochromeStatic' ? t.text : grd;
                             ctx.fillRect(bX, bY, bWidth, gameConfig.brickHeight);
                             
@@ -248,7 +245,6 @@
                                     ball.dy = -ball.dy; b.status = 0; score += 1; updateHud(); spawnPowerUp(bX + bWidth/2, bY);
                                 }
                             });
-
                             bullets.forEach((bull, bi) => {
                                 if(bull.x > bX && bull.x < bX + bWidth && bull.y > bY && bull.y < bY + gameConfig.brickHeight) {
                                     b.status = 0; score += 1; updateHud(); bullets.splice(bi, 1); spawnPowerUp(bX + bWidth/2, bY);
@@ -258,7 +254,8 @@
                     });
                 });
 
-                if(activeCount === 0) {
+                if(activeCount === 0 && !levelTransitioning) {
+                    levelTransitioning = true; ballReleased = false;
                     for(let i=0; i<30; i++) starRain.push({x: Math.random()*canvas.width, y: -Math.random()*50, speed: 1.5+Math.random(), color: [c1, c2, c3][Math.floor(Math.random()*3)], opacity: 1});
                 } else {
                     ctx.fillStyle = t.text; ctx.fillRect(paddleX, canvas.height - 15, paddleWidth, 8);
@@ -266,8 +263,8 @@
                     if (laserTimer > 0) {
                         laserTimer -= 1/60;
                         ctx.beginPath();
-                        ctx.moveTo(paddleX, canvas.height - 15); ctx.lineTo(paddleX + 5, canvas.height - 25); ctx.lineTo(paddleX + 10, canvas.height - 15);
-                        ctx.moveTo(paddleX + paddleWidth - 10, canvas.height - 15); ctx.lineTo(paddleX + paddleWidth - 5, canvas.height - 25); ctx.lineTo(paddleX + paddleWidth, canvas.height - 15);
+                        ctx.moveTo(paddleX, canvas.height - 15); ctx.lineTo(paddleX + 3, canvas.height - 25); ctx.lineTo(paddleX + 6, canvas.height - 15);
+                        ctx.moveTo(paddleX + paddleWidth - 6, canvas.height - 15); ctx.lineTo(paddleX + paddleWidth - 3, canvas.height - 25); ctx.lineTo(paddleX + paddleWidth, canvas.height - 15);
                         ctx.fill();
                     }
 
@@ -277,18 +274,25 @@
                     });
 
                     powerUps.forEach((p, i) => {
-                        p.y += p.dy; ctx.beginPath(); ctx.arc(p.x, p.y, 10, 0, Math.PI*2);
-                        ctx.strokeStyle = c3; ctx.stroke();
-                        ctx.fillStyle = (p.type === 'reset') ? '#ff0000' : t.text;
-                        ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
-                        const labels = {shrink:'-', expand:'+', multi:'3', reset:'⟳', laser:'L'};
-                        ctx.fillText(labels[p.type], p.x, p.y + 4);
+                        p.y += p.dy;
+                        ctx.beginPath(); ctx.arc(p.x, p.y, 10, 0, Math.PI*2);
+                        ctx.strokeStyle = t.text; ctx.stroke();
+                        ctx.fillStyle = t.text; ctx.textAlign = "center";
+                        
+                        if (p.type === 'shrink') { ctx.font = "bold 14px sans-serif"; ctx.fillText("-", p.x, p.y + 5); }
+                        else if (p.type === 'expand') { ctx.font = "bold 14px sans-serif"; ctx.fillText("+", p.x, p.y + 5); }
+                        else if (p.type === 'laser') { ctx.fillStyle = "#ff0000"; ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2); ctx.fill(); }
+                        else if (p.type === 'multi') { 
+                            ctx.beginPath(); ctx.arc(p.x-3, p.y+2, 2, 0, Math.PI*2); ctx.arc(p.x+3, p.y+2, 2, 0, Math.PI*2); ctx.arc(p.x, p.y-3, 2, 0, Math.PI*2); ctx.fill(); 
+                        }
 
                         if(p.y > canvas.height - 25 && p.x > paddleX && p.x < paddleX + paddleWidth) {
                             if(p.type === 'shrink') paddleWidth = Math.max(30, paddleWidth - 20);
                             if(p.type === 'expand') paddleWidth = Math.min(120, paddleWidth + 30);
-                            if(p.type === 'multi') { balls.push({x: balls[0].x, y: balls[0].y, dx: -balls[0].dx, dy: balls[0].dy}); balls.push({x: balls[0].x, y: balls[0].y, dx: balls[0].dx * 0.5, dy: -balls[0].dy}); }
-                            if(p.type === 'reset') resetBricks();
+                            if(p.type === 'multi') { 
+                                balls.push({x: balls[0].x, y: balls[0].y, dx: -balls[0].dx, dy: balls[0].dy}); 
+                                balls.push({x: balls[0].x, y: balls[0].y, dx: balls[0].dx * 0.5, dy: -balls[0].dy}); 
+                            }
                             if(p.type === 'laser') laserTimer = 5;
                             powerUps.splice(i, 1);
                         } else if (p.y > canvas.height) powerUps.splice(i, 1);
