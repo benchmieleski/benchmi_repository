@@ -64,15 +64,14 @@
         .desktop-only { display: flex; }
         #game-easter-egg {
             flex-grow: 1; height: 84px; 
-            pointer-events: auto; 
+            pointer-events: none; /* Changed from auto to prevent clicks */
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             transition: height 0.5s ease-in-out; z-index: 900;
-            clip-path: inset(0 0 0 50%); 
         }
 
         body.game-on #game-easter-egg { 
             position: absolute; top: 0; left: 0; right: 0; height: 40vh; 
-            background: var(--bg-main); clip-path: none; 
+            background: var(--bg-main); pointer-events: auto; /* Re-enable for paddle movement */
         }
 
         .canvas-container { position: relative; display: none; height: 80%; aspect-ratio: 4 / 3; }
@@ -166,7 +165,7 @@
             </nav>
         </div>
 
-        <div id="game-easter-egg" class="desktop-only" onclick="handleTriggerClick(event)">
+        <div id="game-easter-egg" class="desktop-only" onclick="handleGameInput(event)">
             <div class="canvas-container">
                 <canvas id="breakoutCanvas"></canvas>
                 <div id="close-game-btn" class="universal-close" onclick="event.stopPropagation(); closeGame()">✕</div>
@@ -210,6 +209,35 @@
         let gameActive = false, ballReleased = false, activeTheme = 'misty', gameWon = false;
         let paddleX, paddleWidth, bricks, starRain = [], powerUps = [], balls = [];
         let score = 0, level = 1, lives = 3, levelTransitioning = false;
+
+        // Detection for typing "game"
+        let inputBuffer = "";
+        window.addEventListener('keydown', (e) => {
+            if (gameActive) {
+                if (e.code === 'Space' && !ballReleased) ballReleased = true;
+                return;
+            }
+            inputBuffer += e.key.toLowerCase();
+            if (inputBuffer.endsWith("game")) {
+                inputBuffer = "";
+                activateGame();
+            }
+            if (inputBuffer.length > 10) inputBuffer = inputBuffer.slice(-4);
+        });
+
+        function activateGame() {
+            if (window.innerWidth <= 768) return; 
+            gameActive = true; 
+            document.body.classList.add('game-on'); 
+            hud.style.display = 'block'; 
+            closeBtn.style.display = 'flex'; 
+            initGame(true); 
+            drawGame();
+        }
+
+        function handleGameInput(e) {
+            if (gameActive && !ballReleased) ballReleased = true;
+        }
 
         function updateHud() { if(hud) hud.innerText = `Score: ${score} | Level: ${level} | Lives: ${lives}`; }
         function resetBricks() { bricks = Array.from({length: gameConfig.cols}, () => Array.from({length: gameConfig.rows}, () => ({status: 1}))); }
@@ -284,7 +312,7 @@
 
                 if(activeCount === 0 && !levelTransitioning) {
                     levelTransitioning = true; ballReleased = false;
-                    for(let i=0; i<30; i++) starRain.push({x: Math.random()*canvas.width, y: -Math.random()*50, speed: 0.7+Math.random(), color: colors[1], opacity: 1});
+                    for(let i=0; i<30; i++) starRain.push({x: Math.random()*canvas.width, y: -Math.random()*50, speed: 1.0+Math.random(), color: colors[1], opacity: 1});
                 } else {
                     ctx.fillStyle = t.text; ctx.fillRect(paddleX, canvas.height - 10, paddleWidth, 5);
                     
@@ -324,12 +352,6 @@
                 }
             }
             requestAnimationFrame(drawGame);
-        }
-
-        function handleTriggerClick(e) { 
-            if (window.innerWidth <= 768) return; 
-            if (!gameActive) { gameActive = true; document.body.classList.add('game-on'); hud.style.display = 'block'; closeBtn.style.display = 'flex'; initGame(true); drawGame(); } 
-            else if (!ballReleased) ballReleased = true; 
         }
 
         document.getElementById('game-easter-egg').onmousemove = e => { 
