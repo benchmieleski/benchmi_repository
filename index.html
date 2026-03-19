@@ -64,14 +64,14 @@
         .desktop-only { display: flex; }
         #game-easter-egg {
             flex-grow: 1; height: 84px; 
-            pointer-events: none; /* Changed from auto to prevent clicks */
+            pointer-events: none; 
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             transition: height 0.5s ease-in-out; z-index: 900;
         }
 
         body.game-on #game-easter-egg { 
             position: absolute; top: 0; left: 0; right: 0; height: 40vh; 
-            background: var(--bg-main); pointer-events: auto; /* Re-enable for paddle movement */
+            background: var(--bg-main); pointer-events: auto; 
         }
 
         .canvas-container { position: relative; display: none; height: 80%; aspect-ratio: 4 / 3; }
@@ -121,6 +121,14 @@
         }
         #modal-body { max-height: 80vh; overflow-y: auto; }
         #modal-body img { max-height: 60vh; max-width: 100%; border-radius: 5px; }
+
+        /* --- Game Menu Styles --- */
+        .game-menu-list { list-style: none; padding: 0; margin: 20px 0 0; display: flex; flex-direction: column; gap: 10px; }
+        .game-menu-item { 
+            padding: 10px; border: 1px solid var(--theme-c1); border-radius: 5px; 
+            cursor: pointer; font-weight: bold; transition: 0.3s;
+        }
+        .game-menu-item:hover { background: var(--theme-c1); color: #fff; }
 
         /* --- Animations & Effects --- */
         @keyframes slow-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
@@ -210,23 +218,48 @@
         let paddleX, paddleWidth, bricks, starRain = [], powerUps = [], balls = [];
         let score = 0, level = 1, lives = 3, levelTransitioning = false;
 
-        // Detection for typing "game"
+        // --- Keyboard Detection ---
         let inputBuffer = "";
         window.addEventListener('keydown', (e) => {
-            if (gameActive) {
-                if (e.code === 'Space' && !ballReleased) ballReleased = true;
+            // Space bar for ball release
+            if (gameActive && e.code === 'Space' && !ballReleased) {
+                ballReleased = true;
                 return;
             }
+
             inputBuffer += e.key.toLowerCase();
+            
+            // Check for "game"
             if (inputBuffer.endsWith("game")) {
                 inputBuffer = "";
-                activateGame();
+                openGameMenu();
             }
-            if (inputBuffer.length > 10) inputBuffer = inputBuffer.slice(-4);
+            
+            // Check for "close"
+            if (inputBuffer.endsWith("close")) {
+                inputBuffer = "";
+                closeGame();
+            }
+
+            // Keep buffer manageable
+            if (inputBuffer.length > 15) inputBuffer = inputBuffer.slice(-10);
         });
 
-        function activateGame() {
+        function openGameMenu() {
             if (window.innerWidth <= 768) return; 
+            const body = document.getElementById('modal-body');
+            body.innerHTML = `
+                <h3>Arcade</h3>
+                <p>Select a game to play:</p>
+                <ul class="game-menu-list">
+                    <li class="game-menu-item" onclick="closeModal(); activateBreakout();">Breakout</li>
+                    <li class="game-menu-item" style="opacity: 0.5; cursor: default;">More coming soon...</li>
+                </ul>
+            `;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function activateBreakout() {
             gameActive = true; 
             document.body.classList.add('game-on'); 
             hud.style.display = 'block'; 
