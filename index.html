@@ -76,7 +76,7 @@
 
         .canvas-container { position: relative; display: none; height: 80%; aspect-ratio: 4 / 3; }
         body.game-on .canvas-container { display: block; }
-        #breakoutCanvas { width: 100%; height: 100%; border: 2px solid var(--theme-c1); border-radius: 10px; background: var(--bg-main); }
+        #gameCanvas { width: 100%; height: 100%; border: 2px solid var(--theme-c1); border-radius: 10px; background: var(--bg-main); }
         #game-hud { display: none; font-size: 0.65rem; font-weight: bold; padding: 5px 0; text-transform: uppercase; letter-spacing: 0.1em; }
 
         .universal-close {
@@ -175,10 +175,10 @@
 
         <div id="game-easter-egg" class="desktop-only" onclick="handleGameInput(event)">
             <div class="canvas-container">
-                <canvas id="breakoutCanvas"></canvas>
+                <canvas id="gameCanvas"></canvas>
                 <div id="close-game-btn" class="universal-close" onclick="event.stopPropagation(); closeGame()">✕</div>
             </div>
-            <div id="game-hud" class="inv-grad-box">Score: 0 | Level: 1 | Lives: 3</div>
+            <div id="game-hud" class="inv-grad-box">Score: 0</div>
         </div>
     </header>
 
@@ -200,7 +200,6 @@
             { path: 'art_bella.jpg', title: 'Botanics', description: 'acrylic on wood, 2026' }
         ];
 
-        const gameConfig = { cols: 8, rows: 3, basePaddleWidth: 36, brickHeight: 12, baseSpeed: 3, maxLevels: 3 };
         const themes = {
             misty: { colors: ['#6cccb6', '#57648a', '#ab5c95'], bg: '#fff', text: '#1a1a1a' }, 
             electric: { colors: ['#d9b3f2', '#b3d9d9', '#efb9da'], bg: '#fff', text: '#1a1a1a' },
@@ -208,40 +207,37 @@
             monochromeStatic: { colors: ['#000', '#000', '#000'], bg: '#fff', text: '#1a1a1a' }
         };
 
-        const canvas = document.getElementById('breakoutCanvas');
+        const canvas = document.getElementById('gameCanvas');
         const ctx = canvas?.getContext('2d');
         const hud = document.getElementById('game-hud');
         const closeBtn = document.getElementById('close-game-btn');
         const gallery = document.getElementById('gallery-wrapper');
         
-        let gameActive = false, ballReleased = false, activeTheme = 'misty', gameWon = false;
-        let paddleX, paddleWidth, bricks, starRain = [], powerUps = [], balls = [];
+        let gameActive = false, snakeActive = false, breakoutActive = false;
+        let activeTheme = 'misty', inputBuffer = "";
+
+        // --- Breakout State ---
+        const breakoutConfig = { cols: 8, rows: 3, basePaddleWidth: 36, brickHeight: 12, baseSpeed: 3, maxLevels: 3 };
+        let ballReleased = false, gameWon = false, paddleX, paddleWidth, bricks, starRain = [], powerUps = [], balls = [];
         let score = 0, level = 1, lives = 3, levelTransitioning = false;
 
+        // --- Snake State ---
+        let snake = [{x: 10, y: 10}], food = {x: 15, y: 15}, dx = 0, dy = 0, snakeScore = 0, gameLoop;
+
         // --- Keyboard Detection ---
-        let inputBuffer = "";
         window.addEventListener('keydown', (e) => {
-            // Space bar for ball release
-            if (gameActive && e.code === 'Space' && !ballReleased) {
-                ballReleased = true;
-                return;
+            if (breakoutActive && e.code === 'Space' && !ballReleased) { ballReleased = true; return; }
+            if (snakeActive) {
+                if (e.key === "ArrowUp" && dy === 0) { dx = 0; dy = -1; }
+                if (e.key === "ArrowDown" && dy === 0) { dx = 0; dy = 1; }
+                if (e.key === "ArrowLeft" && dx === 0) { dx = -1; dy = 0; }
+                if (e.key === "ArrowRight" && dx === 0) { dx = 1; dy = 0; }
             }
 
             inputBuffer += e.key.toLowerCase();
-            
-            // Check for "game"
-            if (inputBuffer.endsWith("game")) {
-                inputBuffer = "";
-                openGameMenu();
-            }
-            
-            // Check for "close"
-            if (inputBuffer.endsWith("close")) {
-                inputBuffer = "";
-                closeGame();
-            }
-
-            // Keep buffer manageable
+            if (inputBuffer.endsWith("game")) { inputBuffer = ""; openGameMenu(); }
+            if (inputBuffer.endsWith("arcade")) { inputBuffer = ""; openGameMenu(); }
+            if (inputBuffer.endsWith("close")) { inputBuffer = ""; closeGame(); }
             if (inputBuffer.length > 15) inputBuffer = inputBuffer.slice(-10);
         });
 
@@ -252,148 +248,152 @@
                 <h3>Arcade</h3>
                 <ul class="game-menu-list">
                     <li class="game-menu-item" onclick="closeModal(); activateBreakout();">Breakout</li>
+                    <li class="game-menu-item" onclick="closeModal(); activateSnake();">Snake</li>
                 </ul>
             `;
             document.getElementById('modal').style.display = 'block';
         }
 
-        function activateBreakout() {
-            gameActive = true; 
-            document.body.classList.add('game-on'); 
-            hud.style.display = 'block'; 
-            closeBtn.style.display = 'flex'; 
-            initGame(true); 
-            drawGame();
+        function closeGame() {
+            gameActive = snakeActive = breakoutActive = false;
+            clearInterval(gameLoop);
+            document.body.classList.remove('game-on');
+            hud.style.display = 'none';
+            closeBtn.style.display = 'none';
         }
 
         function handleGameInput(e) {
-            if (gameActive && !ballReleased) ballReleased = true;
+            if (breakoutActive && !ballReleased) ballReleased = true;
+            if (snakeActive && dx === 0 && dy === 0) { dx = 1; gameLoop = setInterval(stepSnake, 100); }
         }
 
-        function updateHud() { if(hud) hud.innerText = `Score: ${score} | Level: ${level} | Lives: ${lives}`; }
-        function resetBricks() { bricks = Array.from({length: gameConfig.cols}, () => Array.from({length: gameConfig.rows}, () => ({status: 1}))); }
-
-        function initGame(fullReset = true) {
-            if(!canvas) return;
-            canvas.width = 240; canvas.height = 180; 
-            levelTransitioning = false;
-            if (fullReset) { score = 0; level = 1; lives = 3; paddleWidth = gameConfig.basePaddleWidth; resetBricks(); gameWon = false; }
-            paddleX = (canvas.width - paddleWidth) / 2;
-            ballReleased = false; starRain = []; powerUps = [];
-            balls = [{ x: paddleX + paddleWidth / 2, y: canvas.height - 15, dx: gameConfig.baseSpeed + (level * 0.5), dy: -(gameConfig.baseSpeed + (level * 0.5)) }];
-            updateHud();
+        // --- Snake Logic ---
+        function activateSnake() {
+            closeGame();
+            snakeActive = gameActive = true;
+            document.body.classList.add('game-on');
+            hud.style.display = 'block';
+            closeBtn.style.display = 'flex';
+            initSnake();
         }
 
-        function spawnPowerUp(x, y) {
-            const rand = Math.random();
-            if (rand < 0.15) {
-                const types = ['shrink', 'expand', 'multi', 'life'];
-                const type = rand < 0.03 ? 'life' : types[Math.floor(Math.random() * types.length)];
-                powerUps.push({ x, y, type, dy: 1.2 });
+        function initSnake() {
+            canvas.width = 240; canvas.height = 180;
+            snake = [{x: 10, y: 10}]; dx = dy = snakeScore = 0;
+            spawnFood(); updateHud(`Score: ${snakeScore}`);
+            renderSnakeScreen("SNAKE", "Click to Start");
+        }
+
+        function spawnFood() { food = { x: Math.floor(Math.random() * 24), y: Math.floor(Math.random() * 18) }; }
+
+        function stepSnake() {
+            const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+            if (head.x < 0 || head.x >= 24 || head.y < 0 || head.y >= 18 || snake.some(s => s.x === head.x && s.y === head.y)) {
+                clearInterval(gameLoop); renderSnakeScreen("GAME OVER", "Refreshing..."); setTimeout(initSnake, 2000); return;
             }
+            snake.unshift(head);
+            if (head.x === food.x && head.y === food.y) { snakeScore += 10; updateHud(`Score: ${snakeScore}`); spawnFood(); } else { snake.pop(); }
+            renderSnake();
         }
 
-        function drawGame() {
-            if(!gameActive || !ctx) return;
+        function renderSnake() {
             ctx.clearRect(0,0, canvas.width, canvas.height);
-            const style = getComputedStyle(document.documentElement);
-            const colors = [style.getPropertyValue('--theme-c1'), style.getPropertyValue('--theme-c2'), style.getPropertyValue('--theme-c3')].map(c => c.trim());
+            const colors = getThemeColors();
+            ctx.fillStyle = colors[2]; ctx.fillRect(food.x * 10, food.y * 10, 8, 8);
+            snake.forEach((s, i) => { ctx.fillStyle = i === 0 ? themes[activeTheme].text : colors[0]; ctx.fillRect(s.x * 10, s.y * 10, 9, 9); });
+        }
+
+        function renderSnakeScreen(t1, t2) {
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+            ctx.fillStyle = themes[activeTheme].text; ctx.textAlign = "center";
+            ctx.font = "bold 14px sans-serif"; ctx.fillText(t1, 120, 80);
+            ctx.font = "10px sans-serif"; ctx.fillText(t2, 120, 100);
+        }
+
+        // --- Breakout Logic ---
+        function activateBreakout() {
+            closeGame();
+            breakoutActive = gameActive = true;
+            document.body.classList.add('game-on');
+            hud.style.display = 'block'; closeBtn.style.display = 'flex';
+            initBreakout(true); drawBreakout();
+        }
+
+        function initBreakout(fullReset = true) {
+            canvas.width = 240; canvas.height = 180;
+            if (fullReset) { score = 0; level = 1; lives = 3; paddleWidth = breakoutConfig.basePaddleWidth; resetBricks(); gameWon = false; }
+            paddleX = (canvas.width - paddleWidth) / 2; ballReleased = false; starRain = []; powerUps = [];
+            balls = [{ x: paddleX + paddleWidth / 2, y: canvas.height - 15, dx: breakoutConfig.baseSpeed + (level * 0.5), dy: -(breakoutConfig.baseSpeed + (level * 0.5)) }];
+            updateHud(`Score: ${score} | Level: ${level} | Lives: ${lives}`);
+        }
+
+        function resetBricks() { bricks = Array.from({length: breakoutConfig.cols}, () => Array.from({length: breakoutConfig.rows}, () => ({status: 1}))); }
+
+        function drawBreakout() {
+            if(!breakoutActive) return;
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+            const colors = getThemeColors();
             const t = themes[activeTheme];
             
             if (gameWon) {
                 ctx.font = "bold 24px sans-serif"; ctx.textAlign = "center";
-                const grd = ctx.createLinearGradient(0, 0, canvas.width, 0);
-                colors.forEach((c, i) => grd.addColorStop(i/2, c));
-                ctx.fillStyle = grd;
-                ctx.fillText("You Win!", canvas.width / 2, canvas.height / 2);
-                ctx.font = "bold 10px sans-serif";
-                ctx.fillText("Final Score: " + score, canvas.width / 2, (canvas.height / 2) + 25);
+                ctx.fillStyle = colors[0]; ctx.fillText("You Win!", 120, 90);
             } else if (starRain.length > 0) {
                 starRain.forEach((s, i) => {
                     ctx.globalAlpha = s.opacity; ctx.fillStyle = s.color; ctx.fillText("*", s.x, s.y); s.y += s.speed;
-                    if (s.y > canvas.height) s.opacity -= 0.01;
-                    if (s.opacity <= 0) starRain.splice(i, 1);
+                    if (s.y > canvas.height) s.opacity -= 0.01; if (s.opacity <= 0) starRain.splice(i, 1);
                 });
-                ctx.globalAlpha = 1.0; 
-                if (starRain.length === 0 && levelTransitioning) {
-                    if (level < gameConfig.maxLevels) { level++; resetBricks(); initGame(false); } 
-                    else { gameWon = true; ballReleased = false; }
+                ctx.globalAlpha = 1.0; if (starRain.length === 0 && levelTransitioning) {
+                    if (level < breakoutConfig.maxLevels) { level++; resetBricks(); initBreakout(false); } else { gameWon = true; ballReleased = false; }
                     levelTransitioning = false;
                 }
             } else {
                 let activeCount = 0;
-                const padding = 4, bWidth = (canvas.width / gameConfig.cols) - padding;
-
-                bricks.forEach((col, i) => {
-                    col.forEach((b, r) => {
-                        if(b.status === 1) {
-                            activeCount++;
-                            const bX = (padding/2) + i * (bWidth + padding), bY = r * (gameConfig.brickHeight + padding) + 30;
-                            ctx.fillStyle = activeTheme === 'monochromeStatic' ? t.text : colors[r] || colors[2];
-                            ctx.fillRect(bX, bY, bWidth, gameConfig.brickHeight);
-                            
-                            balls.forEach(ball => {
-                                if(ballReleased && ball.x > bX && ball.x < bX + bWidth && ball.y > bY && ball.y < bY + gameConfig.brickHeight) {
-                                    ball.dy = -ball.dy; b.status = 0; score++; updateHud(); spawnPowerUp(bX + bWidth/2, bY);
-                                }
-                            });
-                        }
-                    });
-                });
-
+                bricks.forEach((col, i) => col.forEach((b, r) => {
+                    if(b.status === 1) {
+                        activeCount++; const bX = 2 + i * 30, bY = r * 16 + 30;
+                        ctx.fillStyle = activeTheme === 'monochromeStatic' ? t.text : colors[r] || colors[2];
+                        ctx.fillRect(bX, bY, 26, 12);
+                        balls.forEach(ball => { if(ballReleased && ball.x > bX && ball.x < bX + 26 && ball.y > bY && ball.y < bY + 12) { ball.dy = -ball.dy; b.status = 0; score++; updateHud(`Score: ${score} | Level: ${level} | Lives: ${lives}`); } });
+                    }
+                }));
                 if(activeCount === 0 && !levelTransitioning) {
                     levelTransitioning = true; ballReleased = false;
-                    for(let i=0; i<30; i++) starRain.push({x: Math.random()*canvas.width, y: -Math.random()*50, speed: 1.0+Math.random(), color: colors[1], opacity: 1});
+                    for(let i=0; i<30; i++) starRain.push({x: Math.random()*240, y: -Math.random()*50, speed: 1.0+Math.random(), color: colors[1], opacity: 1});
                 } else {
                     ctx.fillStyle = t.text; ctx.fillRect(paddleX, canvas.height - 10, paddleWidth, 5);
-                    
-                    powerUps.forEach((p, i) => {
-                        p.y += p.dy;
-                        ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, Math.PI*2); ctx.stroke();
-                        ctx.font = "bold 8px sans-serif"; ctx.textAlign = "center";
-                        ctx.fillStyle = p.type === 'life' ? '#ff4d4d' : t.text;
-                        const icons = {life: "♥", expand: "+", shrink: "-", multi: "3"};
-                        ctx.fillText(icons[p.type], p.x, p.y + 3);
-
-                        if(p.y > canvas.height - 15 && p.x > paddleX && p.x < paddleX + paddleWidth) {
-                            if(p.type === 'life') lives++;
-                            if(p.type === 'expand') paddleWidth = Math.min(72, paddleWidth + 12);
-                            if(p.type === 'shrink') paddleWidth = Math.max(18, paddleWidth - 9);
-                            if(p.type === 'multi') {
-                                balls.push({x: balls[0].x, y: balls[0].y, dx: -balls[0].dx, dy: balls[0].dy});
-                                balls.push({x: balls[0].x, y: balls[0].y, dx: balls[0].dx * 0.5, dy: balls[0].dy});
-                            }
-                            updateHud(); powerUps.splice(i, 1);
-                        } else if (p.y > canvas.height) powerUps.splice(i, 1);
-                    });
-
                     balls.forEach((ball, i) => {
                         if (!ballReleased) { ball.x = paddleX + paddleWidth / 2; ball.y = canvas.height - 15; }
                         ctx.beginPath(); ctx.arc(ball.x, ball.y, 3, 0, Math.PI*2); ctx.fillStyle = t.text; ctx.fill();
                         if (ballReleased) {
-                            if(ball.x + ball.dx > canvas.width || ball.x + ball.dx < 0) ball.dx = -ball.dx;
+                            if(ball.x + ball.dx > 240 || ball.x + ball.dx < 0) ball.dx = -ball.dx;
                             if(ball.y + ball.dy < 0) ball.dy = -ball.dy;
                             else if(ball.y + ball.dy > canvas.height - 10) {
                                 if(ball.x > paddleX && ball.x < paddleX + paddleWidth) ball.dy = -ball.dy;
-                                else { balls.splice(i, 1); if (balls.length === 0) { lives--; ballReleased = false; lives <= 0 ? initGame(true) : initGame(false); } }
+                                else { balls.splice(i, 1); if (balls.length === 0) { lives--; ballReleased = false; lives <= 0 ? initBreakout(true) : initBreakout(false); } }
                             }
                             ball.x += ball.dx; ball.y += ball.dy;
                         }
                     });
                 }
             }
-            requestAnimationFrame(drawGame);
+            requestAnimationFrame(drawBreakout);
         }
 
+        // --- Shared Helpers ---
+        function updateHud(txt) { if(hud) hud.innerText = txt; }
+        function getThemeColors() { 
+            const style = getComputedStyle(document.documentElement);
+            return [style.getPropertyValue('--theme-c1').trim(), style.getPropertyValue('--theme-c2').trim(), style.getPropertyValue('--theme-c3').trim()];
+        }
+        
         document.getElementById('game-easter-egg').onmousemove = e => { 
-            if(!gameActive) return; 
+            if(!breakoutActive) return; 
             let rect = canvas.getBoundingClientRect(); 
-            paddleX = (e.clientX - rect.left) * (canvas.width / rect.width) - paddleWidth / 2; 
-            paddleX = Math.max(0, Math.min(canvas.width - paddleWidth, paddleX)); 
+            paddleX = (e.clientX - rect.left) * (240 / rect.width) - paddleWidth / 2; 
+            paddleX = Math.max(0, Math.min(240 - paddleWidth, paddleX)); 
         };
 
-        function closeGame() { gameActive = false; document.body.classList.remove('game-on'); hud.style.display = 'none'; closeBtn.style.display = 'none'; }
-        
         function setTheme(key, el) { 
             activeTheme = key; const t = themes[key]; const root = document.documentElement.style; 
             root.setProperty('--theme-c1', t.colors[0]); root.setProperty('--theme-c2', t.colors[1]); 
