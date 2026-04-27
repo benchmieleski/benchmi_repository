@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ben Chmieleski | Home</title>
+    <style>
+        /* - Updated imports for modern Sans (Montserrat) and Serif (Lora) */
+        @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Montserrat:wght@400;700&family=Silkscreen:wght@400;700&display=swap');
+
+        :root {
+            --bg-main: #ffffff;
+            --text-base: #1a1a1a;
+            --theme-c1: #6cccb6; 
+            --theme-c2: #57648a; 
+            --theme-c3: #ab5c95; 
+            /* Default set to Sans Serif */
+            --current-font: 'Montserrat', sans-serif;
+        }
+
+        /* --- Global & Scrollbars --- */
+        * { 
+            box-sizing: border-box; 
+            scrollbar-width: thin; 
+            scrollbar-color: var(--theme-c1) var(--bg-main); 
+            font-family: var(--current-font);
+            letter-spacing: 1px;
+        }
+        
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-main); }
+        ::-webkit-scrollbar-thumb { background: var(--theme-c1); border-radius: 10px; border: 2px solid var(--bg-main); }
+
+        body, html {
+            margin: 0; padding: 0;
+            overflow-x: hidden;
+            background: var(--bg-main);
+            color: var(--text-base);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s ease;
+        }
+
+        /* --- Header & Navigation --- */
+        header { 
+            position: fixed; top: 0; left: 0; right: 0; 
+            padding: 40px; z-index: 1000; 
+            display: flex; flex-direction: row; align-items: flex-start;
+            pointer-events: none;
+        }
+
+        .site-name-wrapper { 
+            display: inline-flex; flex-direction: column; cursor: pointer; padding-bottom: 30px; 
+            pointer-events: auto; flex-shrink: 0; z-index: 1001;
+        }
+
+        .site-name { 
+            font-size: 2rem; 
+            font-weight: 700; 
+            line-height: 1.2; 
+            margin: 0; 
+            text-transform: uppercase;
+            letter-spacing: 4px; 
+        }
+
+        .site-subheading { 
+            font-size: 1.1rem; 
+            line-height: 1.2; 
+            margin: 4px 0 12px; 
+            letter-spacing: 1px;
+        }
+
+        .nav-menu { display: none; flex-direction: row; align-items: center; gap: 20px; }
+        .site-name-wrapper:hover .nav-menu { display: flex; }
+        .nav-links-column { display: flex; flex-direction: column; gap: 6px; }
+        .nav-link { font-size: 0.9rem; font-weight: bold; text-decoration: none; color: inherit; cursor: pointer; }
+
+        /* --- Theme Controls --- */
+        .color-controls-dropdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .theme-option { 
+            cursor: pointer; border: 1px solid var(--theme-c3); padding: 1px; 
+            background: #fff; display: flex; height: 20px; align-items: center; justify-content: center; 
+        }
+        .theme-option.active { border: 2px solid var(--text-base); }
+        .swatch { width: 10px; height: 10px; margin: 0 1px; }
+
+        /* Font Dropdown Styling */
+        #font-selector {
+            background: transparent;
+            color: var(--text-base);
+            border: 1px solid var(--theme-c1);
+            padding: 2px 5px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        /* --- Easter Egg Game --- */
+        .desktop-only { display: flex; }
+        #game-easter-egg {
+            flex-grow: 1; height: 84px; 
+            pointer-events: none; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: height 0.5s ease-in-out; z-index: 900;
+        }
+
+        body.game-on #game-easter-egg { 
+            position: absolute; top: 0; left: 0; right: 0; height: 40vh; 
+            background: var(--bg-main); pointer-events: auto; 
+        }
+
+        .canvas-container { position: relative; display: none; height: 80%; aspect-ratio: 4 / 3; }
+        body.game-on .canvas-container { display: block; }
+        #gameCanvas { width: 100%; height: 100%; border: 2px solid var(--theme-c1); border-radius: 10px; background: var(--bg-main); }
+        #game-hud { display: none; font-size: 0.8rem; font-weight: bold; padding: 5px 0; text-transform: uppercase; }
+
+        .universal-close {
+            display: none; cursor: pointer; position: absolute;
+            width: 24px; height: 24px;
+            background: var(--bg-main); border: 2px solid var(--theme-c1); border-radius: 4px; 
+            color: var(--text-base); font-size: 0.8rem; font-weight: bold;
+            align-items: center; justify-content: center; z-index: 2005; top: 0; right: 0; transform: translate(50%, -50%);
+        }
+
+        /* --- Gallery & Items --- */
+        .gallery-container { 
+            flex: 1; width: 100vw; display: flex; align-items: center; 
+            overflow-x: auto; overflow-y: hidden;
+            transition: flex 0.5s ease-in-out; margin-top: 140px; padding-bottom: 25px;
+        }
+        
+        .gallery-container::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; margin: 0 100px; }
+
+        body.game-on .gallery-container { margin-top: 40vh; flex: 0 0 60vh; }
+        
+        .scroll-wrapper { display: flex; width: max-content; padding: 0 100px; animation: slow-scroll 80s linear infinite; }
+        .scroll-wrapper:hover { animation-play-state: paused; }
+        
+        .item-wrapper { 
+            height: 60vh; margin: 20px 40px; padding: 4px; 
+            background: var(--theme-c1); transition: 0.6s; 
+            cursor: pointer; flex-shrink: 0; border-radius: 5px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.17); overflow: hidden;
+        }
+        .item-wrapper:hover { transform: translateY(-8px); box-shadow: 0 25px 50px rgba(0,0,0,0.24); }
+        
+        body.game-on .item-wrapper { height: 45vh; } 
+        .painting { height: 100%; display: block; background: #fff; border-radius: 2px; }
+
+        /* --- Modal --- */
+        #modal { 
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            background: var(--bg-main); padding: 40px; border: 2px solid var(--theme-c1); 
+            z-index: 2000; text-align: center; max-width: 85vw; border-radius: 10px; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4); 
+        }
+        #modal-body { max-height: 80vh; overflow-y: auto; }
+        #modal-body img { max-height: 60vh; max-width: 100%; border-radius: 5px; }
+
+        /* --- Game Menu Styles --- */
+        .game-menu-list { list-style: none; padding: 0; margin: 15px 0 0; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+        .game-menu-item { 
+            padding: 6px 16px; border: 1px solid var(--theme-c1); border-radius: 4px; 
+            cursor: pointer; font-size: 0.85rem; font-weight: bold; transition: 0.3s; color: var(--text-base);
+            width: fit-content; min-width: 100px;
+        }
+        .game-menu-item:hover { background: var(--theme-c1); color: var(--bg-main); }
+
+        /* --- Animations & Effects --- */
+        @keyframes slow-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        @keyframes gradient-flow { to { background-position: 400% center; } }
+        
+        .inv-grad-box { 
+            background: linear-gradient(to right, var(--theme-c1), var(--theme-c2), var(--theme-c3), var(--theme-c1)); 
+            background-size: 400% auto; animation: gradient-flow 18s linear infinite; 
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; 
+            display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            .desktop-only { display: none !important; }
+            header { position: relative; padding: 20px; pointer-events: auto; }
+            .site-name { font-size: 1.5rem; letter-spacing: 2px; }
+            .site-subheading { font-size: 0.9rem; }
+            .nav-menu { display: flex; margin-top: 10px; }
+            .gallery-container { margin-top: 20px; overflow-y: auto; display: block; height: auto; }
+            .scroll-wrapper { animation: none; display: flex; flex-direction: column; width: 100%; padding: 0 20px; }
+            .item-wrapper { height: auto; width: 100%; margin: 0 0 30px 0; }
+            .painting { width: 100%; height: auto; }
+            body { overflow-y: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="site-name-wrapper" onclick="window.location.href=window.location.origin">
+            <div class="site-name inv-grad-box">Ben Chmieleski</div>
+            <div class="site-subheading inv-grad-box">Artist | Designer | Creator</div>
+            <nav class="nav-menu">
+                <div class="nav-links-column">
+                    <a class="nav-link inv-grad-box" onclick="event.stopPropagation(); openSection('about')">About</a>
+                    <a class="nav-link inv-grad-box" onclick="event.stopPropagation(); openSection('contact')">Contact</a>
+                </div>
+                <div class="color-controls-dropdown">
+                    <div class="theme-option active" onclick="event.stopPropagation(); setTheme('misty', this)"><div class="swatch" style="background:#6cccb6"></div><div class="swatch" style="background:#57648a"></div><div class="swatch" style="background:#ab5c95"></div></div>
+                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('electric', this)"><div class="swatch" style="background:#d9b3f2"></div><div class="swatch" style="background:#b3d9d9"></div><div class="swatch" style="background:#efb9da"></div></div>
+                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('monochromeDark', this)" style="background:#000;"><div class="swatch" style="background:#fff"></div><div class="swatch" style="background:#fff"></div><div class="swatch" style="background:#fff"></div></div>
+                    <div class="theme-option" onclick="event.stopPropagation(); setTheme('monochromeStatic', this)"><div class="swatch" style="background:#000"></div><div class="swatch" style="background:#000"></div><div class="swatch" style="background:#000"></div></div>
+                </div>
+                <select id="font-selector" onchange="setFont(this.value)" onclick="event.stopPropagation()">
+                    <option value="sans" selected>Sans</option>
+                    <option value="serif">Serif</option>
+                    <option value="retro">Retro</option>
+                </select>
+            </nav>
+        </div>
+
+        <div id="game-easter-egg" class="desktop-only" onclick="handleGameInput(event)">
+            <div class="canvas-container">
+                <canvas id="gameCanvas"></canvas>
+                <div id="close-game-btn" class="universal-close" onclick="event.stopPropagation(); closeGame()">✕</div>
+            </div>
+            <div id="game-hud" class="inv-grad-box">Score: 0</div>
+        </div>
+    </header>
+
+    <main class="gallery-container" id="main-gallery">
+        <div class="scroll-wrapper" id="gallery-wrapper"></div>
+    </main>
+
+    <div id="modal">
+        <div id="modal-close-btn" class="universal-close" style="display:flex;" onclick="closeModal()">✕</div>
+        <div id="modal-body"></div>
+    </div>
+
+    <script>
+        const feedItems = [
+            { path: 'art_garden.jpg', title: 'Garden', description: 'oil on paper, 2025' },
+            { path: 'art_riverside.jpg', title: 'Riverside', description: 'oil on paper, 2025' },
+            { path: 'art_sunset.jpg', title: 'Sunset', description: 'oil on paper, 2025' },
+            { path: 'art_flowers.jpg', title: 'Flowers', description: 'oil on paper, 2025' },
+        ];
+
+        const themes = {
+            misty: { colors: ['#6cccb6', '#57648a', '#ab5c95'], bg: '#fff', text: '#1a1a1a' }, 
+            electric: { colors: ['#d9b3f2', '#b3d9d9', '#efb9da'], bg: '#fff', text: '#1a1a1a' },
+            monochromeDark: { colors: ['#ffffff', '#888888', '#444444'], bg: '#000', text: '#f0f0f0' },
+            monochromeStatic: { colors: ['#000000', '#555555', '#999999'], bg: '#fff', text: '#1a1a1a' }
+        };
+
+        const fontChoices = {
+            sans: "'Montserrat', sans-serif",
+            serif: "'Lora', serif",
+            retro: "'Silkscreen', cursive"
+        };
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas?.getContext('2d');
+        const hud = document.getElementById('game-hud');
+        const closeBtn = document.getElementById('close-game-btn');
+        const gallery = document.getElementById('gallery-wrapper');
+        
+        let gameActive = false, snakeActive = false, breakoutActive = false;
+        let activeTheme = 'misty', inputBuffer = "";
+
+        const breakoutConfig = { cols: 8, rows: 3, basePaddleWidth: 36, brickHeight: 12, baseSpeed: 2, maxLevels: 3 };
+        let ballReleased = false, gameWon = false, paddleX, paddleWidth, bricks, starRain = [], powerUps = [], balls = [];
+        let score = 0, level = 1, lives = 3, levelTransitioning = false;
+
+        let snake = [{x: 10, y: 10}], food = {x: 15, y: 15}, dx = 0, dy = 0, snakeScore = 0, gameLoop;
+
+        window.addEventListener('keydown', (e) => {
+            if (breakoutActive && e.code === 'Space' && !ballReleased) { ballReleased = true; return; }
+            if (snakeActive) {
+                if (e.key === "ArrowUp" && dy === 0) { dx = 0; dy = -1; }
+                if (e.key === "ArrowDown" && dy === 0) { dx = 0; dy = 1; }
+                if (e.key === "ArrowLeft" && dx === 0) { dx = -1; dy = 0; }
+                if (e.key === "ArrowRight" && dx === 0) { dx = 1; dy = 0; }
+            }
+            inputBuffer += e.key.toLowerCase();
+            if (inputBuffer.endsWith("game") || inputBuffer.endsWith("arcade")) { inputBuffer = ""; openGameMenu(); }
+            if (inputBuffer.endsWith("close")) { inputBuffer = ""; closeGame(); }
+            if (inputBuffer.length > 20) inputBuffer = inputBuffer.slice(-15);
+        });
+
+        function setFont(val) {
+            document.documentElement.style.setProperty('--current-font', fontChoices[val]);
+        }
+
+        function openGameMenu() {
+            if (window.innerWidth <= 768) return; 
+            const body = document.getElementById('modal-body');
+            body.innerHTML = `
+                <h3 class="inv-grad-box" style="margin-bottom: 5px;">Arcade</h3><br>
+                <ul class="game-menu-list">
+                    <li class="game-menu-item" onclick="closeModal(); activateBreakout();">Breakout</li>
+                    <li class="game-menu-item" onclick="closeModal(); activateSnake();">Snake</li>
+                </ul>
+            `;
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        function closeGame() {
+            gameActive = snakeActive = breakoutActive = false;
+            clearInterval(gameLoop);
+            document.body.classList.remove('game-on');
+            hud.style.display = 'none';
+            closeBtn.style.display = 'none';
+            openGameMenu(); 
+        }
+
+        function handleGameInput(e) {
+            if (breakoutActive && !ballReleased) ballReleased = true;
+            if (snakeActive && dx === 0 && dy === 0) { dx = 1; gameLoop = setInterval(stepSnake, 100); }
+        }
+
+        function activateSnake() {
+            snakeActive = gameActive = true; breakoutActive = false;
+            document.body.classList.add('game-on');
+            hud.style.display = 'block';
+            closeBtn.style.display = 'flex';
+            initSnake();
+        }
+
+        function initSnake() {
+            canvas.width = 240; canvas.height = 180;
+            snake = [{x: 10, y: 10}]; dx = dy = snakeScore = 0;
+            spawnFood(); updateHud(`Score: ${snakeScore}`);
+            renderSnakeScreen("S N A K E", "Click to Start");
+        }
+
+        function spawnFood() { food = { x: Math.floor(Math.random() * 24), y: Math.floor(Math.random() * 18) }; }
+
+        function stepSnake() {
+            const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+            if (head.x < 0 || head.x >= 24 || head.y < 0 || head.y >= 18 || snake.some(s => s.x === head.x && s.y === head.y)) {
+                clearInterval(gameLoop); renderSnakeScreen("GAME OVER", "Refreshing..."); setTimeout(initSnake, 2000); return;
+            }
+            snake.unshift(head);
+            if (head.x === food.x && head.y === food.y) { snakeScore += 10; updateHud(`Score: ${snakeScore}`); spawnFood(); } else { snake.pop(); }
+            renderSnake();
+        }
+
+        function renderSnake() {
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+            const colors = getThemeColors();
+            ctx.fillStyle = colors[2]; ctx.fillRect(food.x * 10, food.y * 10, 8, 8);
+            snake.forEach((s, i) => { ctx.fillStyle = i === 0 ? themes[activeTheme].text : colors[0]; ctx.fillRect(s.x * 10, s.y * 10, 9, 9); });
+        }
+
+        function renderSnakeScreen(t1, t2) {
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+            const style = getComputedStyle(document.documentElement);
+            const themeAccent = style.getPropertyValue('--theme-c1').trim();
+            ctx.fillStyle = themeAccent; ctx.textAlign = "center";
+            ctx.font = "14px 'Silkscreen', cursive"; ctx.fillText(t1, 120, 80);
+            ctx.font = "8px 'Silkscreen', cursive"; ctx.fillText(t2, 120, 100);
+        }
+
+        function activateBreakout() {
+            breakoutActive = gameActive = true; snakeActive = false;
+            document.body.classList.add('game-on');
+            hud.style.display = 'block'; closeBtn.style.display = 'flex';
+            initBreakout(true); drawBreakout();
+        }
+
+        function initBreakout(fullReset = true) {
+            canvas.width = 240; canvas.height = 180;
+            if (fullReset) { score = 0; level = 1; lives = 3; paddleWidth = breakoutConfig.basePaddleWidth; resetBricks(); gameWon = false; }
+            paddleX = (canvas.width - paddleWidth) / 2; ballReleased = false; starRain = []; powerUps = [];
+            balls = [{ x: paddleX + paddleWidth / 2, y: canvas.height - 15, dx: breakoutConfig.baseSpeed + (level * 0.5), dy: -(breakoutConfig.baseSpeed + (level * 0.5)) }];
+            updateHud(`Score: ${score} | Level: ${level} | Lives: ${lives}`);
+        }
+
+        function resetBricks() { bricks = Array.from({length: breakoutConfig.cols}, () => Array.from({length: breakoutConfig.rows}, () => ({status: 1}))); }
+
+        function drawBreakout() {
+            if(!breakoutActive) return;
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+            const colors = getThemeColors();
+            const t = themes[activeTheme];
+            
+            if (gameWon) {
+                ctx.font = "20px 'Silkscreen', cursive"; ctx.textAlign = "center";
+                ctx.fillStyle = colors[0]; ctx.fillText("You Win!", 120, 90);
+            } else if (starRain.length > 0) {
+                starRain.forEach((s, i) => {
+                    ctx.globalAlpha = s.opacity; ctx.fillStyle = s.color; ctx.fillText("*", s.x, s.y); s.y += s.speed;
+                    if (s.y > canvas.height) s.opacity -= 0.01; if (s.opacity <= 0) starRain.splice(i, 1);
+                });
+                ctx.globalAlpha = 1.0; if (starRain.length === 0 && levelTransitioning) {
+                    if (level < breakoutConfig.maxLevels) { level++; resetBricks(); initBreakout(false); } else { gameWon = true; ballReleased = false; }
+                    levelTransitioning = false;
+                }
+            } else {
+                let activeCount = 0;
+                bricks.forEach((col, i) => col.forEach((b, r) => {
+                    if(b.status === 1) {
+                        activeCount++; const bX = 2 + i * 30, bY = r * 16 + 30;
+                        ctx.fillStyle = activeTheme === 'monochromeStatic' ? t.text : colors[r] || colors[2];
+                        ctx.fillRect(bX, bY, 26, 12);
+                        balls.forEach(ball => { if(ballReleased && ball.x > bX && ball.x < bX + 26 && ball.y > bY && ball.y < bY + 12) { ball.dy = -ball.dy; b.status = 0; score++; updateHud(`Score: ${score} | Level: ${level} | Lives: ${lives}`); } });
+                    }
+                }));
+                if(activeCount === 0 && !levelTransitioning) {
+                    levelTransitioning = true; ballReleased = false;
+                    for(let i=0; i<30; i++) starRain.push({x: Math.random()*240, y: -Math.random()*50, speed: 1.0+Math.random(), color: colors[1], opacity: 1});
+                } else {
+                    ctx.fillStyle = t.text; ctx.fillRect(paddleX, canvas.height - 10, paddleWidth, 5);
+                    balls.forEach((ball, i) => {
+                        if (!ballReleased) { ball.x = paddleX + paddleWidth / 2; ball.y = canvas.height - 15; }
+                        ctx.beginPath(); ctx.arc(ball.x, ball.y, 3, 0, Math.PI*2); ctx.fillStyle = t.text; ctx.fill();
+                        if (ballReleased) {
+                            if(ball.x + ball.dx > 240 || ball.x + ball.dx < 0) ball.dx = -ball.dx;
+                            if(ball.y + ball.dy < 0) ball.dy = -ball.dy;
+                            else if(ball.y + ball.dy > canvas.height - 10) {
+                                if(ball.x > paddleX && ball.x < paddleX + paddleWidth) ball.dy = -ball.dy;
+                                else { balls.splice(i, 1); if (balls.length === 0) { lives--; ballReleased = false; lives <= 0 ? initBreakout(true) : initBreakout(false); } }
+                            }
+                            ball.x += ball.dx; ball.y += ball.dy;
+                        }
+                    });
+                }
+            }
+            requestAnimationFrame(drawBreakout);
+        }
+
+        function updateHud(txt) { if(hud) hud.innerText = txt; }
+        function getThemeColors() { 
+            const style = getComputedStyle(document.documentElement);
+            return [style.getPropertyValue('--theme-c1').trim(), style.getPropertyValue('--theme-c2').trim(), style.getPropertyValue('--theme-c3').trim()];
+        }
+        
+        document.getElementById('game-easter-egg').onmousemove = e => { 
+            if(!breakoutActive) return; 
+            let rect = canvas.getBoundingClientRect(); 
+            paddleX = (e.clientX - rect.left) * (240 / rect.width) - paddleWidth / 2; 
+            paddleX = Math.max(0, Math.min(240 - paddleWidth, paddleX)); 
+        };
+
+        function setTheme(key, el) { 
+            activeTheme = key; const t = themes[key]; const root = document.documentElement.style; 
+            root.setProperty('--theme-c1', t.colors[0]); root.setProperty('--theme-c2', t.colors[1]); 
+            root.setProperty('--theme-c3', t.colors[2]); root.setProperty('--bg-main', t.bg); 
+            root.setProperty('--text-base', t.text); 
+            document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active')); el.classList.add('active'); 
+            if(snakeActive && dx === 0) renderSnakeScreen("S N A K E", "Click to Start");
+        }
+
+        function openItem(idx) { 
+            const item = feedItems[idx % feedItems.length]; 
+            document.getElementById('modal-body').innerHTML = `<img src="${item.path}"><h3 class="inv-grad-box" style="margin-top:15px;">${item.title}</h3><p>${item.description}</p>`; 
+            document.getElementById('modal').style.display = 'block'; 
+        }
+        
+        function openSection(type) { 
+            const content = type === 'about' ? 
+                `<h3 class="inv-grad-box">Ben Chmieleski</h3><p>Artist & Designer in West Michigan.<br><br>Type "Arcade" ;)</p>` : 
+                `<h3 class="inv-grad-box">Contact</h3><p><a href="mailto:benchmieleski@gmail.com" style="color:inherit; text-decoration:underline;">Email</a> | <a href="https://www.linkedin.com/in/benchmieleski" target="_blank" style="color:inherit; text-decoration:underline;">LinkedIn</a></p>`; 
+            document.getElementById('modal-body').innerHTML = content;
+            document.getElementById('modal').style.display = 'block'; 
+        }
+        
+        function closeModal() { document.getElementById('modal').style.display = 'none'; }
+        
+        const isMobileView = window.innerWidth <= 768;
+        const galleryHtml = feedItems.map((item, idx) => `<div class="item-wrapper" onclick="openItem(${idx})"><img src="${item.path}" class="painting"></div>`).join('');
+        gallery.innerHTML = isMobileView ? galleryHtml : galleryHtml + galleryHtml;
+    </script>
+</body>
+</html>
